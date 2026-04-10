@@ -67,3 +67,21 @@
 Python 3.11+  |  PostgreSQL 14+  |  Redis 7+
 
 
+Installation
+# Clone repository
+git clone https://github.com/yourusername/ceh-platform.git
+cd ceh-platform
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup database
+python manage.py migrate
+python manage.py loaddata modules/questions
+
+# Run development server
+python manage.py runserver
