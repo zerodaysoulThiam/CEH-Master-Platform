@@ -67,7 +67,7 @@
 Python 3.11+  |  PostgreSQL 14+  |  Redis 7+
 
 
-Installation
+### Installation
 # Clone repository
 git clone https://github.com/yourusername/ceh-platform.git
 cd ceh-platform
