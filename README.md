@@ -79,9 +79,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup database
-python manage.py migrate
-python manage.py loaddata modules/questions
 
 # Run development server
-python manage.py runserver
+python runserver.py
