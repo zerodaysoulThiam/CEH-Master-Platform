@@ -63,7 +63,7 @@
 
 ### Prerequisites
 
-```bash
+bash
 Python 3.11+  |  PostgreSQL 14+  |  Redis 7+
 
 
