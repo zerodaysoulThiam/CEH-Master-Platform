@@ -85,3 +85,17 @@ python runserver.py
 [![EC-Council](https://img.shields.io/badge/EC--Council-CEH%20v12-red?style=flat-square&logo=acclaim)](https://www.eccouncil.org/ceh)
 [![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/yourusername/ceh-platform)
 
+# docker-compose.yml example
+version: '3.8'
+services:
+  web:
+    image: ceh-platform:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres:14
+  redis:
+    image: redis:7
