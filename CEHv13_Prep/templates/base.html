@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CEH Prep{% endblock %}</title>
+    <link rel="icon" href="/static/img/logo-anonymous.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <!-- Ajouter Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+</head>
+<!-- ... reste inchangé ... -->
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/static/img/CEH-logo.avif" alt="Logo CEH Prep" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('cours') }}">Cours</a></li>
+                <!-- Dans la barre de navigation, modifiez la ligne Quiz comme ceci : -->
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('quiz_list') }}">Quiz</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('glossaire') }}">Glossaire</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container body-content">
+    {% block content %}{% endblock %}
+    <hr />
+
+</div>
+
+<script src="/static/scripts/jquery-1.10.2.js"></script>
+<script src="/static/scripts/bootstrap.js"></script>
+<script src="/static/scripts/respond.js"></script>
+<script>
+    // Afficher le bouton lorsque l'utilisateur fait défiler vers le bas de 20px
+    window.onscroll = function() {
+        const button = document.getElementById("scrollToTopBtn");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block"; // Afficher le bouton
+        } else {
+            button.style.display = "none"; // Masquer le bouton
+        }
+    };
+
+    // Fonction pour faire défiler vers le haut
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Défilement en douceur
+        });
+    }
+</script>
+
+<button id="scrollToTopBtn" class="scrollToTopBtn" onclick="scrollToTop()">↑</button>
+
+</body>
+</html>

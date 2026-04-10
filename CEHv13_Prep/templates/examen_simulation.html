@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="exam-header text-center mb-4">
+        <h1 class="display-4">{{ title }}</h1>
+        <div class="exam-info d-flex justify-content-center align-items-center gap-4 mt-3">
+            <div class="exam-timer bg-dark text-white p-2 rounded">
+                <i class="fas fa-clock me-1"></i> Temps restant: <span id="timer">04:00:00</span>
+            </div>
+            <div class="exam-questions bg-primary text-white p-2 rounded">
+                <i class="fas fa-question-circle me-1"></i> 
+                Question <span id="current">1</span>/<span id="total">125</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam-progress mb-4">
+        <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div id="questions-container" class="mb-4">
+        <!-- Les questions seront injectées ici par JavaScript -->
+    </div>
+
+    <div class="exam-navigation d-flex justify-content-between mt-4">
+        <button class="btn btn-lg btn-outline-primary" id="prev-btn" disabled>
+            <i class="fas fa-arrow-left me-2"></i> Précédent
+        </button>
+        <button class="btn btn-lg btn-primary" id="next-btn">
+            Suivant <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    function finishExam() {
+        clearInterval(timerInterval);
+        score = calculateScore();
+        window.location.href = `/examen/resultats?type={{ exam_type }}&id={{ exam_id }}&score=${score}`;
+    }
+    // Données réelles pour les questions
+    const questions = [
+        {
+            id: 1,
+            text: "Quelle est la technique la plus efficace pour se protéger contre les attaques par déni de service distribué (DDoS)?",
+            options: [
+                "Utilisation d'un pare-feu stateless",
+                "Mise en place d'un système de détection d'intrusion (IDS)",
+                "Implémentation d'un service de mitigation DDoS",
+                "Désactivation du protocole UDP"
+            ],
+            correct: 2,
+            explanation: "Les services de mitigation DDoS sont spécialement conçus pour absorber et filtrer le trafic malveillant des attaques DDoS."
+        },
+        {
+            id: 2,
+            text: "Quel outil est couramment utilisé pour le scan de ports?",
+            options: [
+                "Wireshark",
+                "Nmap",
+                "Metasploit",
+                "Burp Suite"
+            ],
+            correct: 1,
+            explanation: "Nmap (Network Mapper) est l'outil le plus populaire pour le scan de ports et la découverte de réseau."
+        },
+        {
+            id: 3,
+            text: "Quelle technique permet de détecter les systèmes actifs sur un réseau sans envoyer de paquets directement?",
+            options: [
+                "Scan SYN",
+                "Ping sweep",
+                "ARP scanning",
+                "Scan de ports"
+            ],
+            correct: 2,
+            explanation: "L'ARP scanning permet de découvrir les hôtes actifs sur un réseau local en utilisant le protocole ARP sans générer de trafic IP direct."
+        }
+        // Ajoutez plus de questions ici...
+    ];
+
+    // Configuration de l'examen
+    const totalExamQuestions = 125; // Garder 125 comme nombre total de questions
+    let currentQuestionIndex = 0;
+    let userAnswers = new Array(totalExamQuestions).fill(null);
+    let score = 0;
+    let timeInSeconds = 4 * 60 * 60; // 4 heures
+    let timerInterval;
+
+    // Éléments d'interface
+    const questionsContainer = document.getElementById('questions-container');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const currentSpan = document.getElementById('current');
+    const totalSpan = document.getElementById('total');
+    const timerElement = document.getElementById('timer');
+    const progressBar = document.getElementById('progress-bar');
+
+    // Afficher la question actuelle
+    function showQuestion(index) {
+        if (index >= questions.length) {
+            // Si on dépasse les questions disponibles, afficher un message
+            questionsContainer.innerHTML = `
+                <div class="alert alert-info text-center">
+                    <h4>Fin des questions disponibles</h4>
+                    <p>Vous avez atteint la fin des questions préparées pour cette démonstration.</p>
+                    <button class="btn btn-primary mt-2" onclick="finishExam()">Terminer l'examen</button>
+                </div>
+            `;
+            return;
+        }
+        
+        const question = questions[index];
+        let html = `
+            <div class="exam-question card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="question-title">Question ${index + 1}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="question-text lead">${question.text}</p>
+                    <div class="options mt-4">
+        `;
+        
+        question.options.forEach((option, i) => {
+            const isChecked = userAnswers[index] === i ? 'checked' : '';
+            html += `
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="question${index}" 
+                           id="option${index}-${i}" value="${i}" ${isChecked}>
+                    <label class="form-check-label" for="option${index}-${i}">
+                        ${option}
+                    </label>
+                </div>
+            `;
+        });
+        
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        questionsContainer.innerHTML = html;
+        currentSpan.textContent = index + 1;
+        totalSpan.textContent = totalExamQuestions;
+        
+        // Mise à jour de la barre de progression
+        const progress = ((index + 1) / totalExamQuestions) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        // Gestion des boutons de navigation
+        prevBtn.disabled = index === 0;
+        nextBtn.textContent = index === totalExamQuestions - 1 ? "Terminer l'examen" : "Suivant";
+        
+        // Ajouter les écouteurs d'événements pour les réponses
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                userAnswers[index] = parseInt(e.target.value);
+            });
+        });
+    }
+
+    // Calculer le score
+    function calculateScore() {
+        let correctCount = 0;
+        userAnswers.forEach((answer, index) => {
+            if (index < questions.length && answer === questions[index].correct) {
+                correctCount++;
+            }
+        });
+        return Math.round((correctCount / questions.length) * 100);
+    }
+
+    // Fonction pour terminer l'examen
+    function finishExam() {
+        clearInterval(timerInterval);
+        score = calculateScore();
+        window.location.href = `/examen/resultats?type={{ exam_type }}&id={{ exam_id }}&score=${score}`;
+    }
+
+    // Navigation
+    nextBtn.addEventListener('click', () => {
+        if (currentQuestionIndex < totalExamQuestions - 1) {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        } else {
+            finishExam();
+        }
+    });
+    
+    prevBtn.addEventListener('click', () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion(currentQuestionIndex);
+        }
+    });
+
+    // Timer
+    function updateTimer() {
+        const hours = Math.floor(timeInSeconds / 3600);
+        const minutes = Math.floor((timeInSeconds % 3600) / 60);
+        const seconds = timeInSeconds % 60;
+        
+        timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeInSeconds <= 0) {
+            finishExam();
+        } else {
+            timeInSeconds--;
+        }
+    }
+    
+    // Démarrer le timer et afficher la première question
+    timerInterval = setInterval(updateTimer, 1000);
+    showQuestion(0);
+</script>
+
+<style>
+    .exam-header {
+        background: #1a2a6c;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+    }
+    .exam-question {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

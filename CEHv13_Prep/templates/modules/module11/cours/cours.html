@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module: Session Hijacking{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mt-4">
+    <h1>Module 11: Session Hijacking</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#session-concepts">1. Concepts de Session Hijacking</a></td>
+                <td>Fondamentaux du détournement de session</td>
+            </tr>
+            <tr>
+                <td><a href="#app-level">2. Détournement au niveau applicatif</a></td>
+                <td>Techniques sur les sessions web</td>
+            </tr>
+            <tr>
+                <td><a href="#network-level">3. Détournement au niveau réseau</a></td>
+                <td>Attaques TCP et MITM</td>
+            </tr>
+            <tr>
+                <td><a href="#session-tools">4. Outils de détournement</a></td>
+                <td>Logiciels spécialisés</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">5. Contre-mesures</a></td>
+                <td>Protections contre le détournement</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="session-concepts">
+        <h1>1. Concepts de Session Hijacking</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce que le Session Hijacking?</h3>
+                <p>Le détournement de session est une technique où un attaquant prend le contrôle d'une session utilisateur légitime après l'authentification, en volant ou en devinant l'identifiant de session.</p>
+                
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Pourquoi est-ce efficace?</h5>
+                    <ul>
+                        <li>Contourne l'authentification initiale</li>
+                        <li>Permet un accès complet au compte</li>
+                        <li>Difficile à détecter pour l'utilisateur</li>
+                        <li>Peut être maintenu pendant longtemps</li>
+                    </ul>
+                </div>
+                
+                <h3>Types de sessions vulnérables</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Sessions web</td>
+                        <td>Cookies, tokens JWT, paramètres URL</td>
+                    </tr>
+                    <tr>
+                        <td>Sessions réseau</td>
+                        <td>Connexions TCP, séquences de paquets</td>
+                    </tr>
+                    <tr>
+                        <td>Sessions applicatives</td>
+                        <td>Authentification unique (SSO), API tokens</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Impact du Session Hijacking</h4>
+                        <ul>
+                            <li>68% des applications web sont vulnérables</li>
+                            <li>Coût moyen d'une violation: $4.35 millions</li>
+                            <li>60% des attaques impliquent des identifiants volés</li>
+                            <li>Temps moyen de détection: 207 jours</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Cycle d'attaque typique</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Surveillance du trafic réseau</li>
+                            <li>Capture d'identifiants de session</li>
+                            <li>Prise de contrôle de la session</li>
+                            <li>Élévation de privilèges</li>
+                            <li>Exfiltration de données</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <img src="https://www.imperva.com/learn/wp-content/uploads/sites/13/2019/01/session-hijacking.jpg" alt="Cycle d'attaque de détournement de session" class="img-fluid rounded mt-3">
+            </div>
+        </div>
+    </section>
+    
+    <section id="app-level" class="mt-5">
+        <h1>2. Détournement au niveau applicatif</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Méthodes d'attaque</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Méthode</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Vol de cookie</td>
+                        <td>XSS, MITM, accès physique</td>
+                    </tr>
+                    <tr>
+                        <td>Fixation de session</td>
+                        <td>Forcer un ID de session spécifique</td>
+                    </tr>
+                    <tr>
+                        <td>Prédiction d'ID</td>
+                        <td>Devinettes d'ID de session faibles</td>
+                    </tr>
+                    <tr>
+                        <td>Cross-Site Request Forgery (CSRF)</td>
+                        <td>Exécution d'actions non autorisées</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Exemple: Attaque par fixation de session</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Attaquant crée un ID de session valide</li>
+                            <li>Victime est dirigée vers le site avec cet ID</li>
+                            <li>Victime s'authentifie avec cet ID</li>
+                            <li>Attaquant utilise le même ID pour accéder au compte</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Vecteurs d'attaque courants</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>XSS (Cross-Site Scripting)</strong>: Exécution de scripts malveillants</li>
+                        <li><strong>MITM (Man-in-the-Middle)</strong>: Interception du trafic</li>
+                        <li><strong>Sniffing WiFi</strong>: Capture de données sur réseaux non sécurisés</li>
+                        <li><strong>Applications compromises</strong>: Malware sur l'appareil de la victime</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: Vol de cookie via XSS</h4>
+                        <ol>
+                            <li>Injecter un script dans une page vulnérable</li>
+                            <li>Script envoie les cookies de session à l'attaquant</li>
+                            <li>Attaquant copie les cookies dans son navigateur</li>
+                            <li>Accès au compte sans authentification</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Protections applicatives</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Cookies avec flags Secure et HttpOnly</li>
+                            <li>Renouvellement d'ID de session après authentification</li>
+                            <li>Validation des tokens CSRF</li>
+                            <li>Mise en œuvre de Content Security Policy (CSP)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="network-level" class="mt-5">
+        <h1>3. Détournement au niveau réseau</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Attaques TCP/IP</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>TCP Session Hijacking</td>
+                        <td>Prédiction des numéros de séquence</td>
+                    </tr>
+                    <tr>
+                        <td>RST Attack</td>
+                        <td>Envoi de paquets RST pour terminer la session</td>
+                    </tr>
+                    <tr>
+                        <td>Man-in-the-Middle (MITM)</td>
+                        <td>Interception complète du trafic</td>
+                    </tr>
+                    <tr>
+                        <td>ARP Spoofing</td>
+                        <td>Redirection du trafic réseau</td>
+                    </tr>
+                </table>
+                
+                <h3>Processus de détournement TCP</h3>
+                <div class="card bg-light p-3 mt-3">
+                    <ol>
+                        <li>Surveillance de la connexion TCP</li>
+                        <li>Prédiction des numéros de séquence</li>
+                        <li>Envoi de paquets falsifiés</li>
+                        <li>Déconnexion de la victime (RST ou SYN flood)</li>
+                        <li>Prise de contrôle de la session</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Exemple: ARP Spoofing</h4>
+                        <ol>
+                            <li>Attaquant envoie de faux messages ARP</li>
+                            <li>Réseau redirige le trafic vers l'attaquant</li>
+                            <li>Attaquant intercepte et modifie les paquets</li>
+                            <li>Attaquant renvoie les paquets à destination</li>
+                            <li>Victimes inconscientes de la manipulation</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Protocoles vulnérables</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Telnet/FTP</strong>: Communications non chiffrées</li>
+                            <li><strong>HTTP</strong>: Trafic visible en clair</li>
+                            <li><strong>RDP</strong>: Sans sécurisation appropriée</li>
+                            <li><strong>SMTP/POP3</strong>: Authentification en clair</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-light mt-3">
+                    <div class="card-body">
+                        <h5>Défis du détournement TCP</h5>
+                        <ul>
+                            <li>Prédiction précise des numéros de séquence</li>
+                            <li>Synchronisation avec la victime</li>
+                            <li>Maintenir la session sans déclencher d'alertes</li>
+                            <li>Éviter les mécanismes de détection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Outils MITM</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Ettercap</h5>
+                            <p>Suite complète MITM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>BetterCAP</h5>
+                            <p>Framework MITM moderne</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Wireshark</h5>
+                            <p>Analyse de paquets</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>arpspoof</h5>
+                            <p>Outils ARP spoofing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="session-tools" class="mt-5">
+        <h1>4. Outils de détournement</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Outils populaires</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Outil</th>
+                        <th>Fonctionnalité</th>
+                    </tr>
+                    <tr>
+                        <td>Burp Suite</td>
+                        <td>Interception proxy, manipulation de sessions</td>
+                    </tr>
+                    <tr>
+                        <td>OWASP ZAP</td>
+                        <td>Proxy de sécurité pour applications web</td>
+                    </tr>
+                    <tr>
+                        <td>Firesheep</td>
+                        <td>Détournement de sessions HTTP</td>
+                    </tr>
+                    <tr>
+                        <td>Hunt</td>
+                        <td>Détournement TCP avancé</td>
+                    </tr>
+                    <tr>
+                        <td>Ettercap</td>
+                        <td>Attaques MITM et ARP spoofing</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Burp Suite - Fonctions clés</h5>
+                    <ul>
+                        <li>Proxy d'interception</li>
+                        <li>Repeater pour modifier et renvoyer des requêtes</li>
+                        <li>Scanner de vulnérabilités</li>
+                        <li>Intruder pour attaques par brute force</li>
+                        <li>Comparateur de réponses</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Démonstration: Utilisation de Burp Suite</h4>
+                        <ol>
+                            <li>Configurer le navigateur pour utiliser le proxy Burp</li>
+                            <li>Activer l'interception des requêtes</li>
+                            <li>Modifier les cookies de session dans une requête</li>
+                            <li>Renforcer les requêtes pour élever les privilèges</li>
+                            <li>Utiliser le Scanner pour trouver des vulnérabilités</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Fonctionnalités avancées</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Session Handling Rules</strong>: Automatisation des manipulations</li>
+                            <li><strong>Macros</strong>: Réexécution de séquences</li>
+                            <li><strong>Collaborator</strong>: Détection des vulnérabilités hors-bande</li>
+                            <li><strong>Extensions BApp</strong>: Fonctionnalités supplémentaires</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-warning mt-3">
+                    <div class="card-body">
+                        <h5>Considérations éthiques</h5>
+                        <p>Ces outils ne doivent être utilisés qu'avec autorisation explicite. Leur utilisation non autorisée est illégale et contraire à l'éthique.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>5. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protections pour utilisateurs</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>HTTPS partout</strong>: Toujours utiliser des connexions chiffrées</li>
+                        <li><strong>VPN</strong>: Sur les réseaux publics non fiables</li>
+                        <li><strong>Déconnexion</strong>: Après chaque session sensible</li>
+                        <li><strong>Mises à jour</strong>: Navigateurs et OS à jour</li>
+                        <li><strong>Sensibilisation</strong>: Reconnaître les signes d'attaques</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protections pour développeurs</h3>
+                <ul>
+                    <li>Cookies Secure, HttpOnly et SameSite</li>
+                    <li>Renouvellement des ID de session après login</li>
+                    <li>Validation des tokens CSRF</li>
+                    <li>Limitation de durée des sessions</li>
+                    <li>Enregistrement des activités suspectes</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Protections réseau</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Chiffrement</strong>: TLS/SSL pour tout le trafic</li>
+                        <li><strong>Segmentation</strong>: Isoler les segments réseau sensibles</li>
+                        <li><strong>Détection d'intrusion</strong>: Systèmes IDS/IPS</li>
+                        <li><strong>Authentification forte</strong>: MFA pour tous les accès</li>
+                        <li><strong>Contrôle ARP</strong>: Protection contre ARP spoofing</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Bonnes pratiques de sécurité</h4>
+                        <ul>
+                            <li>Implémenter HSTS (HTTP Strict Transport Security)</li>
+                            <li>Utiliser des cookies de session sécurisés</li>
+                            <li>Valider l'origine des requêtes</li>
+                            <li>Limiter la durée des sessions</li>
+                            <li>Mettre en œuvre des mécanismes de réauthentification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-primary text-white mt-4">
+            <div class="card-body">
+                <h4>Programme de protection complet</h4>
+                <ol>
+                    <li>Audit régulier des mécanismes de session</li>
+                    <li>Formation des développeurs aux bonnes pratiques</li>
+                    <li>Tests d'intrusion et évaluations de sécurité</li>
+                    <li>Surveillance continue des sessions</li>
+                    <li>Plan de réponse aux incidents de session</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Technologies de protection</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>WAF (Web Application Firewall)</h5>
+                            <p>Protection contre attaques web</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>RASP (Runtime Application Self-Protection)</h5>
+                            <p>Protection au sein de l'application</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SIEM (Security Information and Event Management)</h5>
+                            <p>Détection des anomalies</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

@@ -1,0 +1,1160 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 20{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+    <h1> Cours - Module 20: Cryptography </h1>
+
+    <table class="table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#introduction-to-cryptography">1. Introduction to Cryptography</a></td>
+                <td>Concepts fondamentaux, objectifs, clés symétriques et asymétriques</td>
+            </tr>
+            <tr>
+                <td><a href="#cryptography-algorithms">2. Cryptography Algorithms</a></td>
+                <td>Principaux algorithmes utilisés en cryptographie</td>
+            </tr>
+            <tr>
+                <td><a href="#Hashing-algorithms">3. Hashing Algorithms</a></td>
+                <td>Principaux Hashages utilisés en cryptographie</td>
+            </tr>
+            <tr>
+                <td><a href="#public-key-infrastructure">4. Public Key Infrastructure (PKI) and Key Management</a></td>
+                <td>Certificats, autorités de certification, X.509, génération et gestion des clés</td>
+            </tr>
+            <tr>
+                <td><a href="#cryptography-tools">5. Cryptography Tools</a></td>
+                <td>OpenSSL, GnuPG, VeraCrypt, Hashcat, etc.</td>
+            </tr>
+            <tr>
+                <td><a href="#communication-and-email-encryption">6. Communication and Email Encryption</a></td>
+                <td>TLS/SSL, HTTPS, SSH, PGP, S/MIME, signature et chiffrement d’email</td>
+            </tr>
+            <tr>
+                <td><a href="#disk-and-storage-encryption">7. Disk and Storage Encryption</a></td>
+                <td>BitLocker, VeraCrypt, FileVault, LUKS, chiffrement complet ou partiel</td>
+            </tr>
+            <tr>
+                <td><a href="#tunneling-protocols-and-vpns">8. Tunneling Protocols and VPNs</a></td>
+                <td>IPSec, L2TP, PPTP, OpenVPN, WireGuard</td>
+            </tr>
+            <tr>
+                <td><a href="#cryptanalysis-and-attacks">9. Cryptanalysis and Cryptographic Attacks</a></td>
+                <td>Techniques d’attaque : brute force, dictionnaires, rainbow tables, man-in-the-middle</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures-and-best-practices">10. Countermeasures and Best Practices in Cryptography</a></td>
+                <td>Durcissement, choix d’algorithmes, gestion des clés, rotation, mises à jour</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections -->
+
+    <section id="introduction-to-cryptography" class="mt-5">
+        <h1>1.Introduction à la Cryptographie</h1>
+
+        <p>
+            La cryptographie est l'art et la science de cacher l'information afin de protéger la confidentialité et l'intégrité des données.
+            Elle permet de sécuriser des informations sensibles telles que les emails, les fichiers, ou toute donnée personnelle, en les rendant illisibles à toute personne non autorisée.
+        </p>
+
+        <h2>Termes essentiels en cryptographie</h2>
+        <ul>
+            <li><strong>Chiffre (cipher)</strong> : un algorithme qui réalise le chiffrement (cryptage) et le déchiffrement des données.</li>
+            <li><strong>Texte clair (clear text / plaintext)</strong> : données en clair, non chiffrées.</li>
+            <li><strong>Texte chiffré (ciphertext)</strong> : données transformées par chiffrement, illisibles sans clé.</li>
+            <li><strong>Clé (key)</strong> : une valeur secrète qui contrôle la transformation des données lors du chiffrement et du déchiffrement.</li>
+        </ul>
+
+        <h2>Types de chiffrements</h2>
+        <h3>Chiffres classiques</h3>
+        <p>Historiquement utilisés, ils sont aujourd’hui peu sécurisés mais restent intéressants pour comprendre les principes de base.</p>
+
+        <h4>Chiffrement par substitution</h4>
+        <p>Chaque caractère du texte est remplacé par un autre caractère selon une règle fixe.</p>
+        <p><em>Exemple : Le chiffre de César (100 av. J.-C.)</em></p>
+        <pre>
+Texte clair :  THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG
+Texte chiffré : QEB NRFZH YOLTK CLU GRJMP LSBO QEB IXWV ALD
+Clé : décalage de 3 lettres vers la droite
+  </pre>
+
+        <h4>Chiffrement polyalphabétique</h4>
+        <p>Extension du chiffrement par substitution utilisant plusieurs alphabets de substitution successifs pour plus de complexité.</p>
+        <p><em>Exemple : Le chiffre de Vigenère (1467)</em>, qui applique plusieurs décalages différents en alternance.</p>
+
+        <h4>Chiffrement par transposition</h4>
+        <p>Le texte clair est réarrangé selon un motif (sans changer les caractères eux-mêmes).</p>
+        <p><em>Exemple : Le chiffre du rail fence</em>, où le texte est écrit en zigzag sur plusieurs lignes puis lu ligne par ligne.</p>
+        <pre>
+Texte clair : WE ARE DISCOVERED. FLEE AT ONCE
+Texte chiffré : WECRLTEERDSOEEFEAOCAIVDEN
+  </pre>
+
+        <h3>Chiffres modernes</h3>
+        <p>Les systèmes modernes reposent sur des problèmes mathématiques difficiles à résoudre, rendant leur déchiffrement par force brute ou méthode directe irréalisable en pratique.</p>
+
+        <h4>Chiffrement symétrique</h4>
+        <p>Utilise une même clé secrète pour chiffrer et déchiffrer les données.</p>
+        <ul>
+            <li>Rapide et efficace pour de grandes quantités de données.</li>
+            <li>Exemples célèbres : AES (Advanced Encryption Standard), DES (Data Encryption Standard).</li>
+            <li>Principal défi : distribution sécurisée des clés.</li>
+        </ul>
+
+        <h4>Chiffrement asymétrique (à clé publique)</h4>
+        <p>Utilise une paire de clés : une clé publique pour chiffrer, et une clé privée pour déchiffrer.</p>
+        <ul>
+            <li>Permet d’échanger des clés symétriques de manière sécurisée.</li>
+            <li>Plus lent que le chiffrement symétrique, utilisé en combinaison dans des systèmes hybrides (ex : SSL/TLS).</li>
+            <li>Algorithmes populaires : RSA, DSA, Diffie-Hellman.</li>
+            <li>Assure aussi l’authentification et la non-répudiation via des signatures numériques.</li>
+        </ul>
+
+        <h5>Secret parfait (Forward Secrecy)</h5>
+        <p>Propriété garantissant que la compromission future d’une clé privée ne permet pas de déchiffrer des communications passées.</p>
+
+        <h3>Types de chiffrements selon le traitement des données</h3>
+        <h4>Chiffrement par blocs</h4>
+        <p>Le texte est découpé en blocs fixes (souvent 64 ou 128 bits) qui sont chiffrés séparément.</p>
+        <p>Simple à implémenter, mais plus lent que le chiffrement par flux.</p>
+
+        <h4>Chiffrement par flux</h4>
+        <p>Le texte est chiffré bit à bit ou octet par octet en combinant les données avec un flux pseudo-aléatoire (généré par une clé).</p>
+        <p>Plus rapide et adapté aux flux continus, mais vulnérable si la clé est réutilisée.</p>
+
+        <h5>Chiffrement XOR</h5>
+        <p>Opération binaire qui combine bits du texte clair et de la clé selon la règle "exclusive OR".</p>
+        <p>Facile à inverser : appliquer deux fois l'opération avec la même clé revient au texte initial.</p>
+
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <caption>Table de vérité du XOR</caption>
+            <tr><th>A</th><th>B</th><th>Résultat A XOR B</th></tr>
+            <tr><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>0</td></tr>
+        </table>
+
+        <h2>Résumé</h2>
+        <p>
+            La cryptographie est indispensable à la sécurité numérique. Que ce soit pour protéger la confidentialité, assurer l’intégrité, ou garantir l’authenticité des données, elle repose sur des principes mathématiques solides.
+            La bonne compréhension des types de chiffrements et de leurs usages est essentielle pour concevoir des systèmes sécurisés et résistants aux attaques.
+        </p>
+    </section>
+
+
+    <section id="cryptography-algorithms" class="mt-5">
+        <h1>2. Algorithmes et techniques de chiffrement</h1>
+
+        <p>
+            Un <strong>algorithme</strong> est une méthode détaillée, étape par étape, permettant de résoudre un problème spécifique. En cryptographie, les <strong>algorithmes de chiffrement</strong> sont des formules mathématiques complexes qui permettent de transformer des données en un format sécurisé appelé texte chiffré, puis de retrouver les données originales via un processus de déchiffrement.
+        </p>
+
+        <p>
+            Même si certains algorithmes sont réputés « inviolables », il est essentiel de changer régulièrement les clés de chiffrement afin de limiter les risques liés à des failles potentielles ou des attaques futures.
+        </p>
+
+        <h2>Vitesse et performances</h2>
+        <ul>
+            <li>Les algorithmes de chiffrement <strong>symétriques</strong> sont généralement plus rapides que les algorithmes <strong>asymétriques</strong>.</li>
+            <li>Les <em>chiffres de flux</em> (comme AES en mode CTR) sont souvent plus rapides que certaines fonctions de hachage, ce qui est important pour le chiffrement en temps réel ou les flux de données continus.</li>
+        </ul>
+
+        <h2>Types de chiffrement selon les couches du modèle OSI</h2>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Couche OSI</th>
+                    <th>Type de chiffrement</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2 (Liaison)</td>
+                    <td>Chiffrement au niveau de la liaison</td>
+                    <td>Toute la trame, y compris les en-têtes originaux, est chiffrée. Exemples : VPN de couche 2, protocoles comme MACsec.</td>
+                </tr>
+                <tr>
+                    <td>3 (Réseau)</td>
+                    <td>Chiffrement au niveau du réseau</td>
+                    <td>Tout le paquet IP est chiffré. Exemple : IPsec.</td>
+                </tr>
+                <tr>
+                    <td>4 (Transport)</td>
+                    <td>Chiffrement au niveau du protocole</td>
+                    <td>Chiffrement de protocoles spécifiques comme SSL/TLS, assurant la sécurité des communications TCP.</td>
+                </tr>
+                <tr>
+                    <td>5 (Session)</td>
+                    <td>Chiffrement basé sur le service</td>
+                    <td>Chiffrement appliqué à des services précis sur des hôtes spécifiques.</td>
+                </tr>
+                <tr>
+                    <td>6 (Présentation)</td>
+                    <td>Chiffrement des données</td>
+                    <td>Transformation et chiffrement des données pour assurer leur confidentialité avant présentation à l’application.</td>
+                </tr>
+                <tr>
+                    <td>7 (Application)</td>
+                    <td>Chiffrement au niveau de l'application</td>
+                    <td>Protection des données directement au sein des applications (exemple : chiffrement de fichiers, messagerie sécurisée).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Algorithmes symétriques</h2>
+        <p>Dans le chiffrement symétrique, la même clé est utilisée pour chiffrer et déchiffrer les données. Cela nécessite que l’expéditeur et le destinataire partagent cette clé en toute sécurité avant toute communication.</p>
+
+        <h3>DES (Data Encryption Standard)</h3>
+        <ul>
+            <li>Chiffrement par blocs avec une clé de 56 bits et un bloc de 64 bits.</li>
+            <li>Développé dans les années 1970 chez IBM, standardisé par la NSA.</li>
+            <li>Maintenant considéré comme obsolète et peu sécurisé à cause de la taille réduite de la clé.</li>
+            <li>A été remplacé par l’<strong>AES</strong>.</li>
+        </ul>
+
+        <h3>3DES (Triple DES)</h3>
+        <ul>
+            <li>Version améliorée du DES avec une clé effective de 168 bits.</li>
+            <li>Chiffrement appliqué trois fois : chiffrage, déchiffrage, puis nouveau chiffrement.</li>
+            <li>Plus sécurisé que DES mais plus lent.</li>
+        </ul>
+
+        <h3>AES (Advanced Encryption Standard)</h3>
+        <ul>
+            <li>Algorithme de chiffrement par blocs itératifs, avec des clés de 128, 192 ou 256 bits.</li>
+            <li>Standard moderne recommandé, utilisé dans la plupart des applications actuelles.</li>
+            <li>Plus rapide et sécurisé que DES et 3DES, approuvé par la NSA.</li>
+        </ul>
+
+        <h3>Famille RC (Rivest Cipher)</h3>
+        <ul>
+            <li>Algorithmes symétriques variés, dont RC4 (chiffre de flux), RC5 et RC6 (chiffre de blocs paramétrables).</li>
+            <li>RC4 a longtemps été utilisé pour sa rapidité, mais il est aujourd’hui considéré comme non sécurisé.</li>
+        </ul>
+
+        <h3>Blowfish et Twofish</h3>
+        <ul>
+            <li>Blowfish est un algorithme rapide à clé variable, mais avec des limites de sécurité reconnues aujourd’hui.</li>
+            <li>Twofish, successeur de Blowfish, a été finaliste du concours AES mais n’a pas été retenu.</li>
+        </ul>
+
+        <h2>Algorithmes asymétriques</h2>
+        <p>Les algorithmes asymétriques utilisent une paire de clés : une clé publique pour chiffrer les données, et une clé privée pour les déchiffrer. Cela élimine le problème du partage sécurisé des clés.</p>
+
+        <h3>RSA (Rivest–Shamir–Adleman)</h3>
+        <ul>
+            <li>Un des standards les plus utilisés pour le chiffrement et la signature numérique.</li>
+            <li>Basé sur la difficulté de factoriser de grands nombres premiers.</li>
+            <li>Permet de chiffrer un message avec la clé publique et le déchiffrer uniquement avec la clé privée, ou vice versa pour la signature.</li>
+            <li>Clé recommandée d’au moins 2048 bits pour assurer la sécurité.</li>
+            <li>Utilisé dans SSH, SSL/TLS, et d’autres protocoles.</li>
+        </ul>
+
+        <h3>Diffie-Hellman (DH)</h3>
+        <ul>
+            <li>Permet à deux parties de générer une clé secrète partagée via un canal non sécurisé.</li>
+            <li>Utilisé pour établir des clés symétriques sans échange préalable.</li>
+            <li>Vulnérable aux attaques de type « homme du milieu » sans authentification.</li>
+            <li>Souvent utilisé dans SSL/TLS et IPsec.</li>
+        </ul>
+
+        <h4>Groupes Diffie-Hellman</h4>
+        <p>Les groupes DH déterminent la taille et la sécurité de la clé générée. Les groupes à taille plus élevée sont plus sécurisés mais demandent plus de puissance de calcul.</p>
+
+        <h3>Elliptic-Curve Cryptography (ECC)</h3>
+        <ul>
+            <li>Cryptographie basée sur les propriétés mathématiques des courbes elliptiques.</li>
+            <li>Permet d’obtenir un niveau de sécurité équivalent à RSA avec des clés beaucoup plus petites.</li>
+            <li>Très efficace pour les appareils mobiles et systèmes à ressources limitées.</li>
+            <li>Exemple d’utilisation : Elliptic-Curve Diffie-Hellman (ECDH), signatures numériques ECDSA.</li>
+        </ul>
+
+        <h3>DSA (Digital Signature Algorithm)</h3>
+        <ul>
+            <li>Algorithmique asymétrique dédiée aux signatures numériques.</li>
+            <li>La clé privée sert à signer, la clé publique à vérifier la signature.</li>
+            <li>Conforme aux standards gouvernementaux américains (FIPS).</li>
+        </ul>
+
+        <h2>Comparaison entre chiffrement symétrique et asymétrique</h2>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Critère</th>
+                    <th>Chiffrement Symétrique</th>
+                    <th>Chiffrement Asymétrique</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nombre de clés</td>
+                    <td>Une seule clé partagée pour chiffrer et déchiffrer</td>
+                    <td>Deux clés distinctes (publique et privée)</td>
+                </tr>
+                <tr>
+                    <td>Complexité & Vitesse</td>
+                    <td>Simple et rapide, adapté aux gros volumes de données</td>
+                    <td>Plus complexe et lent, utilisé principalement pour établir des connexions sécurisées</td>
+                </tr>
+                <tr>
+                    <td>Taille des clés</td>
+                    <td>Plus petites (128 à 512 bits)</td>
+                    <td>Beaucoup plus grandes (2048 bits et plus pour RSA)</td>
+                </tr>
+                <tr>
+                    <td>Usage typique</td>
+                    <td>Chiffrement de flux de données volumineux (ex : fichiers, vidéo)</td>
+                    <td>Échange sécurisé de clés, authentification, signatures numériques</td>
+                </tr>
+                <tr>
+                    <td>Sécurité</td>
+                    <td>Risque si la clé est interceptée car elle est partagée</td>
+                    <td>Plus sûr, car la clé privée reste secrète</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Conclusion</h2>
+        <p>
+            Le choix entre chiffrement symétrique et asymétrique dépend du contexte d’utilisation. Le symétrique est privilégié pour la rapidité et le volume, tandis que l’asymétrique est essentiel pour sécuriser les échanges de clés et assurer l’authentification. Dans la plupart des systèmes modernes, on combine ces deux types d’algorithmes afin d’allier sécurité et performance, par exemple en utilisant RSA ou ECC pour échanger une clé AES utilisée ensuite pour le chiffrement des données.
+        </p>
+    </section>
+
+    <section id=Hashing-algorithms class="mt-5">
+        <h1>3. Les Algorithmes de Hachage : Fondamentaux et Applications</h1>
+
+        <p>
+            Un algorithme de hachage, aussi appelé <strong>fonction à sens unique</strong>, <strong>fonction de hachage</strong> ou encore <strong>fonction de condensation</strong>, est un procédé mathématique qui transforme une donnée d'entrée (message, fichier, mot de passe, etc.) en une représentation fixe de taille déterminée, appelée <em>empreinte</em> ou <em>haché</em>. Cette opération est irréversible : on ne peut pas retrouver la donnée initiale à partir de son haché.
+        </p>
+
+        <h2>Utilisations principales des fonctions de hachage</h2>
+        <ul>
+            <li><strong>Vérification d'intégrité :</strong> Lors du téléchargement d’un fichier sur Internet, on compare le haché du fichier reçu avec celui fourni par le site pour vérifier qu’il n’a pas été altéré.</li>
+            <li><strong>Stockage sécurisé des mots de passe :</strong> Au lieu de garder les mots de passe en clair dans une base de données, les systèmes les stockent sous forme de hachés, ce qui empêche leur récupération en cas de fuite.</li>
+            <li><strong>Signature numérique et authentification :</strong> Le hachage est la base de nombreux protocoles de sécurité et signatures électroniques.</li>
+        </ul>
+
+        <h2>Concept clé : la résistance aux collisions</h2>
+        <p>
+            Une fonction de hachage idéale est <strong>résistante aux collisions</strong>. Cela signifie qu'il est <em>pratiquement impossible</em> de trouver deux entrées différentes produisant le même haché. Cette propriété est cruciale pour éviter les fraudes où un attaquant pourrait substituer un contenu sans changer son empreinte.
+        </p>
+
+        <h2>Les principaux algorithmes de hachage</h2>
+
+        <h3>MD5 (Message Digest 5)</h3>
+        <ul>
+            <li>Produit une empreinte de 128 bits (16 octets).</li>
+            <li>Très populaire dans les années 90 et 2000.</li>
+            <li>Considéré aujourd’hui comme <strong>insecure</strong> car il est vulnérable à des attaques de collision et à la récupération de données.</li>
+            <li>Utilisé encore pour des contrôles d’intégrité basiques (ex. vérification de fichiers).</li>
+        </ul>
+
+        <h3>SHA (Secure Hash Algorithm)</h3>
+        <p>Développé et standardisé par le NIST, SHA est une famille d’algorithmes de hachage cryptographiquement sécurisés :</p>
+        <ul>
+            <li><strong>SHA-0 :</strong> retiré rapidement à cause d’une faille.</li>
+            <li><strong>SHA-1 :</strong> produit des hachés de 160 bits, mais désormais considéré comme peu sûr face aux avancées en cryptanalyse.</li>
+            <li><strong>SHA-2 :</strong> comprend plusieurs variantes, notamment SHA-256 et SHA-512, très robustes et utilisées largement aujourd’hui.</li>
+            <li><strong>SHA-3 :</strong> standard plus récent, issu d’un concours public, avec une architecture différente de SHA-2, apportant une sécurité supplémentaire.</li>
+        </ul>
+
+        <h3>RIPEMD</h3>
+        <p>Algorithme de hachage européen (RACE Integrity Primitives Evaluation Message Digest) produisant un haché de 160 bits. Moins utilisé que SHA, mais apprécié pour sa conception modulaire et son approche différente.</p>
+
+        <h2>HMAC : Authentification basée sur le hachage</h2>
+        <p>
+            Le <strong>HMAC</strong> (Hash-based Message Authentication Code) est une construction cryptographique combinant un algorithme de hachage avec une clé secrète. Son but est d’assurer à la fois l’intégrité et l’authenticité d’un message.
+        </p>
+        <ul>
+            <li>Utilise une clé secrète et une fonction de hachage (par exemple SHA-1, SHA-256 ou MD5).</li>
+            <li>Permet de vérifier que le message n’a pas été modifié et qu’il provient bien d’un expéditeur authentifié.</li>
+            <li>Ne nécessite pas d’infrastructure de clé publique (PKI), la clé est partagée au préalable via un canal sécurisé.</li>
+        </ul>
+
+        <p>Exemple : <code>HMAC_SHA256("clé", "Le rapide renard brun saute par-dessus le chien paresseux") = f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8</code></p>
+
+        <h2>Principales attaques contre les fonctions de hachage</h2>
+        <ul>
+            <li><strong>Attaque par collision :</strong> Trouver deux messages différents avec le même haché.</li>
+            <li><strong>Attaque par l’anniversaire (birthday attack) :</strong> Exploite la probabilité mathématique pour accélérer la recherche de collisions.</li>
+            <li><strong>Tables arc-en-ciel (rainbow tables) :</strong> Grandes bases pré-calculées de hachés pour inverser rapidement certains hachages, notamment des mots de passe.</li>
+            <li><strong>Attaque par force brute :</strong> Tester toutes les possibilités pour retrouver une entrée correspondant à un haché donné.</li>
+        </ul>
+
+        <h2>Contremesures et bonnes pratiques</h2>
+
+        <h3>Le salage des hachages (salted hash)</h3>
+        <p>
+            Le <strong>sel (salt)</strong> est une valeur aléatoire ajoutée à la donnée avant hachage. Il sert à rendre unique chaque haché même pour des données identiques (ex. mots de passe identiques).
+        </p>
+        <ul>
+            <li>Augmente considérablement la difficulté des attaques par dictionnaire ou force brute.</li>
+            <li>Le sel est stocké avec le haché mais n’a pas besoin d’être secret.</li>
+        </ul>
+
+        <h3>Étirement de clé (key stretching)</h3>
+        <p>
+            Technique consistant à appliquer plusieurs fois une fonction de hachage sur une donnée (comme un mot de passe) pour rendre le calcul plus long et coûteux en temps, ralentissant ainsi les attaques par force brute.
+        </p>
+        <ul>
+            <li>Utilisation d’algorithmes comme <strong>PBKDF2</strong>, <strong>bcrypt</strong> ou <strong>scrypt</strong>.</li>
+            <li>Génère une clé plus longue, plus complexe et résistante aux attaques.</li>
+        </ul>
+
+        <h2>Résumé</h2>
+        <p>
+            Les fonctions de hachage sont un pilier fondamental de la sécurité informatique, permettant d’assurer l’intégrité, la confidentialité et l’authenticité des données. Bien que certaines fonctions anciennes comme MD5 ou SHA-1 soient désormais vulnérables, les standards actuels (SHA-2, SHA-3) et les techniques comme HMAC, salage et étirement de clé renforcent significativement la sécurité contre les attaques modernes.
+        </p>
+    </section>
+
+    <section id="public-key-infrastructure" class="mt-5">
+        <h1>4. Infrastructure à Clé Publique (PKI) et Gestion des Clés</h1>
+
+        <p>
+            L'<strong>Infrastructure à Clé Publique (PKI)</strong> est un cadre technique, organisationnel et légal permettant de gérer les clés cryptographiques et les certificats numériques. Elle repose sur l'utilisation d'une <strong>cryptographie asymétrique</strong> (clé publique / clé privée) pour sécuriser des échanges, authentifier des entités et garantir la confidentialité et l'intégrité des communications.
+        </p>
+
+        <h2>1. Principe de la cryptographie asymétrique</h2>
+        <ul>
+            <li><strong>Clé publique :</strong> utilisée pour chiffrer les données ; elle peut être diffusée librement.</li>
+            <li><strong>Clé privée :</strong> utilisée pour déchiffrer les données ; elle doit rester secrète.</li>
+            <li>Ce système permet également de signer numériquement un message avec la clé privée afin de garantir l'<strong>authenticité</strong> et l'<strong>intégrité</strong>.</li>
+        </ul>
+
+        <h2>2. Composants de la PKI</h2>
+        <ul>
+            <li><strong>Autorité de Certification (CA - Certificate Authority) :</strong> organisme de confiance qui émet et valide les certificats numériques.</li>
+            <li><strong>Autorité d'Enregistrement (RA - Registration Authority) :</strong> vérifie l'identité des entités avant l’émission d’un certificat par la CA.</li>
+            <li><strong>Certificat numérique :</strong> fichier électronique qui associe une clé publique à l'identité de son propriétaire. Il est signé numériquement par la CA.</li>
+            <li><strong>CRL (Certificate Revocation List) :</strong> liste des certificats révoqués avant leur expiration (compromis ou erreur).</li>
+            <li><strong>OCSP (Online Certificate Status Protocol) :</strong> méthode plus rapide que la CRL pour vérifier en temps réel le statut d’un certificat.</li>
+        </ul>
+
+        <h2>3. Structure d’un certificat numérique (X.509)</h2>
+        <ul>
+            <li>Nom du titulaire (Subject)</li>
+            <li>Clé publique du titulaire</li>
+            <li>Nom de l’émetteur (Issuer)</li>
+            <li>Date de validité (Début/Fin)</li>
+            <li>Numéro de série</li>
+            <li>Algorithme de signature</li>
+            <li>Empreinte (hash) du certificat</li>
+        </ul>
+
+        <h2>4. Cycle de vie d’un certificat</h2>
+        <ol>
+            <li><strong>Génération de la paire de clés</strong> (publique/privée)</li>
+            <li><strong>Demande de signature</strong> à la CA (CSR - Certificate Signing Request)</li>
+            <li><strong>Émission</strong> du certificat par la CA</li>
+            <li><strong>Utilisation</strong> du certificat pour l’authentification ou le chiffrement</li>
+            <li><strong>Expiration ou révocation</strong></li>
+        </ol>
+
+        <h2>5. Cas d’usage de la PKI</h2>
+        <ul>
+            <li><strong>HTTPS :</strong> chiffrement des communications Web via SSL/TLS</li>
+            <li><strong>Signature de logiciels :</strong> garantir que le code n’a pas été modifié</li>
+            <li><strong>Authentification forte :</strong> certificats pour les utilisateurs ou les machines</li>
+            <li><strong>Email sécurisé (S/MIME)</strong> : chiffrement et signature des courriels</li>
+            <li><strong>VPN, réseaux d’entreprise, IoT</strong></li>
+        </ul>
+
+        <h2>6. Gestion des clés cryptographiques</h2>
+        <p>
+            La sécurité des communications dépend de la protection des <strong>clés privées</strong>. La gestion des clés comprend :
+        </p>
+        <ul>
+            <li><strong>Génération sécurisée :</strong> via des algorithmes robustes (RSA, ECC)</li>
+            <li><strong>Stockage sécurisé :</strong> HSM (Hardware Security Module), TPM (Trusted Platform Module)</li>
+            <li><strong>Distribution sécurisée :</strong> canaux cryptés, transfert hors ligne</li>
+            <li><strong>Rotation régulière :</strong> changer les clés périodiquement</li>
+            <li><strong>Archivage et destruction sécurisée</strong></li>
+        </ul>
+
+        <h2>7. Vulnérabilités et attaques liées à la PKI</h2>
+        <ul>
+            <li><strong>Vol de clé privée :</strong> compromis total si la clé privée d’une autorité est volée</li>
+            <li><strong>Fausse autorité de certification :</strong> injection dans le système de confiance (ex. attaques de type man-in-the-middle)</li>
+            <li><strong>Certificats frauduleux :</strong> si une CA émet un certificat sans vérification</li>
+            <li><strong>Attaques sur les algorithmes faibles :</strong> ex. RSA < 2048 bits, MD5</li>
+            <li><strong>Faille de validation SSL/TLS :</strong> ex. Heartbleed, attaque POODLE</li>
+        </ul>
+
+        <h2>8. Bonnes pratiques pour un ethical hacker (CEH)</h2>
+        <ul>
+            <li>Analyser la chaîne de certification dans une application web (ex. avec OpenSSL ou Burp Suite)</li>
+            <li>Vérifier la taille des clés et les algorithmes de hachage utilisés</li>
+            <li>Surveiller les ports SSL/TLS ouverts (443, 8443…) et les versions vulnérables (via <code>nmap --script ssl*</code>)</li>
+            <li>Tester les certificats expirés ou auto-signés (souvent négligés)</li>
+            <li>Utiliser <code>openssl s_client</code> pour inspecter les certificats d’un service</li>
+            <li>Utiliser <code>sslscan</code> ou <code>testssl.sh</code> pour détecter les failles SSL/TLS</li>
+        </ul>
+
+        <h2>9. Outils utiles en CEH v13</h2>
+        <ul>
+            <li><code>OpenSSL</code> – Génération/visualisation de certificats</li>
+            <li><code>Nmap</code> – Détection de services SSL/TLS, scripts NSE</li>
+            <li><code>SSLScan</code> – Test des configurations SSL</li>
+            <li><code>Burp Suite</code> – Interception de certificats lors des connexions HTTPS</li>
+            <li><code>Wireshark</code> – Analyse du trafic TLS</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>
+            La PKI est un pilier de la cybersécurité moderne. Pour un ethical hacker, comprendre son fonctionnement est essentiel pour détecter les failles, auditer les certificats, et tester la robustesse des communications sécurisées. La gestion correcte des clés et certificats est primordiale pour éviter les compromissions massives. Dans le cadre de la certification CEH, ce savoir permet d’évaluer la surface d’attaque d’un réseau ou d’une application et de proposer des solutions concrètes d’amélioration.
+        </p>
+    </section>
+
+
+    <section id="cryptography-tools" class="mt-5">
+        <h1>5. Outils de Cryptographie</h1>
+
+        <p>
+            Les outils de cryptographie permettent de <strong>chiffrer, déchiffrer, signer, vérifier, hacher</strong> ou encore <strong>gérer des certificats et des clés</strong>. Ces outils sont essentiels aussi bien pour les professionnels de la sécurité que pour les attaquants éthiques (ethical hackers). Ils permettent d'analyser, tester, ou sécuriser les communications et les données sensibles.
+        </p>
+
+        <h2>1. Objectifs de l'utilisation des outils de cryptographie</h2>
+        <ul>
+            <li><strong>Confidentialité :</strong> garantir que seules les personnes autorisées puissent accéder à l'information.</li>
+            <li><strong>Intégrité :</strong> s’assurer que l’information n’a pas été altérée.</li>
+            <li><strong>Authenticité :</strong> vérifier l’identité du signataire ou de la source d’un message.</li>
+            <li><strong>Non-répudiation :</strong> empêcher qu’un auteur nie avoir envoyé un message ou signé un document.</li>
+        </ul>
+
+        <h2>2. Outils les plus courants en cryptographie</h2>
+
+        <h3>🔐 OpenSSL</h3>
+        <ul>
+            <li>Bibliothèque et outil en ligne de commande pour les opérations SSL/TLS et la manipulation de certificats X.509.</li>
+            <li>Permet de : générer des paires de clés, signer des certificats, tester les connexions SSL/TLS, calculer des empreintes de fichiers, etc.</li>
+            <li>
+                <code>openssl s_client -connect example.com:443</code> – Inspecte un certificat SSL.
+            </li>
+            <li>
+                <code>openssl dgst -sha256 fichier.txt</code> – Génère une empreinte SHA-256 d’un fichier.
+            </li>
+        </ul>
+
+        <h3>🔐 GnuPG (GPG)</h3>
+        <ul>
+            <li>Implémentation libre de OpenPGP (RFC 4880), permet le chiffrement, la signature et la gestion de clés.</li>
+            <li>Utilisé pour chiffrer des e-mails, signer des documents ou partager des fichiers en toute sécurité.</li>
+            <li>
+                <code>gpg --encrypt --recipient nom fichier.txt</code> – Chiffre un fichier pour un destinataire.
+            </li>
+        </ul>
+
+        <h3>🔐 VeraCrypt</h3>
+        <ul>
+            <li>Outil de chiffrement de disque et de partitions (successeur de TrueCrypt).</li>
+            <li>Permet de créer des volumes cachés ou chiffrés, parfait pour protéger des données sensibles.</li>
+            <li>Supporte AES, Serpent, Twofish, et combinaisons multiples.</li>
+        </ul>
+
+        <h3>🔐 Hashcat</h3>
+        <ul>
+            <li>Utilisé pour le <strong>craquage de mots de passe chiffrés</strong> via force brute, dictionnaires ou attaques hybrides.</li>
+            <li>Supporte des milliers d’algorithmes de hachage (MD5, SHA1, bcrypt, etc.).</li>
+            <li>Utilisation possible avec CPU ou GPU.</li>
+            <li>
+                Exemple : <code>hashcat -m 0 -a 0 hash.txt wordlist.txt</code> – attaque par dictionnaire sur hash MD5.
+            </li>
+        </ul>
+
+        <h3>🔐 John the Ripper</h3>
+        <ul>
+            <li>Crackeur de mots de passe multi-plateforme.</li>
+            <li>Supporte des hachages Unix, Windows, ZIP, PDF, etc.</li>
+            <li>Utilisable avec des dictionnaires ou des attaques personnalisées.</li>
+        </ul>
+
+        <h3>🔐 Keytool (Java)</h3>
+        <ul>
+            <li>Outil en ligne de commande fourni avec le JDK pour gérer les certificats Java (keystores).</li>
+            <li>Permet de signer, importer, exporter des certificats pour les applications web (ex. Tomcat).</li>
+        </ul>
+
+        <h3>🔐 CertUtil (Windows)</h3>
+        <ul>
+            <li>Outil intégré à Windows pour gérer les certificats et les clés.</li>
+            <li>
+                Exemple : <code>certutil -hashfile fichier.txt SHA256</code> – calcul d'une empreinte SHA-256.
+            </li>
+        </ul>
+
+        <h2>3. Outils de test SSL/TLS</h2>
+        <ul>
+            <li><strong>testssl.sh</strong> – Script bash pour tester la configuration TLS/SSL d’un serveur (protocoles, ciphers, vulnérabilités).</li>
+            <li><strong>SSLyze</strong> – Scanne les services SSL et détecte les erreurs de configuration ou faiblesses (ex. support de SSLv2, ciphers faibles).</li>
+            <li><strong>ssllabs.com</strong> – Service en ligne de Qualys pour auditer les configurations SSL d’un site web.</li>
+        </ul>
+
+        <h2>4. Usage éthique et dans le cadre CEH</h2>
+        <ul>
+            <li><strong>Audit :</strong> utiliser OpenSSL ou testssl.sh pour vérifier la robustesse TLS d’un serveur web ou d’un service distant.</li>
+            <li><strong>Analyse :</strong> extraire et analyser des certificats SSL interceptés via Wireshark ou Burp Suite.</li>
+            <li><strong>Pentest :</strong> repérer des certificats auto-signés ou expirés, signaler leur usage dans un rapport.</li>
+            <li><strong>Détection :</strong> identifier les algorithmes faibles comme MD5 ou des clés trop courtes (RSA &lt; 2048).</li>
+        </ul>
+
+        <h2>5. Risques liés aux mauvais usages</h2>
+        <ul>
+            <li><strong>Implémentation faible :</strong> mauvais choix d’algorithmes ou mauvaise gestion des clés.</li>
+            <li><strong>Fuites de clés privées :</strong> compromission totale du chiffrement.</li>
+            <li><strong>Certificats expirés ou non valides :</strong> peuvent être utilisés pour des attaques de type man-in-the-middle (MITM).</li>
+        </ul>
+
+        <h2>6. Bonnes pratiques</h2>
+        <ul>
+            <li>Utiliser des <strong>algorithmes robustes</strong> : SHA-256, AES-256, RSA 2048 bits minimum.</li>
+            <li>Changer régulièrement les clés et surveiller leur intégrité.</li>
+            <li>Ne jamais stocker une clé privée en clair ou dans un répertoire accessible.</li>
+            <li>Vérifier les dates de validité des certificats SSL.</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>
+            Les outils de cryptographie sont indispensables à toute démarche de sécurisation ou d’audit. Dans le contexte de la certification CEH v13, ils permettent non seulement de comprendre la manière dont les communications sont protégées, mais aussi d’identifier les erreurs ou faiblesses de configuration qui peuvent être exploitées. Un bon ethical hacker doit savoir les utiliser à bon escient pour simuler, tester et corriger les vulnérabilités liées à la cryptographie.
+        </p>
+    </section>
+
+
+    <section id="communication-and-email-encryption" class="mt-5">
+        <h1>6. Communication and Email Encryption</h1>
+
+        <h3>Encrypting Communication</h3>
+        <p>Le chiffrement peut se produire à différents niveaux du modèle TCP/IP :</p>
+        <ul>
+            <li><strong>Link Layer</strong> : ex. PPP</li>
+            <li><strong>Internet Layer</strong> : ex. <a href="#ipsec">IPSec</a></li>
+            <li><strong>Transport Layer</strong> : ex. <a href="#tcp">TCP</a></li>
+            <li><strong>Application Layer</strong> : ex. <a href="#ssh">SSH</a>, <a href="#ftp">FTP</a>, <a href="#tls">TLS</a></li>
+        </ul>
+
+        <h3 id="tls">SSL / TLS</h3>
+        <p><strong>SSL</strong> (désormais obsolète) et <strong>TLS</strong> sont des protocoles pour établir une connexion sécurisée entre un client et un serveur.</p>
+        <ul>
+            <li>Utilisent chiffrement asymétrique (pour la session) et symétrique (pour les données)</li>
+            <li>Protocole TLS recommandé (minimum version 1.2)</li>
+            <li>Fonctionne au niveau Transport du modèle TCP/IP</li>
+        </ul>
+
+        <h4>Vulnérabilités connues :</h4>
+        <ul>
+            <li>Heartbleed, POODLE, CRIME, BREACH, FREAK, DROWN, Renegotiation Attack</li>
+        </ul>
+
+        <h4>Couches TLS</h4>
+        <ul>
+            <li><strong>TLS Record Protocol</strong> : chiffre les données avec intégrité</li>
+            <li><strong>TLS Handshake Protocol</strong> : établit une session sécurisée via cryptographie asymétrique</li>
+        </ul>
+
+        <h3 id="ftp">Securing FTP</h3>
+        <p>Le protocole FTP classique est <strong>insecure</strong>. Alternatives plus sûres :</p>
+        <ul>
+            <li><strong>SFTP</strong> (via SSH)</li>
+            <li><strong>FTP over TLS</strong> (aussi appelé FTPS)</li>
+            <li><strong>FTP over VPN ou IPSec</strong></li>
+            <li><strong>FTP over SSH</strong></li>
+        </ul>
+
+        <h3 id="digital-signature">Digital Signatures</h3>
+        <p>Les signatures numériques garantissent :</p>
+        <ul>
+            <li><strong>Authentification</strong> : identifie le signataire</li>
+            <li><strong>Intégrité</strong> : détecte toute altération</li>
+            <li><strong>Non-répudiation</strong> : le signataire ne peut nier avoir signé</li>
+        </ul>
+        <p>Utilise le chiffrement asymétrique (ex. DSA, RSA).</p>
+
+        <h3>Public Key Infrastructure (PKI)</h3>
+        <p>Système de gestion des certificats numériques. Composants :</p>
+        <ul>
+            <li><strong>CA (Certificate Authority)</strong> : délivre les certificats</li>
+            <li><strong>RA (Registration Authority)</strong> : vérifie les identités</li>
+            <li><strong>VA (Validation Authority)</strong> : valide les certificats</li>
+            <li><strong>Key Escrow</strong> : copie des clés privées en cas de besoin légal</li>
+        </ul>
+
+        <h3>Digital Certificates</h3>
+        <p>Certificat numérique (ex. X.509) contenant une clé publique, l'identité du propriétaire, etc.</p>
+        <ul>
+            <li><strong>Self-signed</strong> : auto-signé, peu fiable</li>
+            <li><strong>Signed</strong> : signé par une autorité de confiance (CA)</li>
+        </ul>
+
+        <h3>Email Encryption</h3>
+        <p>Le chiffrement des emails protège la confidentialité, l'intégrité et l'identité de l'expéditeur.</p>
+
+        <h4>PGP (Pretty Good Privacy)</h4>
+        <ul>
+            <li>Utilise un mix de hachage, chiffrement symétrique et asymétrique</li>
+            <li>Modèle <strong>Web of Trust</strong> : validation pair-à-pair</li>
+            <li>Outils : <strong>GnuPG</strong> (open source)</li>
+            <li>Chiffrement : <code>gpg -c fichier</code>, Déchiffrement : <code>gpg fichier</code></li>
+        </ul>
+
+        <h4>S/MIME</h4>
+        <ul>
+            <li>Basé sur le standard <strong>X.509</strong></li>
+            <li>Utilisé dans les clients email (Outlook, Apple Mail...)</li>
+            <li>Fonctionne avec des certificats délivrés par une autorité de confiance (CA)</li>
+            <li>Plus intégré mais plus centralisé que PGP</li>
+        </ul>
+
+        <h4>PEM (Privacy Enhanced Mail)</h4>
+        <ul>
+            <li>Ancien standard obsolète</li>
+            <li>Basé sur un certificat racine unique (non flexible)</li>
+            <li>A été abandonné au profit de S/MIME et PGP</li>
+        </ul>
+
+        <h3>Résumé : Comparaison des méthodes</h3>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Méthode</th>
+                    <th>Chiffrement</th>
+                    <th>Signature</th>
+                    <th>Décentralisé</th>
+                    <th>Support Client Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PGP</td>
+                    <td>Oui</td>
+                    <td>Oui</td>
+                    <td>Oui (Web of Trust)</td>
+                    <td>Limité</td>
+                </tr>
+                <tr>
+                    <td>S/MIME</td>
+                    <td>Oui</td>
+                    <td>Oui</td>
+                    <td>Non (PKI centralisée)</td>
+                    <td>Oui (Outlook, Apple Mail)</td>
+                </tr>
+                <tr>
+                    <td>PEM</td>
+                    <td>Oui</td>
+                    <td>Oui</td>
+                    <td>Non</td>
+                    <td>Non (abandonné)</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <section id="disk-and-storage-encryption" class="mt-5">
+        <h1>7. Disk Encryption</h1>
+
+        <h3>What is Disk Encryption?</h3>
+        <p>Le chiffrement de disque consiste à chiffrer toutes les données stockées sur un disque afin d'assurer leur confidentialité.</p>
+        <ul>
+            <li>Protection des <strong>données au repos</strong> (data-at-rest)</li>
+            <li>Empêche l'accès non autorisé aux données en cas de vol ou d'accès physique à l'appareil</li>
+            <li>📝 <strong>Protège contre un accès physique</strong> à votre machine</li>
+            <li>❗ <strong>Ne protège pas</strong> contre les malwares ou les attaques réseau</li>
+        </ul>
+
+        <h3>Full Disk Encryption (FDE)</h3>
+        <ul>
+            <li>Chiffre toutes les données d’un disque ou volume</li>
+            <li>Fonctionne comme le chiffrement de messages, même quand le système d’exploitation n’est pas actif</li>
+            <li>Protège les dossiers système, fichiers et MBR (Master Boot Record)</li>
+            <li>Demande des <strong>identifiants valides avant le démarrage</strong> (pre-boot authentication)</li>
+        </ul>
+
+        <h3>Disk Encryption Tools</h3>
+        <p>Outils populaires pour chiffrer les disques :</p>
+        <ul>
+            <li><a href="https://www.veracrypt.fr/" target="_blank">VeraCrypt</a> : outil open-source basé sur TrueCrypt</li>
+            <li><a href="https://help.symantec.com/cs/SEE11.3_MS/SEEMS/v98749288_v130891549/Configuring-the-Drive-Encryption---Encryption-policy-options" target="_blank">Symantec Drive Encryption</a> : solution commerciale</li>
+            <li><a href="https://en.wikipedia.org/wiki/BitLocker" target="_blank">BitLocker</a> : outil intégré à Windows (versions Pro et Entreprise)</li>
+            <li><a href="https://gitlab.com/cryptsetup/cryptsetup" target="_blank">cryptsetup</a> : utilitaire open-source sous Linux</li>
+        </ul>
+
+        <h4>cryptsetup et LUKS</h4>
+        <p><strong>cryptsetup</strong> permet de chiffrer des partitions de disque sous Linux. Il prend en charge :</p>
+        <ul>
+            <li><strong>LUKS</strong> (Linux Unified Key Setup)</li>
+            <li>TrueCrypt / VeraCrypt</li>
+            <li>BitLocker (en lecture seule)</li>
+            <li>loop-AES, dm-crypt, etc.</li>
+        </ul>
+
+        <h4>Commandes de base avec cryptsetup :</h4>
+        <h5>Installation :</h5>
+        <pre><code>sudo yum install cryptsetup</code></pre>
+
+        <h5>Chiffrer une partition :</h5>
+        <ol>
+            <li>
+                Repérer le disque à chiffrer :<br>
+                <code>sudo fdisk -l</code>
+            </li>
+            <li>
+                Formater avec LUKS :<br>
+                <code>sudo cryptsetup -y -v luksFormat /dev/&lt;partition&gt;</code>
+            </li>
+        </ol>
+
+        <h5>Déchiffrer et mapper la partition :</h5>
+        <pre><code>sudo cryptsetup luksOpen /dev/&lt;partition&gt; &lt;nom&gt;</code></pre>
+        <p>La partition chiffrée sera mappée à <code>/dev/mapper/&lt;nom&gt;</code>.</p>
+
+        <h5>Vérification du statut :</h5>
+        <pre><code>sudo cryptsetup status &lt;nom&gt;</code></pre>
+        <pre><code>sudo cryptsetup luksDump /dev/&lt;partition&gt;</code></pre>
+
+        <h5>Formater et monter la partition :</h5>
+        <pre><code>
+# Nettoyer le contenu
+sudo dd if=/dev/zero of=/dev/mapper/&lt;nom&gt; bs=128
+
+# Créer un système de fichiers
+sudo mkfs.ext4 /dev/mapper/&lt;nom&gt;
+
+# Monter
+sudo mount /dev/mapper/&lt;nom&gt; /mnt/&lt;repertoire&gt;
+</code></pre>
+
+        <h4>Remarques :</h4>
+        <ul>
+            <li>Ne pas oublier de démonter et fermer la partition après usage :</li>
+            <pre><code>
+sudo umount /mnt/&lt;repertoire&gt;
+sudo cryptsetup luksClose &lt;nom&gt;
+</code></pre>
+        </ul>
+    </section>
+
+
+    <section id="tunneling-protocols-and-vpns" class="mt-5">
+        <h1>8. Tunneling Protocols</h1>
+        <p>Les protocoles de tunneling permettent de transférer des données d’un réseau à un autre en encapsulant les paquets dans un autre protocole, souvent avec chiffrement. Cela permet de masquer le contenu ou la nature du trafic réseau.</p>
+
+        <ul>
+            <li>Utilisés pour établir des connexions sécurisées entre deux points</li>
+            <li>Encapsulation du trafic dans un protocole chiffré</li>
+            <li>Masque l'activité réseau réelle et protège les données</li>
+        </ul>
+
+        <h3>OpenVPN</h3>
+        <ul>
+            <li><a href="https://github.com/OpenVPN/openvpn" target="_blank">OpenVPN</a> est une solution VPN open-source</li>
+            <li>Permet des connexions point-à-point ou site-à-site en mode routé ou ponté</li>
+            <li>Utilisé pour l’accès distant sécurisé</li>
+            <li>
+                Méthodes d’authentification :
+                <ul>
+                    <li>Clés secrètes partagées (pre-shared keys)</li>
+                    <li><a href="encrypting-communication.html#digital-certificate">Certificats</a></li>
+                    <li>Nom d'utilisateur / mot de passe</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>SSH (Secure Shell)</h3>
+        <ul>
+            <li>Protocole réseau sécurisé pour les connexions distantes et l'exécution de commandes</li>
+            <li>Remplace <a href="banner-grabbing.html#telnet">Telnet</a> qui est non sécurisé</li>
+            <li>Permet le transfert de fichiers via SFTP ou SCP</li>
+            <li>Utilise un échange de clés cryptographiques pour établir la session :</li>
+            <ol>
+                <li>Handshake TCP (3-way)</li>
+                <li>Annonce des versions</li>
+                <li>Négociation des algorithmes</li>
+                <li>Échange de clés via <a href="encryption-algorithms.html#elliptic-curve-diffiehellman">ECDH</a></li>
+            </ol>
+        </ul>
+
+        <h3>IPSec</h3>
+        <ul>
+            <li>Protocole de sécurité de bout en bout pour IP (niveau 3 du modèle OSI)</li>
+            <li>
+                Offre :
+                <ul>
+                    <li><strong>Authentification</strong> des pairs</li>
+                    <li><strong>Intégrité</strong> via algorithmes de hachage</li>
+                    <li><strong>Non-répudiation</strong> avec signatures numériques</li>
+                    <li><strong>Confidentialité</strong> grâce au chiffrement</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>IKE (Internet Key Exchange)</h4>
+        <ul>
+            <li>Versions : IKEv1 / IKEv2</li>
+            <li>Chiffre les paquets (payloads + headers)</li>
+            <li>Utilise <a href="encrypting-communication.html#x509">X.509</a> pour l’échange de clés</li>
+            <li>Profils crypto définis dans les politiques IKE</li>
+            <li>Outil : <a href="https://github.com/royhills/ike-scan" target="_blank">ike-scan</a> pour scanner des serveurs IPsec</li>
+        </ul>
+
+        <h4>IPSec Architecture</h4>
+        <ul>
+            <li>
+                <strong>Authentication Header (AH)</strong> :
+                <ul>
+                    <li>Intégrité + authentification</li>
+                    <li>Protection contre les attaques de relecture</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Encapsulating Security Payload (ESP)</strong> :
+                <ul>
+                    <li>Chiffrement pour la confidentialité</li>
+                    <li>Ne protège pas l’en-tête IP extérieur</li>
+                    <li>❗ L’authentification seule est considérée comme peu sécurisée</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Security Associations (SA)</strong> :
+                <ul>
+                    <li>Contient les paramètres (algorithmes, clés, durée) nécessaires à AH/ESP</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Modes d'opération</h4>
+
+        <h5>Transport Mode</h5>
+        <ul>
+            <li>Authentification généralement activée</li>
+            <li>Seule la charge utile (payload) est chiffrée</li>
+            <li>❗ Non compatible avec NAT</li>
+            <li>📝 Utilisé au sein d’un même réseau</li>
+        </ul>
+
+        <h5>Tunnel Mode</h5>
+        <ul>
+            <li>Tout le paquet est chiffré et authentifié</li>
+            <li>Compatible avec NAT</li>
+            <li>📝 Utilisé pour connecter deux réseaux distants (VPN site-à-site)</li>
+        </ul>
+
+        <h3>PPP (Point-to-Point Protocol)</h3>
+        <ul>
+            <li>Permet l’authentification, le chiffrement et la compression des données</li>
+            <li>Connexion routeur-à-routeur ou hôte-à-réseau</li>
+            <li>Peut être encapsulé dans un tunnel SSH</li>
+            <li>Couches OSI : couche 2 (liaison de données)</li>
+        </ul>
+
+        <h4>PPTP (Point-to-Point Tunneling Protocol)</h4>
+        <ul>
+            <li>❗ Méthode obsolète et non sécurisée de création de VPN</li>
+            <li>Utilise un canal de contrôle TCP + encapsulation GRE des paquets PPP</li>
+            <li>Non recommandé pour une utilisation en production</li>
+        </ul>
+    </section>
+
+
+    <section id="cryptanalysis-and-attacks" class="mt-5">
+        <h1>🔐 9. Cryptanalyse</h1>
+        <p>La cryptanalyse est le processus de déchiffrement de textes chiffrés sans connaître la clé. Elle sert à identifier les vulnérabilités dans les systèmes cryptographiques.</p>
+
+        <h2>🛠️ Techniques de cryptanalyse</h2>
+
+        <h3>🔸 Linear cryptanalysis</h3>
+        <ul>
+            <li>Attaque par texte clair connu</li>
+            <li>Applicable aux chiffrements par blocs et flux</li>
+            <li>Nécessite des paires texte clair / texte chiffré</li>
+            <li>Découverte par Matsui et Yamagishi en 1992</li>
+            <li>Identifie une relation linéaire entre texte clair, chiffré et clé</li>
+        </ul>
+
+        <h3>🔸 Differential cryptanalysis</h3>
+        <ul>
+            <li>Découverte par Eli Biham et Adi Shamir</li>
+            <li>Fonctionne sur les algorithmes symétriques (surtout à blocs)</li>
+            <li>Compare les différences dans les entrées et les sorties</li>
+            <li>Utilise du texte clair choisi ou connu</li>
+        </ul>
+
+        <h3>🔸 Integral cryptanalysis</h3>
+        <ul>
+            <li>Utilisée sur les chiffrements par blocs</li>
+            <li>Découverte par Lars Knudsen en 1997</li>
+            <li>Analyse les sorties d'ensembles de textes où certains bits varient</li>
+        </ul>
+
+        <h2>📚 Méthodes classiques de cassage</h2>
+        <ul>
+            <li><strong>Analyse fréquentielle</strong> : repère les lettres ou groupes les plus fréquents</li>
+            <li><strong>Tromperie</strong> : utiliser des ruses (ex : social engineering)</li>
+            <li><strong>One-time pad</strong> : incassable si bien utilisé, mais peu pratique (clé = taille du message)</li>
+        </ul>
+
+        <h2>⚔️ Types d’attaques cryptographiques</h2>
+
+        <h3>Attaques selon l’accès de l’attaquant</h3>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <tr><th>Type</th><th>Ce que l’attaquant connaît</th><th>Exemple</th></tr>
+            <tr><td>COA (Ciphertext-Only)</td><td>Texte chiffré seulement</td><td>Analyse fréquentielle</td></tr>
+            <tr><td>KPA (Known-Plaintext)</td><td>Paires clair/chiffré</td><td>Déduction de clé</td></tr>
+            <tr><td>CPA (Chosen-Plaintext)</td><td>Choix du texte clair</td><td>RSA, AES-ECB</td></tr>
+            <tr><td>CCA (Chosen-Ciphertext)</td><td>Choix du texte chiffré</td><td>Ancien SSL</td></tr>
+        </table>
+
+        <h4>📌 Variantes notables</h4>
+        <ul>
+            <li><strong>Meet-in-the-middle</strong> : double chiffrement vulnérable (ex : Double DES)</li>
+            <li><strong>Adaptive attacks</strong> : l’attaquant ajuste ses requêtes selon les réponses</li>
+            <li><strong>Lunchtime attack</strong> : accès temporaire au système</li>
+        </ul>
+
+        <h3>🔧 Autres attaques</h3>
+        <ul>
+            <li><strong>Brute-force</strong> : tester toutes les combinaisons possibles</li>
+            <li><strong>Birthday attack</strong> : basé sur les collisions de hash (problème des anniversaires)</li>
+            <li><strong>Rainbow table</strong> : tables de hash pré-calculés (gain de temps, coût en espace)</li>
+            <li><strong>Dictionary attack</strong> : tester des mots de passe courants</li>
+            <li><strong>Side-channel</strong> : exploite des fuites comme le temps ou la consommation</li>
+            <li><strong>Timing attack</strong> : utilise les temps d'exécution pour deviner des infos</li>
+            <li><strong>Related-key attack</strong> : exploitation de clés ayant des liens connus</li>
+            <li><strong>DUHK attack</strong> : clé codée en dur dans des RNG vulnérables</li>
+            <li><strong>Collision attack</strong> : trouver deux entrées produisant le même hash</li>
+        </ul>
+
+        <h2>🧰 Outils de cryptanalyse</h2>
+        <ul>
+            <li><a href="https://www.l0phtcrack.com/" target="_blank">L0phtcrack</a> : cassage de mots de passe Windows</li>
+            <li><a href="https://www.openwall.com/john/" target="_blank">John the Ripper</a> : cassage de mots de passe (hashs système, bases de données...)</li>
+            <li><a href="https://www.cryptool.org/en/" target="_blank">CrypTool</a> : interface graphique pour expérimenter la cryptographie</li>
+            <li><a href="http://www.addario.org/cryptobench/" target="_blank">Cryptobench</a> : outils de hash/chiffrement en ligne</li>
+        </ul>
+    </section>
+
+
+    <section id="countermeasures-and-best-practices" class="mt-5">
+        <h1>🛡️ 10. Countermeasures and Best Practices in Cryptography</h1>
+        <p>Cette section couvre les mesures essentielles pour renforcer la sécurité des systèmes cryptographiques dans un environnement professionnel ou en cybersécurité offensive/défensive. Elle est alignée avec les recommandations du CEHv13.</p>
+
+        <h3>🔒 1. Choix des algorithmes cryptographiques</h3>
+        <ul>
+            <li>Utiliser des standards éprouvés : <strong>AES</strong> (Advanced Encryption Standard), <strong>RSA</strong>, <strong>ECC</strong>, <strong>SHA-2</strong> ou <strong>SHA-3</strong>.</li>
+            <li>Éviter les algorithmes obsolètes : DES, RC4, MD5, SHA-1 (trop vulnérables aujourd’hui).</li>
+            <li>
+                Utiliser des tailles de clé appropriées :
+                <ul>
+                    <li>AES : 128, 192 ou 256 bits</li>
+                    <li>RSA : ≥ 2048 bits (3072 ou 4096 recommandés)</li>
+                    <li>ECC : ≥ 256 bits</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>🔑 2. Gestion des clés (Key Management)</h3>
+        <ul>
+            <li>Utiliser des <strong>HSM</strong> (Hardware Security Modules) pour stocker les clés sensibles.</li>
+            <li>Mettre en place des politiques strictes de <strong>génération, distribution, stockage, rotation et destruction</strong> des clés.</li>
+            <li>Utiliser le protocole <strong>KMIP</strong> (Key Management Interoperability Protocol) pour une gestion centralisée.</li>
+            <li>Ne jamais stocker de clés en clair sur disque.</li>
+        </ul>
+
+        <h3>♻️ 3. Rotation et expiration des clés</h3>
+        <ul>
+            <li>Implémenter des politiques de rotation régulière des clés (ex. tous les 90 jours).</li>
+            <li>Associer une date d’expiration aux certificats et aux clés asymétriques.</li>
+            <li>Révoquer immédiatement une clé compromise.</li>
+        </ul>
+
+        <h3>⚙️ 4. Mise à jour des bibliothèques et protocoles</h3>
+        <ul>
+            <li>Mettre à jour régulièrement les librairies cryptographiques (ex : OpenSSL, BouncyCastle).</li>
+            <li>
+                Remplacer les protocoles obsolètes :
+                <ul>
+                    <li><strong>Désactiver SSL 2.0 / 3.0</strong>, TLS 1.0 / 1.1</li>
+                    <li><strong>Utiliser TLS 1.2 ou TLS 1.3 uniquement</strong></li>
+                </ul>
+            </li>
+            <li>Effectuer des audits réguliers de configuration SSL/TLS (ex : via <a href="https://www.ssllabs.com/ssltest/" target="_blank">SSL Labs</a>).</li>
+        </ul>
+
+        <h3>🔐 5. Renforcement de la sécurité (Hardening)</h3>
+        <ul>
+            <li>Activer le chiffrement disque (Full Disk Encryption – FDE) sur les postes et serveurs critiques.</li>
+            <li>Implémenter le chiffrement des bases de données, des e-mails (PGP/GPG) et des fichiers sensibles.</li>
+            <li>Utiliser des modules TPM (Trusted Platform Module) pour le chiffrement matériel.</li>
+            <li>Désactiver les algorithmes faibles sur les serveurs Web (via configuration Apache/Nginx/IIS).</li>
+        </ul>
+
+        <h3>🧪 6. Tests et audits réguliers</h3>
+        <ul>
+            <li>Effectuer des <strong>tests d’intrusion</strong> (Pentest) pour détecter les mauvaises implémentations de cryptographie.</li>
+            <li>
+                Utiliser des outils comme :
+                <ul>
+                    <li><code>nmap --script ssl-enum-ciphers</code></li>
+                    <li><code>testssl.sh</code></li>
+                    <li><code>openssl s_client</code></li>
+                </ul>
+            </li>
+            <li>Vérifier la conformité avec les normes : FIPS 140-3, ISO/IEC 27001, PCI-DSS, NIST.</li>
+        </ul>
+
+        <h3>🚫 7. Contre-mesures contre les attaques connues</h3>
+        <ul>
+            <li>
+                <strong>Protection contre les attaques par canal auxiliaire</strong> (side-channel attacks) :
+                <ul>
+                    <li>Limiter les fuites d’informations via consommation électrique, timing, etc.</li>
+                    <li>Utiliser du code constant-time pour les opérations sensibles.</li>
+                </ul>
+            </li>
+            <li><strong>Prévention des attaques par collision ou pré-image</strong> : utiliser SHA-2 ou SHA-3, éviter MD5/SHA-1.</li>
+            <li><strong>Protection contre les rainbow tables</strong> : saler les hashs de mot de passe.</li>
+            <li>
+                <strong>Protection contre les attaques par dictionnaire et brute-force</strong> :
+                <ul>
+                    <li>Imposer une complexité minimale aux mots de passe</li>
+                    <li>Limiter le nombre de tentatives de connexion (rate-limiting)</li>
+                    <li>Utiliser des gestionnaires de mots de passe ou l’authentification multi-facteur (MFA)</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>🏛️ 8. Politiques d’entreprise et sensibilisation</h3>
+        <ul>
+            <li>Former les employés aux bonnes pratiques de chiffrement et à la gestion des données sensibles.</li>
+            <li>Documenter une politique de sécurité claire : classification des données, gestion des incidents, sauvegardes chiffrées.</li>
+            <li>Mettre en œuvre un plan de réponse aux incidents incluant les cas de compromission de clés.</li>
+        </ul>
+
+        <h3>📄 9. Outils de référence recommandés par CEHv13</h3>
+        <ul>
+            <li><a href="https://www.openssl.org/" target="_blank">OpenSSL</a></li>
+            <li><a href="https://gpg4win.org/" target="_blank">GPG4win</a></li>
+            <li><a href="https://www.veracrypt.fr/" target="_blank">VeraCrypt</a></li>
+            <li><a href="https://www.kali.org/tools/testssl.sh/" target="_blank">testssl.sh</a></li>
+            <li><a href="https://www.ssllabs.com/ssltest/" target="_blank">Qualys SSL Labs</a></li>
+            <li>Key Management Tools : HashiCorp Vault, AWS KMS, Azure Key Vault</li>
+        </ul>
+        <a href="https://tryhackme.com/room/encryptioncrypto101"> https://tryhackme.com/room/encryptioncrypto101 </a>
+        <a href="https://tryhackme.com/room/hashingcrypto101">https://tryhackme.com/room/hashingcrypto101</a>
+    </section>
+</div>
+
+{% endblock %}

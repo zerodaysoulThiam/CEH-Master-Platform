@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow rounded-lg text-center">
+                <div class="card-header bg-{% if passed %}success{% else %}danger{% endif %} text-white py-4">
+                    <h1 class="card-title mb-0">
+                        <i class="fas fa-{% if passed %}check-circle{% else %}times-circle{% endif %} fa-3x"></i>
+                    </h1>
+                </div>
+                <div class="card-body py-5">
+                    <h2 class="mb-4">Résultats de l'examen</h2>
+                    
+                    <div class="result-summary mb-5">
+                        <div class="display-1 fw-bold text-{% if passed %}success{% else %}danger{% endif %}">
+                            {{ score }}%
+                        </div>
+                        <p class="lead">
+                            {% if passed %}
+                            Félicitations ! Vous avez réussi l'examen.
+                            {% else %}
+                            Vous n'avez pas atteint le score minimum de 70%.
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-primary mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    Détails de l'examen
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <strong>Type:</strong> 
+                                        {% if exam_type == 'blanc' %}Examen Blanc{% else %}Examen Final{% endif %}
+                                        {% if exam_type == 'blanc' %}{{ exam_id }}{% endif %}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Date:</strong> {{ current_date }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Score minimum:</strong> 70%
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    Recommandations
+                                </div>
+                                <div class="card-body text-start">
+                                    {% if passed %}
+                                    <p>Vous êtes prêt pour l'examen officiel CEH !</p>
+                                    <ul>
+                                        <li>Revoyez les modules où vous avez eu des difficultés</li>
+                                        <li>Pratiquez avec les examens blancs supplémentaires</li>
+                                    </ul>
+                                    {% else %}
+                                    <p>Nous vous recommandons de :</p>
+                                    <ul>
+                                        <li>Revoir les modules avec les scores les plus bas</li>
+                                        <li>Pratiquer avec les quiz thématiques</li>
+                                        <li>Refaire un examen blanc dans quelques jours</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+                        <a href="{{ url_for('quiz_list') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-book me-2"></i>Retour aux quiz
+                        </a>
+                        <a href="{{ url_for('statistiques') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-chart-bar me-2"></i>Voir les statistiques
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

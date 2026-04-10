@@ -1,0 +1,700 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module Sniffing{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mt-4">
+    <h1>Cours - Module 8: Sniffing</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#sniffing-concepts">1. Concepts du sniffing</a></td>
+                <td>Fondamentaux et principes du sniffing réseau</td>
+            </tr>
+            <tr>
+                <td><a href="#mac-attacks">2. Attaques MAC</a></td>
+                <td>Techniques basées sur les adresses MAC</td>
+            </tr>
+            <tr>
+                <td><a href="#dhcp-attacks">3. Attaques DHCP</a></td>
+                <td>Exploitation du protocole DHCP</td>
+            </tr>
+            <tr>
+                <td><a href="#arp-poisoning">4. Empoisonnement ARP</a></td>
+                <td>Attaques par manipulation des tables ARP</td>
+            </tr>
+            <tr>
+                <td><a href="#spoofing-attacks">5. Attaques par spoofing</a></td>
+                <td>Usurpation d'identité réseau</td>
+            </tr>
+            <tr>
+                <td><a href="#dns-poisoning">6. Empoisonnement DNS</a></td>
+                <td>Manipulation des résolutions DNS</td>
+            </tr>
+            <tr>
+                <td><a href="#sniffing-tools">7. Outils de sniffing</a></td>
+                <td>Logiciels d'analyse réseau</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">8. Contre-mesures</a></td>
+                <td>Protections contre le sniffing</td>
+            </tr>
+            <tr>
+                <td><a href="#detection-techniques">9. Techniques de détection</a></td>
+                <td>Méthodes pour identifier le sniffing</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="sniffing-concepts">
+        <h1>1. Concepts du sniffing</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce que le sniffing réseau?</h3>
+                <p>Le sniffing réseau est une technique d'écoute clandestine des communications réseau. Il permet de capturer et d'analyser le trafic réseau transitant par une interface.</p>
+                
+                <div class="card bg-light p-3">
+                    <h5>Types de sniffing</h5>
+                    <ul>
+                        <li><strong>Passif</strong>: Écoute sans modification du trafic (hub, port SPAN)</li>
+                        <li><strong>Actif</strong>: Manipulation du trafic pour capturer plus de données (ARP spoofing)</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Modes d'interface réseau</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Mode non promiscuité</strong></td>
+                        <td>Seul le trafic destiné à l'hôte est traité</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mode promiscuité</strong></td>
+                        <td>Toutes les trames sont capturées, quelle que soit la destination</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mode monitor</strong></td>
+                        <td>Capture sans fil des paquets (Wi-Fi)</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Protocoles vulnérables au sniffing</h4>
+                        <ul>
+                            <li>HTTP: Transmet les données en clair</li>
+                            <li>FTP: Identifiants non chiffrés</li>
+                            <li>SMTP: Emails non chiffrés</li>
+                            <li>Telnet: Commande en clair</li>
+                            <li>POP3/IMAP: Emails non chiffrés</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Architecture réseau et sniffing</h4>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('static', filename='img/NetworkSniffing.png') }}" alt="NetworkSniffing">
+
+
+                        <p class="mt-2">Dans les réseaux commutés, le sniffing nécessite des techniques actives comme l'ARP spoofing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="mac-attacks" class="mt-5">
+        <h1>2. Attaques MAC</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Table MAC et commutation</h3>
+                <p>Les commutateurs (switches) utilisent des tables MAC pour diriger le trafic vers les ports appropriés. Les attaques MAC exploitent ce mécanisme :</p>
+                
+                <h3>Attaque par inondation MAC</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li>L'attaquant génère des trames avec des adresses MAC sources aléatoires</li>
+                        <li>La table MAC du switch se remplit jusqu'à sa capacité</li>
+                        <li>Le switch passe en mode "fail-open" (hub)</li>
+                        <li>Tout le trafic est diffusé sur tous les ports</li>
+                        <li>L'attaquant peut maintenant sniffer tout le trafic</li>
+                    </ol>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <pre class="text-light">
+# Créer une inondation MAC avec macof
+macof -i eth0 -n 100000</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Attaque par usurpation MAC</h3>
+                <p>L'attaquant change son adresse MAC pour :</p>
+                <ul>
+                    <li>Contourner le filtrage MAC</li>
+                    <li>Imiter un appareil légitime</li>
+                    <li>Détourner des sessions réseau</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Changer l'adresse MAC sous Linux</h5>
+                    <pre class="bg-dark text-light p-3">
+# Désactiver l'interface
+ifconfig eth0 down
+
+# Changer l'adresse MAC
+ifconfig eth0 hw ether 00:11:22:33:44:55
+
+# Réactiver l'interface
+ifconfig eth0 up</pre>
+                </div>
+                
+                <h3 class="mt-4">Contre-mesures</h3>
+                <ul>
+                    <li>Port Security sur les switches</li>
+                    <li>Limitation du nombre d'adresses MAC par port</li>
+                    <li>Détection des changements MAC fréquents</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section id="dhcp-attacks" class="mt-5">
+        <h1>3. Attaques DHCP</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Processus DHCP</h3>
+                <div class="text-center mb-3">
+                    
+
+                </div>
+                <ol>
+                    <li>DHCP Discover (Client → Broadcast)</li>
+                    <li>DHCP Offer (Serveur → Client)</li>
+                    <li>DHCP Request (Client → Serveur)</li>
+                    <li>DHCP ACK (Serveur → Client)</li>
+                </ol>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Types d'attaques DHCP</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Attaque</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>DHCP Starvation</td>
+                        <td>Épuise le pool d'adresses IP disponibles</td>
+                    </tr>
+                    <tr>
+                        <td>Rogue DHCP Server</td>
+                        <td>Serveur malveillant distribuant de fausses configurations</td>
+                    </tr>
+                    <tr>
+                        <td>DHCP Snooping</td>
+                        <td>Attaque visant à capturer les informations DHCP</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Créer un serveur DHCP rogue</h5>
+                    <pre class="bg-dark text-light p-3">
+# Utiliser dnsmasq comme serveur DHCP malveillant
+dnsmasq --interface=eth0 --dhcp-range=192.168.1.100,192.168.1.200,12h --dhcp-option=3,192.168.1.1 --dhcp-option=6,8.8.8.8</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Contre-mesures DHCP</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>DHCP Snooping</h5>
+                            <p>Filtrage des messages DHCP non autorisés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Port Security</h5>
+                            <p>Limite les adresses MAC par port</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Authentification 802.1X</h5>
+                            <p>Contrôle d'accès réseau</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="arp-poisoning" class="mt-5">
+        <h1>4. Empoisonnement ARP</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Fonctionnement d'ARP</h3>
+                <p>Le protocole ARP (Address Resolution Protocol) résout les adresses IP en adresses MAC :</p>
+                <ol>
+                    <li>Broadcast ARP Request: "Qui a l'IP X.X.X.X?"</li>
+                    <li>Unicast ARP Reply: "L'IP X.X.X.X est à MAC AA:BB:CC:DD:EE:FF"</li>
+                </ol>
+                
+                <h3>ARP Spoofing/Poisoning</h3>
+                <p>L'attaquant envoie de fausses réponses ARP pour :</p>
+                <ul>
+                    <li>Rediriger le trafic vers sa machine</li>
+                    <li>Réaliser des attaques Man-in-the-Middle</li>
+                    <li>Intercepter ou modifier les communications</li>
+                </ul>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <pre class="text-light">
+# Utiliser arpspoof pour l'empoisonnement ARP
+arpspoof -i eth0 -t 192.168.1.10 -r 192.168.1.1</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Processus d'attaque</h4>
+                    <img src="{{ url_for('static', filename='img/arp.png') }}" alt="Image ARP">
+
+                    <ol class="mt-3">
+                        <li>Attaquant → Victime: "192.168.1.1 est à [MAC Attaquant]"</li>
+                        <li>Attaquant → Routeur: "192.168.1.10 est à [MAC Attaquant]"</li>
+                        <li>Le trafic entre la victime et le routeur passe par l'attaquant</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Dangers de l'ARP poisoning</h3>
+            <ul>
+                <li>Interception des mots de passe non chiffrés</li>
+                <li>Détournement de session</li>
+                <li>Attaques par déni de service</li>
+                <li>Modification du trafic en temps réel</li>
+                <li>Écoute des communications chiffrées (SSL stripping)</li>
+            </ul>
+        </div>
+    </section>
+    
+    <section id="spoofing-attacks" class="mt-5">
+        <h1>5. Attaques par spoofing</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types de spoofing</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>IP Spoofing</td>
+                        <td>Usurpation d'adresse IP source</td>
+                    </tr>
+                    <tr>
+                        <td>MAC Spoofing</td>
+                        <td>Usurpation d'adresse MAC</td>
+                    </tr>
+                    <tr>
+                        <td>DNS Spoofing</td>
+                        <td>Fausses réponses DNS</td>
+                    </tr>
+                    <tr>
+                        <td>Email Spoofing</td>
+                        <td>Usurpation d'expéditeur d'email</td>
+                    </tr>
+                    <tr>
+                        <td>Web Spoofing</td>
+                        <td>Copie de sites légitimes</td>
+                    </tr>
+                </table>
+                
+                <h3 class="mt-4">IP Spoofing</h3>
+                <p>Techniques d'usurpation d'IP :</p>
+                <ul>
+                    <li>Direct Spoofing: Envoi de paquets avec IP source falsifiée</li>
+                    <li>Source Routing: Spécification du chemin réseau</li>
+                    <li>Blind Spoofing: Sans voir les réponses</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Création de paquets spoofés</h4>
+                    <pre class="bg-dark text-light p-3">
+from scapy.all import *
+
+# Créer un paquet ICMP avec IP source spoofée
+packet = IP(src="192.168.1.100", dst="8.8.8.8")/ICMP()/"Payload"
+
+# Envoyer le paquet
+send(packet)</pre>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h4>Utilisations du spoofing</h4>
+                        <ul>
+                            <li>Contourner les ACL basées sur IP</li>
+                            <li>Attaques DDoS (amplification)</li>
+                            <li>Masquer la véritable source d'attaque</li>
+                            <li>Détournement de session TCP</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="dns-poisoning" class="mt-5">
+        <h1>6. Empoisonnement DNS</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Fonctionnement du DNS</h3>
+                <p>Le DNS (Domain Name System) traduit les noms de domaine en adresses IP :</p>
+                <ol>
+                    <li>Requête DNS vers le résolveur</li>
+                    <li>Recherche récursive ou itérative</li>
+                    <li>Réponse avec l'adresse IP correspondante</li>
+                </ol>
+                
+                <h3>DNS Poisoning</h3>
+                <p>L'attaquant corrompt le cache DNS pour :</p>
+                <ul>
+                    <li>Rediriger les utilisateurs vers des sites malveillants</li>
+                    <li>Intercepter les communications</li>
+                    <li>Distribuer des malwares</li>
+                    <li>Réaliser des attaques de phishing</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Techniques d'empoisonnement DNS</h4>
+                    <ul>
+                        <li><strong>DNS Spoofing</strong>: Fausses réponses DNS</li>
+                        <li><strong>DNS Cache Poisoning</strong>: Corruption du cache du résolveur</li>
+                        <li><strong>DNS Hijacking</strong>: Modification des paramètres DNS</li>
+                        <li><strong>DNS Tunneling</strong>: Transfert de données via des requêtes DNS</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <pre class="text-light">
+# Utiliser dnsspoof pour l'empoisonnement DNS
+dnsspoof -i eth0 -f hosts.txt</pre>
+                        <p>hosts.txt contient: 192.168.1.100 www.banque.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Protections DNS</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>DNSSEC</h5>
+                            <p>Signature cryptographique des réponses DNS</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>DNS over HTTPS (DoH)</h5>
+                            <p>Chiffrement des requêtes DNS</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Response Rate Limiting</h5>
+                            <p>Limite les réponses DNS non sollicitées</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="sniffing-tools" class="mt-5">
+        <h1>7. Outils de sniffing</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Analyseurs réseau</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Outil</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Wireshark</td>
+                        <td>Analyseur de protocoles complet avec interface graphique</td>
+                    </tr>
+                    <tr>
+                        <td>tcpdump</td>
+                        <td>Outil en ligne de commande pour la capture de paquets</td>
+                    </tr>
+                    <tr>
+                        <td>tshark</td>
+                        <td>Version CLI de Wireshark</td>
+                    </tr>
+                    <tr>
+                        <td>Ettercap</td>
+                        <td>Suite complète pour attaques MITM</td>
+                    </tr>
+                    <tr>
+                        <td>BetterCAP</td>
+                        <td>Framework moderne pour attaques réseau</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Exemple de capture avec tcpdump</h5>
+                    <pre class="bg-dark text-light p-3">
+# Capturer le trafic sur eth0
+tcpdump -i eth0
+
+# Capturer le trafic HTTP
+tcpdump -i eth0 port 80
+
+# Sauvegarder dans un fichier pcap
+tcpdump -i eth0 -w capture.pcap</pre>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Outils spécialisés</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>dsniff</strong>: Collection d'outils pour sniffing (arpspoof, dnsspoof)</li>
+                        <li><strong>SSLStrip</strong>: Dégradation des connexions HTTPS en HTTP</li>
+                        <li><strong>Driftnet</strong>: Capture d'images transitant sur le réseau</li>
+                        <li><strong>NetworkMiner</strong>: Analyse forensique de captures réseau</li>
+                        <li><strong>Scapy</strong>: Puissante bibliothèque Python pour manipulation de paquets</li>
+                    </ul>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Filtres Wireshark essentiels</h4>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-dark text-light p-3">
+http                  # Trafic HTTP
+dns                   # Requêtes DNS
+tcp.port == 443       # Trafic sur port 443
+ip.addr == 192.168.1.1 # Trafic depuis/vers IP spécifique
+arp                   # Trames ARP
+tcp.flags.syn == 1    # Paquets SYN
+!(arp or dns)         # Exclure ARP et DNS</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>8. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protections réseau</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Chiffrement</strong>: HTTPS, SSH, VPN, TLS</li>
+                        <li><strong>Commutateurs sécurisés</strong>: DHCP snooping, ARP inspection</li>
+                        <li><strong>Segmentation réseau</strong>: VLANs, sous-réseaux</li>
+                        <li><strong>Authentification forte</strong>: 802.1X, EAP</li>
+                        <li><strong>Détection d'intrusion</strong>: IDS/IPS</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protocoles sécurisés</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Protocole</strong></td>
+                        <td><strong>Utilisation</strong></td>
+                    </tr>
+                    <tr>
+                        <td>HTTPS</td>
+                        <td>Navigation web sécurisée</td>
+                    </tr>
+                    <tr>
+                        <td>SSH</td>
+                        <td>Accès distant sécurisé</td>
+                    </tr>
+                    <tr>
+                        <td>SFTP/SCP</td>
+                        <td>Transfert de fichiers sécurisé</td>
+                    </tr>
+                    <tr>
+                        <td>IPSec</td>
+                        <td>Chiffrement au niveau IP</td>
+                    </tr>
+                    <tr>
+                        <td>DNSSEC</td>
+                        <td>Sécurisation des requêtes DNS</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Configurations spécifiques</h3>
+                <div class="card bg-light p-3">
+                    <h5>Protection ARP</h5>
+                    <ul>
+                        <li>ARP Inspection (DAI) sur les commutateurs</li>
+                        <li>ARP Static Binding (table ARP statique)</li>
+                        <li>Détection des changements ARP fréquents</li>
+                    </ul>
+                    
+                    <h5 class="mt-3">Protection DHCP</h5>
+                    <ul>
+                        <li>DHCP Snooping</li>
+                        <li>Limitation du taux de requêtes DHCP</li>
+                        <li>Authentification des serveurs DHCP</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Bonnes pratiques</h4>
+                        <ul>
+                            <li>Utiliser des protocoles chiffrés partout où possible</li>
+                            <li>Mettre en place un VPN pour les accès distants</li>
+                            <li>Segmenter le réseau en zones de sécurité</li>
+                            <li>Configurer correctement les commutateurs</li>
+                            <li>Mettre à jour régulièrement les équipements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="detection-techniques" class="mt-5">
+        <h1>9. Techniques de détection</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Détection de sniffing</h3>
+                <ul>
+                    <li><strong>Détection de mode promiscuité</strong>: Envoyer des paquets avec adresse MAC de destination invalide et détecter les réponses</li>
+                    <li><strong>Analyse des temps de réponse</strong>: Les interfaces en mode promiscuité peuvent répondre plus lentement</li>
+                    <li><strong>Détection ARP</strong>: Surveiller les anomalies dans les tables ARP</li>
+                    <li><strong>Analyse DNS inverse</strong>: Tester si les adresses IP répondent aux requêtes DNS inversées</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Détecter le mode promiscuité avec nmap</h5>
+                    <pre class="bg-dark text-light p-3">
+# Scanner les hôtes en mode promiscuité
+nmap --script=sniffer-detect 192.168.1.0/24</pre>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Outils de détection</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Outil</strong></td>
+                        <td><strong>Fonction</strong></td>
+                    </tr>
+                    <tr>
+                        <td>ARPWatch</td>
+                        <td>Surveillance des changements ARP</td>
+                    </tr>
+                    <tr>
+                        <td>XArp</td>
+                        <td>Détection avancée des attaques ARP</td>
+                    </tr>
+                    <tr>
+                        <td>Sniffdet</td>
+                        <td>Détection des interfaces en mode promiscuité</td>
+                    </tr>
+                    <tr>
+                        <td>Wireshark</td>
+                        <td>Détection des anomalies réseau</td>
+                    </tr>
+                    <tr>
+                        <td>Security Onion</td>
+                        <td>Distribution de sécurité pour surveillance réseau</td>
+                    </tr>
+                </table>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5>Indicateurs de compromission</h5>
+                        <ul>
+                            <li>Paquets ARP inhabituels</li>
+                            <li>Trafic DNS anormal</li>
+                            <li>Activations répétées du mode promiscuité</li>
+                            <li>Augmentation soudaine du trafic réseau</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-primary text-white mt-4">
+            <div class="card-body">
+                <h4>Recommandations finales CEHv13</h4>
+                <ol>
+                    <li>Toujours chiffrer les données sensibles en transit</li>
+                    <li>Implémenter des contrôles de sécurité sur les commutateurs</li>
+                    <li>Surveiller régulièrement le réseau pour détecter des anomalies</li>
+                    <li>Mettre en place des solutions IDS/IPS</li>
+                    <li>Former les utilisateurs aux risques du sniffing</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

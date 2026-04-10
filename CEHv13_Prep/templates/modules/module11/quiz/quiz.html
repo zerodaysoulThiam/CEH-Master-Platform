@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 11 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 11 : Session Hijacking</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+         const quizData = {
+            fr: {
+                facile: [
+                    "Qu'est-ce que le session hijacking?;Le vol d'une session utilisateur légitime;Le piratage d'un serveur de session;La création d'une fausse session;L'interception de données non chiffrées;a;Le détournement de session (session hijacking) consiste à prendre le contrôle d'une session utilisateur après l'authentification, permettant ainsi d'accéder aux ressources protégées sans connaître les identifiants.",
+                    "Quel est l'élément le plus couramment volé dans les sessions web?;Les cookies de session;Les mots de passe;Les adresses IP;Les certificats SSL;a;Les cookies de session contiennent l'identifiant unique qui permet au serveur de reconnaître l'utilisateur authentifié. Leur vol permet à un attaquant de se faire passer pour la victime.",
+                    "Quelle technique utilise des scripts pour voler des cookies de session?;XSS (Cross-Site Scripting);SQL Injection;Phishing;DDoS;a;Les attaques XSS permettent d'injecter des scripts malveillants dans des pages web, qui peuvent alors voler les cookies de session des utilisateurs.",
+                    "Qu'est-ce que la fixation de session?;Forcer un utilisateur à utiliser un ID de session spécifique;Réinitialiser la session d'un utilisateur;Déconnecter un utilisateur à distance;Modifier les permissions d'une session;a;La fixation de session consiste à faire accepter à un utilisateur un identifiant de session prédéfini par l'attaquant, qui pourra ensuite prendre le contrôle de cette session.",
+                    "Quelle méthode protège les cookies contre le vol via JavaScript?;Le flag HttpOnly;Le flag Secure;Le chiffrement AES;La validation de domaine;a;Le flag HttpOnly empêche l'accès aux cookies via JavaScript, ce qui limite les risques de vol par des attaques XSS."
+                ],
+                moyen: [
+                    "Quel outil est couramment utilisé pour intercepter et manipuler les sessions HTTP?;Burp Suite;Nmap;Metasploit;Wireshark;a;Burp Suite est un proxy d'interception qui permet d'intercepter, modifier et renvoyer les requêtes HTTP, ce qui est idéal pour tester la sécurité des sessions web.",
+                    "Quelle attaque permet d'exécuter des actions non autorisées au nom d'un utilisateur authentifié?;CSRF (Cross-Site Request Forgery);XSS;SQL Injection;Phishing;a;Les attaques CSRF exploitent la confiance d'un site web envers un utilisateur authentifié pour exécuter des actions à son insu.",
+                    "Quelle protection empêche les attaques CSRF?;Les tokens CSRF;Le chiffrement SSL;L'authentification à deux facteurs;Les pare-feu d'application web;a;Les tokens CSRF sont des valeurs aléatoires uniques incluses dans les formulaires et requêtes qui permettent au serveur de vérifier la légitimité de la requête.",
+                    "Quel protocole est particulièrement vulnérable au session hijacking sur des réseaux non chiffrés?;Telnet;SSH;HTTPS;IPSec;a;Telnet transmet toutes les données, y compris les identifiants de session, en clair, ce qui le rend extrêmement vulnérable aux attaques par détournement de session.",
+                    "Qu'est-ce que le renouvellement de session après authentification?;Générer un nouvel ID de session après la connexion;Rafraîchir la page après connexion;Augmenter la durée de la session;Changer le mot de passe de session;a;Cette technique empêche la fixation de session en attribuant un nouvel identifiant unique après une authentification réussie."
+                ],
+                difficile: [
+                    "Comment fonctionne le détournement TCP?;En prédictant les numéros de séquence TCP;En interceptant les paquets SSL;En exploitant des vulnérabilités HTTP;En usurpant des adresses MAC;a;Le détournement TCP consiste à prédire les numéros de séquence des paquets TCP pour injecter des données malveillantes dans une connexion établie.",
+                    "Quelle technique permet de maintenir une session détournée active sans être détecté?;L'envoi périodique de paquets keep-alive;La désactivation des logs;L'utilisation de proxies;Le chiffrement de la communication;a;L'envoi périodique de petits paquets permet de maintenir la session active sans activité visible de l'utilisateur légitime.",
+                    "Qu'est-ce que le session riding?;Une forme d'attaque CSRF;Une technique de fixation de session;Un type d'attaque DDoS;Une méthode de prédiction de session;a;Le session riding est un autre nom pour les attaques CSRF, où l'attaquant 'chevauché' une session authentifiée pour exécuter des actions.",
+                    "Quelle technologie peut prévenir le détournement de session au niveau réseau?;VPN (Virtual Private Network);Antivirus;Pare-feu applicatif;Système de détection d'intrusion;a;Les VPN chiffrent toutes les communications entre le client et le serveur, empêchant ainsi l'interception et le détournement de session au niveau réseau.",
+                    "Quelle méthode permet de détecter les sessions détournées?;Surveillance des adresses IP et des user-agents;Analyse des logs d'authentification;Scanning de vulnérabilités;Test de pénétration;a;La surveillance des changements d'adresse IP ou de user-agent pendant une session peut indiquer un détournement potentiel."
+                ]
+            },
+            en: {
+                facile: [
+                    "What is session hijacking?;Stealing a legitimate user session;Hacking a session server;Creating a fake session;Intercepting unencrypted data;a;Session hijacking involves taking control of a user session after authentication, allowing access to protected resources without knowing credentials.",
+                    "What is most commonly stolen in web sessions?;Session cookies;Passwords;IP addresses;SSL certificates;a;Session cookies contain the unique identifier that allows the server to recognize the authenticated user. Stealing them allows an attacker to impersonate the victim.",
+                    "Which technique uses scripts to steal session cookies?;XSS (Cross-Site Scripting);SQL Injection;Phishing;DDoS;a;XSS attacks allow injecting malicious scripts into web pages that can then steal users' session cookies.",
+                    "What is session fixation?;Forcing a user to use a specific session ID;Resetting a user's session;Logging out a user remotely;Changing session permissions;a;Session fixation involves making a user accept a session identifier predefined by the attacker, who can then take control of that session.",
+                    "Which method protects cookies against theft via JavaScript?;HttpOnly flag;Secure flag;AES encryption;Domain validation;a;The HttpOnly flag prevents access to cookies via JavaScript, reducing the risk of theft through XSS attacks."
+                ],
+                moyen: [
+                    "Which tool is commonly used to intercept and manipulate HTTP sessions?;Burp Suite;Nmap;Metasploit;Wireshark;a;Burp Suite is an interception proxy that allows intercepting, modifying, and resending HTTP requests, ideal for testing web session security.",
+                    "Which attack allows executing unauthorized actions on behalf of an authenticated user?;CSRF (Cross-Site Request Forgery);XSS;SQL Injection;Phishing;a;CSRF attacks exploit a website's trust in an authenticated user to execute actions without their knowledge.",
+                    "Which protection prevents CSRF attacks?;CSRF tokens;SSL encryption;Two-factor authentication;Web application firewalls;a;CSRF tokens are unique random values included in forms and requests that allow the server to verify the legitimacy of the request.",
+                    "Which protocol is particularly vulnerable to session hijacking on unencrypted networks?;Telnet;SSH;HTTPS;IPSec;a;Telnet transmits all data, including session credentials, in clear text, making it extremely vulnerable to session hijacking attacks.",
+                    "What is session renewal after authentication?;Generating a new session ID after login;Refreshing the page after login;Increasing session duration;Changing session password;a;This technique prevents session fixation by assigning a new unique identifier after successful authentication."
+                ],
+                difficile: [
+                    "How does TCP hijacking work?;By predicting TCP sequence numbers;By intercepting SSL packets;By exploiting HTTP vulnerabilities;By spoofing MAC addresses;a;TCP hijacking involves predicting TCP packet sequence numbers to inject malicious data into an established connection.",
+                    "Which technique maintains a hijacked session active without detection?;Periodically sending keep-alive packets;Disabling logs;Using proxies;Encrypting communication;a;Periodically sending small packets keeps the session active without visible activity from the legitimate user.",
+                    "What is session riding?;A form of CSRF attack;A session fixation technique;A type of DDoS attack;A session prediction method;a;Session riding is another name for CSRF attacks, where the attacker 'rides' an authenticated session to execute actions.",
+                    "Which technology can prevent session hijacking at the network level?;VPN (Virtual Private Network);Antivirus;Application firewall;Intrusion detection system;a;VPNs encrypt all communications between client and server, preventing session interception and hijacking at the network level.",
+                    "Which method helps detect hijacked sessions?;Monitoring IP addresses and user-agents;Analyzing authentication logs;Vulnerability scanning;Penetration testing;a;Monitoring changes in IP address or user-agent during a session can indicate potential hijacking."
+                ]
+            }
+        };
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

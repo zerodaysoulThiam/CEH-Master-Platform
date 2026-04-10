@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\static",
+    "\\static\\img",
+    "\\templates",
+    "\\templates\\modules",
+    "\\templates\\modules\\module1",
+    "\\templates\\modules\\module1\\cours",
+    "\\templates\\modules\\module1\\quiz",
+    "\\templates\\modules\\module2",
+    "\\templates\\modules\\module2\\quiz"
+  ],
+  "SelectedNode": "\\templates\\modules\\module13",
+  "PreviewInSolutionExplorer": false
+}

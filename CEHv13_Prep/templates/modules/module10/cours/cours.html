@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module: Denial-of-Service (DoS/DDoS){% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mt-4">
+    <h1>Module 10: Denial-of-Service (DoS/DDoS)</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#dos-concepts">1. Concepts DoS/DDoS</a></td>
+                <td>Fondamentaux des attaques par déni de service</td>
+            </tr>
+            <tr>
+                <td><a href="#botnets">2. Botnets</a></td>
+                <td>Réseaux de machines compromises</td>
+            </tr>
+            <tr>
+                <td><a href="#attack-techniques">3. Techniques d'attaque</a></td>
+                <td>Méthodes DoS/DDoS</td>
+            </tr>
+            <tr>
+                <td><a href="#ddos-case">4. Étude de cas DDoS</a></td>
+                <td>Analyse d'une attaque réelle</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">5. Contre-mesures</a></td>
+                <td>Protections contre les attaques</td>
+            </tr>
+            <tr>
+                <td><a href="#protection-tools">6. Outils de protection</a></td>
+                <td>Solutions techniques</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="dos-concepts">
+        <h1>1. Concepts DoS/DDoS</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce qu'une attaque DoS/DDoS?</h3>
+                <p>Une attaque par déni de service (DoS) vise à rendre un service, une ressource réseau ou un système inaccessible aux utilisateurs légitimes en submergeant la cible de trafic ou en exploitant des vulnérabilités.</p>
+                
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Différence entre DoS et DDoS</h5>
+                    <table class="table">
+                        <tr>
+                            <th>DoS (Denial-of-Service)</th>
+                            <th>DDoS (Distributed Denial-of-Service)</th>
+                        </tr>
+                        <tr>
+                            <td>Attaque provenant d'une seule source</td>
+                            <td>Attaque coordonnée depuis de multiples sources</td>
+                        </tr>
+                        <tr>
+                            <td>Plus facile à bloquer</td>
+                            <td>Difficile à mitiger en raison de la distribution</td>
+                        </tr>
+                        <tr>
+                            <td>Généralement moins puissant</td>
+                            <td>Peut atteindre des volumes énormes (Tbps)</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h3>Objectifs des attaques</h3>
+                <ul>
+                    <li>Rendre un service temporairement indisponible</li>
+                    <li>Servir de diversion pour d'autres attaques</li>
+                    <li>Nuire à la réputation d'une organisation</li>
+                    <li>Extorsion financière (ransom DDoS)</li>
+                    <li>Motivation idéologique (hacktivisme)</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Impact des attaques DDoS</h4>
+                        <ul>
+                            <li>Coût moyen d'une attaque DDoS: $120,000-$200,000</li>
+                            <li>Augmentation de 200% des attaques DDoS en 2023</li>
+                            <li>75% des organisations victimes d'au moins une attaque DDoS</li>
+                            <li>Durée moyenne d'une attaque: 30-60 minutes</li>
+                            <li>Record d'attaque: 3.47 Tbps (Google, 2020)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Vecteurs d'attaque</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Consommation de bande passante</strong>: Inonder le réseau</li>
+                            <li><strong>Épuisement des ressources</strong>: CPU, mémoire, connexions</li>
+                            <li><strong>Exploitation de vulnérabilités</strong>: Services spécifiques</li>
+                            <li><strong>Attaques applicatives</strong>: Requêtes HTTP malicieuses</li>
+                        </ul>
+                    </div>
+                </div>
+                
+               <img src="{{ url_for('static', filename='img/ddos.png') }}" alt="Image ARP">
+
+            </div>
+        </div>
+    </section>
+    
+    <section id="botnets" class="mt-5">
+        <h1>2. Botnets</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce qu'un botnet?</h3>
+                <p>Un botnet est un réseau de dispositifs compromis (bots) contrôlés à distance par un attaquant (botmaster) pour mener des attaques coordonnées.</p>
+                
+                <h3>Composition d'un botnet</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Élément</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Botmaster</td>
+                        <td>Contrôleur du réseau</td>
+                    </tr>
+                    <tr>
+                        <td>Serveur C&C</td>
+                        <td>Centre de commande et contrôle</td>
+                    </tr>
+                    <tr>
+                        <td>Zombies/Bots</td>
+                        <td>Appareils infectés</td>
+                    </tr>
+                    <tr>
+                        <td>Logiciel malveillant</td>
+                        <td>Agent installé sur les bots</td>
+                    </tr>
+                </table>
+                
+                <h3>Types d'appareils compromis</h3>
+                <ul>
+                    <li>Ordinateurs personnels</li>
+                    <li>Serveurs</li>
+                    <li>Appareils IoT (caméras, routeurs)</li>
+                    <li>Smartphones</li>
+                    <li>Objets connectés divers</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Botnets célèbres</h4>
+                        <ul>
+                            <li><strong>Mirai</strong>: Spécialisé dans les appareils IoT (620 Gbps)</li>
+                            <li><strong>Zeus</strong>: Botnet bancaire (3.6 millions de machines)</li>
+                            <li><strong>Emotet</strong>: Polyvalent, distribution de malware</li>
+                            <li><strong>3ve</strong>: Fraude publicitaire</li>
+                            <li><strong>Meris</strong>: Record de 21.8 millions de requêtes/s</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Cycle de vie d'un botnet</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Recherche de vulnérabilités</li>
+                            <li>Infection des appareils</li>
+                            <li>Connexion au C&C</li>
+                            <li>Mise à jour du malware</li>
+                            <li>Exécution des commandes</li>
+                            <li>Monétisation ou attaque</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card bg-light mt-3">
+                    <div class="card-body">
+                        <h5>Économie des botnets</h5>
+                        <ul>
+                            <li>Location de botnets: $20-$200/jour</li>
+                            <li>Coût d'une attaque DDoS: $5-$400/heure</li>
+                            <li>Marchés darknet pour services DDoS</li>
+                            <li>Botnets-as-a-Service (BaaS)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="attack-techniques" class="mt-5">
+        <h1>3. Techniques d'attaque</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Attaques volumétriques</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Technique</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>UDP Flood</td>
+                        <td>Inondation de paquets UDP vers des ports aléatoires</td>
+                    </tr>
+                    <tr>
+                        <td>ICMP Flood</td>
+                        <td>Envoi massif de requêtes Ping (Smurf Attack)</td>
+                    </tr>
+                    <tr>
+                        <td>DNS Amplification</td>
+                        <td>Exploitation des serveurs DNS pour amplifier le trafic</td>
+                    </tr>
+                    <tr>
+                        <td>NTP Amplification</td>
+                        <td>Utilisation des serveurs NTP pour amplification</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Amplification DNS</h5>
+                    <ol>
+                        <li>L'attaquant envoie de petites requêtes DNS avec IP spoofée</li>
+                        <li>Les serveurs DNS répondent à la victime</li>
+                        <li>Rapport d'amplification: 1:50 à 1:100</li>
+                        <li>Exemple: Requête de 64 octets → Réponse de 3,000 octets</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Attaques par épuisement de ressources</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>SYN Flood</strong>: Demandes de connexion TCP non achevées</li>
+                        <li><strong>HTTP Flood</strong>: Requêtes HTTP/HTTPS apparemment légitimes</li>
+                        <li><strong>Slowloris</strong>: Maintient de nombreuses connexions ouvertes</li>
+                        <li><strong>RUDY</td>
+                        <td>Envoi lent de données POST</td>
+                    </tr>
+                </table>
+                
+                <h3 class="mt-4">Attaques applicatives</h3>
+                <ul>
+                    <li><strong>Layer 7 Attacks</strong>: Ciblent les applications web</li>
+                    <li><strong>CC Attack</strong>: Requêtes coûteuses en ressources</li>
+                    <li><strong>Recursive GET</strong>: Exploration profonde de sites</li>
+                    <li><strong>WordPress XML-RPC</strong>: Exploitation de pingbacks</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Outils d'attaque DDoS</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>LOIC</h5>
+                            <p>Outils open-source simple</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>HOIC</h5>
+                            <p>Version plus avancée de LOIC</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SlowHTTPTest</h5>
+                            <p>Attaques Slowloris/RUDY</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>GoldenEye</h5>
+                            <p>Attaques HTTP Layer 7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="ddos-case" class="mt-5">
+        <h1>4. Étude de cas DDoS</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Attaque contre Dyn (2016)</h4>
+                        <ul>
+                            <li><strong>Cible</strong>: Dyn, fournisseur DNS majeur</li>
+                            <li><strong>Impact</strong>: Twitter, Netflix, Reddit, CNN indisponibles</li>
+                            <li><strong>Volume</strong>: 1.2 Tbps à travers plusieurs vagues</li>
+                            <li><strong>Source</strong>: Botnet Mirai (100,000 appareils IoT)</li>
+                            <li><strong>Durée</strong>: Plusieurs heures sur 2 jours</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3 class="mt-4">Déroulement de l'attaque</h3>
+                <ol>
+                    <li>Recrutement massif d'appareils IoT vulnérables</li>
+                    <li>Déploiement du malware Mirai</li>
+                    <li>Coordination via serveurs C&C</li>
+                    <li>Vagues successives d'attaques TCP/UDP</li>
+                    <li>Saturation des serveurs DNS de Dyn</li>
+                    <li>Propagation des interruptions aux sites dépendants</li>
+                </ol>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Leçons apprises</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Vulnérabilité des appareils IoT non sécurisés</li>
+                            <li>Importance de la redondance DNS</li>
+                            <li>Nécessité de plans de réponse aux incidents</li>
+                            <li>Limites des solutions de protection traditionnelles</li>
+                            <li>Importance de la collaboration entre fournisseurs</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-light">
+                    <div class="card-body">
+                        <h5>Impact à long terme</h5>
+                        <ul>
+                            <li>Renforcement des normes de sécurité IoT</li>
+                            <li>Développement de solutions anti-DDoS plus robustes</li>
+                            <li>Prise de conscience de l'importance du DNS</li>
+                            <li>Augmentation des investissements en sécurité</li>
+                            <li>Législation sur la sécurité des appareils connectés</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <img src="{{ url_for('static', filename='img/impact.png') }}" alt="Impact d'une attaque Ddos">
+
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>5. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protections préventives</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Surdimensionnement</strong>: Capacité réseau excédentaire</li>
+                        <li><strong>Répartition de charge</strong>: Distribution du trafic</li>
+                        <li><strong>Anycast</strong>: Diffusion à plusieurs points</li>
+                        <li><strong>Limitation de débit</strong>: Contrôle du trafic entrant</li>
+                        <li><strong>Filtrage IP</strong>: Blocage des sources malveillantes</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Détection des attaques</h3>
+                <ul>
+                    <li>Analyse du trafic en temps réel</li>
+                    <li>Détection d'anomalies comportementales</li>
+                    <li>Surveillance des indicateurs de performance</li>
+                    <li>Systèmes de détection d'intrusion (IDS)</li>
+                    <li>Solutions basées sur l'IA</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Réponse aux incidents</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li>Identification du type d'attaque</li>
+                        <li>Activation du plan de réponse DDoS</li>
+                        <li>Redirection du trafic via un service de nettoyage</li>
+                        <li>Application des règles de filtrage</li>
+                        <li>Communication avec les parties prenantes</li>
+                        <li>Analyse post-incident</li>
+                    </ol>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Stratégie de défense en profondeur</h4>
+                        <ul>
+                            <li><strong>Couche réseau</strong>: Filtrage BGP, Anycast</li>
+                            <li><strong>Couche infrastructure</strong>: Pare-feu, routeurs</li>
+                            <li><strong>Couche applicative</strong>: WAF, limitation de requêtes</li>
+                            <li><strong>Services externes</strong>: Fournisseurs anti-DDoS</li>
+                            <li><strong>Plan de continuité</strong>: Solutions de repli</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="protection-tools" class="mt-5">
+        <h1>6. Outils de protection</h1>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Solutions matérielles</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Routeurs avec fonctions anti-DDoS</li>
+                            <li>Pare-feu nouvelle génération (NGFW)</li>
+                            <li>Appliances spécialisées anti-DDoS</li>
+                            <li>Équilibreurs de charge intelligents</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5>Solutions cloud</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Cloudflare</li>
+                            <li>Akamai Prolexic</li>
+                            <li>Amazon Shield</li>
+                            <li>Microsoft Azure DDoS Protection</li>
+                            <li>Google Cloud Armor</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h5>Outils open-source</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Snort (détection d'intrusion)</li>
+                            <li>Suricata (analyse de trafic)</li>
+                            <li>Nginx (limitation de débit)</li>
+                            <li>Fail2Ban (protection SSH)</li>
+                            <li>ModSecurity (WAF)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-primary text-white mt-4">
+            <div class="card-body">
+                <h4>Plan de protection DDoS</h4>
+                <ol>
+                    <li>Évaluation des risques et des vulnérabilités</li>
+                    <li>Mise en place d'une architecture résiliente</li>
+                    <li>Souscription à un service de protection DDoS</li>
+                    <li>Développement d'un plan de réponse aux incidents</li>
+                    <li>Formation régulière de l'équipe</li>
+                    <li>Tests de résistance périodiques</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

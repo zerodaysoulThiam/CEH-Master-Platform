@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="mb-3">Examens Blancs CEH</h1>
+        <p class="lead">Testez vos connaissances avec nos examens blancs. Chaque examen simule les conditions réelles de l'examen CEH.</p>
+        <div class="alert alert-info d-inline-block">
+            <i class="fas fa-lightbulb me-2"></i> Pour une préparation optimale, passez les 3 examens dans l'ordre
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Examen Blanc 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow rounded-lg">
+                <div class="card-header bg-pink-200 text-dark py-3">
+                    <h3 class="card-title mb-0 text-center"><i class="fas fa-1 me-2"></i>Examen Blanc 1</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Un examen complet de 125 questions pour tester vos connaissances sur l'ensemble des modules CEH.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            Durée : 4 heures
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-question-circle text-success me-2"></i>
+                            125 questions
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-book text-info me-2"></i>
+                            Couvre tous les modules
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            Difficulté : Moyenne
+                        </li>
+                    </ul>
+                    <div class="recommendation bg-light p-2 rounded text-center mb-3">
+                        <i class="fas fa-user-graduate text-primary me-1"></i> Recommandé pour les débutants
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center py-3">
+                    <a href="{{ url_for('examen_simulation', type='blanc', id=1) }}" 
+                       class="btn btn-pink-200 btn-lg w-100 text-dark">
+                       <i class="fas fa-play-circle me-2"></i>Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examen Blanc 2 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow rounded-lg">
+                <div class="card-header bg-blue-100 text-dark py-3">
+                    <h3 class="card-title mb-0 text-center"><i class="fas fa-2 me-2"></i>Examen Blanc 2</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Un examen axé sur les domaines clés du CEH avec des questions plus difficiles et des scénarios complexes.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            Durée : 4 heures
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-question-circle text-success me-2"></i>
+                            125 questions
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-book text-info me-2"></i>
+                            Focus sur les modules 1 à 10
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            Difficulté : Élevée
+                        </li>
+                    </ul>
+                    <div class="recommendation bg-light p-2 rounded text-center mb-3">
+                        <i class="fas fa-user-shield text-primary me-1"></i> Pour les apprenants intermédiaires
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center py-3">
+                    <a href="{{ url_for('examen_simulation', type='blanc', id=2) }}" 
+                       class="btn btn-blue-100 btn-lg w-100 text-dark">
+                       <i class="fas fa-play-circle me-2"></i>Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examen Blanc 3 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow rounded-lg">
+                <div class="card-header bg-pink-100 text-dark py-3">
+                    <h3 class="card-title mb-0 text-center"><i class="fas fa-3 me-2"></i>Examen Blanc 3</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Dernier examen blanc avec des questions avancées et des mises en situation réalistes pour vous préparer au vrai examen.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            Durée : 4 heures
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-question-circle text-success me-2"></i>
+                            125 questions
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-book text-info me-2"></i>
+                            Focus sur les modules 11 à 20
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            Difficulté : Très élevée
+                        </li>
+                    </ul>
+                    <div class="recommendation bg-light p-2 rounded text-center mb-3">
+                        <i class="fas fa-user-ninja text-primary me-1"></i> Pour les apprenants avancés
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center py-3">
+                    <a href="{{ url_for('examen_simulation', type='blanc', id=3) }}" 
+                       class="btn btn-pink-100 btn-lg w-100 text-dark">
+                       <i class="fas fa-play-circle me-2"></i>Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ajout des classes de couleur personnalisées */
+    .bg-pink-100 {
+        background-color: #f8d7da; /* Rose clair */
+    }
+    
+    .bg-pink-200 {
+        background-color: #f5c6cb; /* Rose moyen */
+    }
+    
+    .bg-blue-100 {
+        background-color: #cce5ff; /* Bleu clair */
+    }
+    
+    .btn-pink-100 {
+        background-color: #f8d7da;
+        border-color: #f8d7da;
+        color: #212529;
+    }
+    
+    .btn-pink-100:hover {
+        background-color: #f5c6cb;
+        border-color: #f5c6cb;
+        color: #212529;
+    }
+    
+    .btn-pink-200 {
+        background-color: #f5c6cb;
+        border-color: #f5c6cb;
+        color: #212529;
+    }
+    
+    .btn-pink-200:hover {
+        background-color: #f1b0b7;
+        border-color: #f1b0b7;
+        color: #212529;
+    }
+    
+    .btn-blue-100 {
+        background-color: #cce5ff;
+        border-color: #cce5ff;
+        color: #212529;
+    }
+    
+    .btn-blue-100:hover {
+        background-color: #b8daff;
+        border-color: #b8daff;
+        color: #212529;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}  
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Quiz CEH - Modules</h1>
+    <p class="lead">Sélectionnez un module pour commencer le quiz :</p>
+    
+    {% if quiz_modules|length == 0 %}
+    <div class="alert alert-warning">
+        Aucun quiz disponible pour le moment. Revenez plus tard!
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        {% for quiz in quiz_modules %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-blue-100 text-white">
+                    <h5 class="card-title mb-0">Module {{ quiz.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ quiz.title }}</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ url_for('quiz_page', module=quiz.id) }}" 
+                       class="btn btn-outline-primary btn-block">
+                       <i class="fas fa-play-circle mr-2"></i>Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

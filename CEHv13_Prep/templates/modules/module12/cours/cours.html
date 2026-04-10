@@ -1,0 +1,690 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Contournement IDS, Firewalls & Honeypots{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mt-4">
+    <h1>Module 12: Contournement des IDS, Firewalls et Honeypots</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#concepts">1. Concepts IDS/IPS, Firewall & Honeypot</a></td>
+                <td>Fondamentaux des systèmes de défense</td>
+            </tr>
+            <tr>
+                <td><a href="#solutions">2. Solutions existantes</a></td>
+                <td>Technologies et outils de sécurité</td>
+            </tr>
+            <tr>
+                <td><a href="#evading-ids">3. Contournement des IDS</a></td>
+                <td>Techniques pour éviter la détection</td>
+            </tr>
+            <tr>
+                <td><a href="#evading-firewalls">4. Contournement des Firewalls</a></td>
+                <td>Méthodes pour franchir les pare-feux</td>
+            </tr>
+            <tr>
+                <td><a href="#evading-nac">5. Contournement NAC et Endpoint Security</a></td>
+                <td>Déjouer les contrôles d'accès réseau</td>
+            </tr>
+            <tr>
+                <td><a href="#tools">6. Outils de contournement</a></td>
+                <td>Logiciels spécialisés</td>
+            </tr>
+            <tr>
+                <td><a href="#detecting-honeypots">7. Détection des Honeypots</a></td>
+                <td>Identifier les systèmes leurres</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">8. Contre-mesures</a></td>
+                <td>Protections contre le contournement</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="concepts">
+        <h1>1. Concepts IDS/IPS, Firewall & Honeypot</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Systèmes de défense réseau</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Système</th>
+                        <th>Fonction</th>
+                    </tr>
+                    <tr>
+                        <td>Firewall</td>
+                        <td>Filtrage du trafic basé sur des règles prédéfinies</td>
+                    </tr>
+                    <tr>
+                        <td>IDS (Système de détection d'intrusion)</td>
+                        <td>Surveillance et alerte en cas d'activité suspecte</td>
+                    </tr>
+                    <tr>
+                        <td>IPS (Système de prévention d'intrusion)</td>
+                        <td>Blocage actif des menaces détectées</td>
+                    </tr>
+                    <tr>
+                        <td>Honeypot</td>
+                        <td>Système leurre pour attirer et étudier les attaquants</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Différence IDS vs IPS</h5>
+                    <ul>
+                        <li><strong>IDS</strong>: Détection passive (alerte sans bloquer)</li>
+                        <li><strong>IPS</strong>: Détection active (bloque le trafic malveillant)</li>
+                        <li>Les IPS sont placés inline (dans le flux du trafic)</li>
+                        <li>Les IDS fonctionnent en mode miroir (hors du flux principal)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Types de Honeypots</h4>
+                        <ul>
+                            <li><strong>Low-Interaction</strong>: Simule des services basiques</li>
+                            <li><strong>High-Interaction</strong>: Systèmes complets pour étude approfondie</li>
+                            <li><strong>Production</strong>: Protège les réseaux réels</li>
+                            <li><strong>Research</strong>: Collecte de données pour analyse</li>
+                            <li><strong>Honeynets</strong>: Réseaux entiers de honeypots</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Architecture de sécurité typique</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="https://www.researchgate.net/profile/Mohammad-Pathan-2/publication/267387263/figure/fig1/AS:669038591803403@1536521868398/A-typical-network-security-architecture.png" alt="Architecture de sécurité réseau" class="img-fluid rounded">
+                        <p class="mt-2">Firewall → IPS → IDS → Honeypot</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h3>Méthodes de détection</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-warning">Signature-based</div>
+                            <div class="card-body">
+                                <p>Détection basée sur des modèles connus de menaces</p>
+                                <ul>
+                                    <li>Avantage: Détection précise des menaces connues</li>
+                                    <li>Limite: Inefficace contre les nouvelles menaces</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-success">Anomaly-based</div>
+                            <div class="card-body">
+                                <p>Détection basée sur des écarts par rapport au comportement normal</p>
+                                <ul>
+                                    <li>Avantage: Détecte les menaces inconnues</li>
+                                    <li>Limite: Fort taux de faux positifs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-danger">Behavior-based</div>
+                            <div class="card-body">
+                                <p>Analyse du comportement des applications et utilisateurs</p>
+                                <ul>
+                                    <li>Avantage: Détection des menaces persistantes</li>
+                                    <li>Limite: Complexe à configurer</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="solutions" class="mt-5">
+        <h1>2. Solutions existantes</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Solutions commerciales</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Type</th>
+                        <th>Solutions populaires</th>
+                    </tr>
+                    <tr>
+                        <td>Firewalls</td>
+                        <td>Palo Alto, Fortinet, Cisco ASA, Check Point</td>
+                    </tr>
+                    <tr>
+                        <td>IDS/IPS</td>
+                        <td>Snort, Suricata, Cisco Firepower, Darktrace</td>
+                    </tr>
+                    <tr>
+                        <td>Honeypots</td>
+                        <td>Canary Tokens, T-Pot, Cowrie, OpenCanary</td>
+                    </tr>
+                    <tr>
+                        <td>NAC</td>
+                        <td>Cisco ISE, Aruba ClearPass, FortiNAC</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Comparatif des solutions IDS/IPS</h5>
+                    <table class="table">
+                        <tr>
+                            <th>Solution</th>
+                            <th>Avantages</th>
+                            <th>Limites</th>
+                        </tr>
+                        <tr>
+                            <td>Snort</td>
+                            <td>Open-source, communauté active</td>
+                            <td>Nécessite une configuration experte</td>
+                        </tr>
+                        <tr>
+                            <td>Suricata</td>
+                            <td>Multithreadé, support moderne</td>
+                            <td>Consommation mémoire élevée</td>
+                        </tr>
+                        <tr>
+                            <td>Cisco Firepower</td>
+                            <td>Intégration complète, gestion centralisée</td>
+                            <td>Coût élevé, complexité</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Solutions open-source</h4>
+                        <ul>
+                            <li><strong>Firewalls</strong>: pfSense, OPNsense, IPFire</li>
+                            <li><strong>IDS/IPS</strong>: Snort, Suricata, Zeek</li>
+                            <li><strong>Honeypots</strong>: T-Pot, Cowrie, Dionaea</li>
+                            <li><strong>Analyse réseau</strong>: Security Onion, Wireshark</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Architecture de sécurité moderne</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Firewall de périmètre (Next-Gen)</li>
+                            <li>IPS en ligne pour le trafic entrant/sortant</li>
+                            <li>IDS pour la surveillance interne</li>
+                            <li>Honeypots stratégiquement placés</li>
+                            <li>Solution NAC pour le contrôle d'accès</li>
+                            <li>EDR/XDR pour la protection des endpoints</li>
+                            <li>SIEM pour la corrélation des événements</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-info text-white">
+                    <div class="card-body">
+                        <h5>Évolution des solutions</h5>
+                        <ul>
+                            <li>Convergence vers XDR (Extended Detection and Response)</li>
+                            <li>Intégration de l'IA pour la détection avancée</li>
+                            <li>Déploiement cloud-native (SASE, SSE)</li>
+                            <li>Automatisation de la réponse aux incidents (SOAR)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="evading-ids" class="mt-5">
+        <h1>3. Contournement des IDS</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Techniques fondamentales</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Technique</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Fragmentation IP</td>
+                        <td>Division des paquets pour éviter la détection</td>
+                    </tr>
+                    <tr>
+                        <td>Encodage</td>
+                        <td>Modification de la charge utile pour échapper aux signatures</td>
+                    </tr>
+                    <tr>
+                        <td>Trafic chiffré</td>
+                        <td>Utilisation de VPN/SSL pour masquer le contenu</td>
+                    </tr>
+                    <tr>
+                        <td>Flux lent</td>
+                        <td>Envoi de données à très bas débit</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Évasion par polymorphisme</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Modification continue de la signature du malware pour éviter la détection basée sur les signatures.</p>
+                        <ol>
+                            <li>Chiffrement de la charge utile</li>
+                            <li>Obfuscation du code</li>
+                            <li>Modification des métadonnées</li>
+                            <li>Techniques de métamorphisme</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Techniques avancées</h4>
+                    <ul>
+                        <li><strong>Session Splicing</strong>: Division des sessions en petits fragments</li>
+                        <li><strong>Overlapping Fragments</strong>: Fragments qui se chevauchent pour confondre le réassemblement</li>
+                        <li><strong>Invalid Packets</strong>: Paquets mal formés exploitant les faiblesses de l'IDS</li>
+                        <li><strong>Timing Attacks</strong>: Exploitation des délais d'analyse</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: Fragmentation IP</h4>
+                        <ol>
+                            <li>Création d'un paquet malveillant</li>
+                            <li>Division en plusieurs fragments</li>
+                            <li>Modification des offsets IP</li>
+                            <li>Envoi avec des délais variables</li>
+                            <li>Réassemblage côté victime</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Détection des IDS</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Analyse des temps de réponse</li>
+                            <li>Envoi de paquets de test spécifiques</li>
+                            <li>Détection des patterns de surveillance</li>
+                            <li>Analyse du comportement réseau</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="evading-firewalls" class="mt-5">
+        <h1>4. Contournement des Firewalls</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Méthodes classiques</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Technique</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Port Hopping</td>
+                        <td>Utilisation de ports non standard</td>
+                    </tr>
+                    <tr>
+                        <td>Port Forwarding</td>
+                        <td>Redirection de ports via des machines compromises</td>
+                    </tr>
+                    <tr>
+                        <td>HTTP Tunneling</td>
+                        <td>Encapsulation dans le protocole HTTP</td>
+                    </tr>
+                    <tr>
+                        <td>DNS Tunneling</td>
+                        <td>Utilisation des requêtes DNS pour exfiltrer des données</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: DNS Tunneling</h4>
+                        <ol>
+                            <li>Configuration d'un serveur DNS malveillant</li>
+                            <li>Encodage des données dans des sous-domaines</li>
+                            <li>Envoi des requêtes via le port 53 (généralement ouvert)</li>
+                            <li>Décodage des données côté serveur</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Techniques avancées</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>ICMP Tunneling</strong>: Utilisation du protocole ICMP (Ping)</li>
+                        <li><strong>FTP Bounce</strong>: Exploitation des serveurs FTP pour contourner les restrictions</li>
+                        <li><strong>Firewalking</td>
+                        <td>Détermination des règles de pare-feu par analyse</td>
+                    </tr>
+                    <tr>
+                        <td>Application-level</td>
+                        <td>Utilisation de services autorisés (HTTP, SMTP)</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h5>Protections contre le contournement</h5>
+                        <ul>
+                            <li>Inspection approfondie des paquets (DPI)</li>
+                            <li>Analyse comportementale du trafic</li>
+                            <li>Limitation des ports ouverts</li>
+                            <li>Surveillance des flux sortants</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="tools" class="mt-5">
+        <h1>6. Outils de contournement</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Outils populaires</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Outil</th>
+                        <th>Fonctionnalité</th>
+                    </tr>
+                    <tr>
+                        <td>Nmap</td>
+                        <td>Scan réseau, détection de pare-feux</td>
+                    </tr>
+                    <tr>
+                        <td>Metasploit</td>
+                        <td>Framework d'exploitation avec modules d'évasion</td>
+                    </tr>
+                    <tr>
+                        <td>DNS2TCP</td>
+                        <td>Tunnel DNS</td>
+                    </tr>
+                    <tr>
+                        <td>Ptunnel</td>
+                        <td>Tunnel ICMP</td>
+                    </tr>
+                    <tr>
+                        <td>HTTPTunnel</td>
+                        <td>Encapsulation HTTP</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Nmap - Techniques d'évasion</h5>
+                    <ul>
+                        <li><code>--scan-delay</code>: Délai entre les paquets</li>
+                        <li><code>--data-length</code>: Ajout de données aléatoires</li>
+                        <li><code>--frag</code>: Fragmentation des paquets</li>
+                        <li><code>--source-port</code>: Spécification du port source</li>
+                        <li><code>--spoof-mac</code>: Spoofing d'adresse MAC</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Démonstration: Tunnel DNS avec DNS2TCP</h4>
+                        <ol>
+                            <li>Configuration du serveur DNS</li>
+                            <li>Lancement du serveur tunnel: <code>dns2tcpd -f dns2tcpd.conf</code></li>
+                            <li>Configuration du client: <code>dns2tcpc -z domain.com server_ip</code></li>
+                            <li>Connexion via SSH sur le tunnel</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Fonctionnalités avancées de Metasploit</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Charges utiles chiffrées</li>
+                            <li>Techniques de fragmentation</li>
+                            <li>Évasion des antivirus</li>
+                            <li>Migration de processus</li>
+                            <li>Communication chiffrée</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-warning mt-3">
+                    <div class="card-body">
+                        <h5>Considérations éthiques</h5>
+                        <p>Ces outils ne doivent être utilisés qu'avec autorisation explicite. Leur utilisation non autorisée est illégale.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="detecting-honeypots" class="mt-5">
+        <h1>7. Détection des Honeypots</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Techniques de détection</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Méthode</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Analyse de comportement</td>
+                        <td>Détection d'anomalies dans les réponses système</td>
+                    </tr>
+                    <tr>
+                        <td>Fingerprinting</td>
+                        <td>Identification des signatures spécifiques aux honeypots</td>
+                    </tr>
+                    <tr>
+                        <td>Délais artificiels</td>
+                        <td>Détection des temps de réponse non naturels</td>
+                    </tr>
+                    <tr>
+                        <td>Interactions limitées</td>
+                        <td>Observation des limites fonctionnelles</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Indicateurs communs des honeypots</h5>
+                    <ul>
+                        <li>Services avec versions inhabituelles</li>
+                        <li>Absence de trafic utilisateur réel</li>
+                        <li>Réponses trop "propres" ou standardisées</li>
+                        <li>Délais de réponse constants</li>
+                        <li>Absence d'activité système normale</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils de détection</h4>
+                        <ul>
+                            <li><strong>Honeypot Detector</strong>: Identification des honeypots connus</li>
+                            <li><strong>Artillery</strong>: Surveillance pour détecter les leurres</li>
+                            <li><strong>Wireshark</strong>: Analyse des patterns réseau</li>
+                            <li><strong>Nmap Scripts</strong>: Détection spécifique via NSE</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Étapes pour identifier un honeypot</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Scan initial des ports et services</li>
+                            <li>Analyse des bannières et versions</li>
+                            <li>Test d'interactions simples</li>
+                            <li>Observation des réponses aux erreurs</li>
+                            <li>Analyse du trafic réseau environnant</li>
+                            <li>Comparaison avec des systèmes réels</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h5>Précautions</h5>
+                        <p>La détection des honeypots peut alerter les défenseurs. Toujours utiliser des techniques non intrusives et des connexions anonymisées.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>8. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protections pour IDS/IPS</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Mises à jour régulières</strong>: Maintenir les signatures à jour</li>
+                        <li><strong>Détection comportementale</strong>: Compléter les signatures par de l'IA</li>
+                        <li><strong>Configuration avancée</strong>: Réglage fin des seuils de détection</li>
+                        <li><strong>Analyse SSL/TLS</strong>: Inspection du trafic chiffré</li>
+                        <li><strong>Corrélation</strong>: Intégration avec SIEM</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protections pour Firewalls</h3>
+                <ul>
+                    <li>Politiques de moindre privilège</li>
+                    <li>Inspection approfondie des paquets (DPI)</li>
+                    <li>Blocage des tunnels connus (DNS, ICMP)</li>
+                    <li>Surveillance des flux sortants</li>
+                    <li>Segmentation réseau stricte</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Protections pour Honeypots</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Diversification</strong>: Varier les types de honeypots</li>
+                        <li><strong>Personnalisation</strong>: Adapter les leurres à l'environnement réel</li>
+                        <li><strong>Interaction réaliste</strong>: Comportements crédibles</li>
+                        <li><strong>Intégration</strong>: Lier aux systèmes de détection</li>
+                        <li><strong>Anonymat</strong>: Dissimuler l'origine des honeypots</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Stratégies globales</h4>
+                        <ul>
+                            <li>Défense en profondeur (multi-couches)</li>
+                            <li>Surveillance continue du réseau</li>
+                            <li>Tests d'intrusion réguliers</li>
+                            <li>Formation des équipes de sécurité</li>
+                            <li>Plan de réponse aux incidents</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-primary text-white mt-4">
+            <div class="card-body">
+                <h4>Programme de protection complet</h4>
+                <ol>
+                    <li>Évaluation des risques et des vulnérabilités</li>
+                    <li>Mise en œuvre de contrôles défensifs multi-couches</li>
+                    <li>Configuration et durcissement des systèmes</li>
+                    <li>Surveillance et analyse continue</li>
+                    <li>Tests réguliers d'efficacité des contrôles</li>
+                    <li>Mise à jour et amélioration continue</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Solutions intégrées</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>XDR (Extended Detection and Response)</h5>
+                            <p>Intégration des données de sécurité</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SASE (Secure Access Service Edge)</h5>
+                            <p>Convergence réseau et sécurité</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SOAR (Security Orchestration, Automation and Response)</h5>
+                            <p>Automatisation de la réponse</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

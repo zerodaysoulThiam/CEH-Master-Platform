@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 16 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 16 : Hacking Wireless Networks</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = 
+            {
+  "fr": {
+    "facile": [
+      "Quel protocole Wi-Fi est considéré comme le plus sécurisé?;WPA3;WEP;WPA;WPA2;a;WPA3 offre une sécurité renforcée avec SAE et une protection contre les attaques offline, contrairement à WEP (cassé en minutes) et WPA2 (vulnérable à KRACK).",
+      "Quelle commande initialise le mode monitor?;airmon-ng start wlan0;airodump-ng wlan0;aireplay-ng --deauth;aircrack-ng capture.cap;a;airmon-ng start wlan0 active le mode monitor nécessaire à l'analyse réseau, créant une interface virtuelle (ex: wlan0mon).",
+      "Quelle attaque bloque les clients Wi-Fi?;Deauth Attack;Evil Twin;Bluejacking;Bluesnarfing;a;L'attaque de désauthentification (aireplay-ng --deauth) envoie des paquets de déconnexion pour forcer les clients à se reconnecter.",
+      "Quel composant identifie un réseau Wi-Fi?;SSID;BSSID;ESSID;MAC Address;a;Le SSID (Service Set Identifier) est le nom public du réseau visible lors de la recherche Wi-Fi.",
+      "Quelle technique vole des données Bluetooth?;Bluesnarfing;Bluejacking;Blueborne;BIAS;b;Le Bluesnarfing permet de voler des données (contacts, messages) via Bluetooth sans consentement."
+    ],
+    "moyen": [
+      "Comment contourner WPA2 avec KRACK?;Réinstaller le handshake 4-way;Désactiver TKIP;Utiliser WPS;Changer de canal;a;KRACK exploite la vulnérabilité de réinstallation du 4-way handshake pour décrypter le trafic.",
+      "Quel outil automatise les attaques Wi-Fi?;Wifite;Aircrack-ng;Kismet;Bluetoothctl;a;Wifite automatise le cracking (détection AP, capture handshake, dictionnaire) sans commandes manuelles.",
+      "Comment identifier un Evil Twin?;Même SSID mais BSSID différent;Signal plus fort;Absence de chiffrement;Canaux 5GHz;a;Un Evil Twin clone le SSID légitime mais a une adresse MAC (BSSID) différente.",
+      "Quelle attaque exploite les PIN WPS?;Attaque Pixie Dust;Deauth;Bluejacking;MITM;a;Pixie Dust cracke les PIN WPS par bruteforce offline en exploitant des seeds PRNG faibles.",
+      "Quelle commande capture un handshake?;airodump-ng -c [canal] --bssid [MAC] -w capture;aireplay-ng --deauth;airmon-ng stop wlan0mon;hcxdumptool -i wlan0 -o capture;a;airodump-ng surveille un canal spécifique et écrit les handshakes capturés dans un fichier."
+    ],
+    "difficile": [
+      "Comment attaquer WPA3 avec Dragonfly?;Exploiter les timing leaks;Désactiver PMF;Utiliser KRACK;Inonder le canal;a;Dragonfly exploite les fuites temporelles dans SAE pour deviner le mot de passe via attaque par canaux auxiliaires.",
+      "Quel outil effectue des attaques MITM BLE?;GATTacker;MDK4;Fern Wifi Cracker;hcitool;a;GATTacker simule des périphériques BLE pour intercepter les communications via des attaques Man-in-the-Middle.",
+      "Comment détecter un Rogue AP?;Analyser les anomalies BSSID;Scanner les ports;Tester WPS;Vérifier le chiffrement;a;Les Rogue APs ont souvent des anomalies (puissance signal, BSSID inconnu, canaux inhabituels) détectables avec Kismet.",
+      "Quelle vulnérabilité cible Bluetooth sans appairage?;Blueborne;BIAS;Bluesnarfing;Bluejacking;a;Blueborne exploite des vulnérabilités dans la pile Bluetooth pour prendre le contrôle sans appairage préalable.",
+      "Comment sécuriser un réseau contre Evil Twins?;Implémenter 802.1X;Désactiver SSID broadcast;Changer le canal;Utiliser WEP;a;Le protocole 802.1X avec authentification EAP empêche les connexions à des AP non autorisés."
+    ]
+  },
+  "en": {
+    "facile": [
+      "Which Wi-Fi protocol is considered the most secure?;WPA3;WEP;WPA;WPA2;a;WPA3 provides enhanced security with SAE and offline attack protection, unlike WEP (broken in minutes) and WPA2 (vulnerable to KRACK).",
+      "Which command initiates monitor mode?;airmon-ng start wlan0;airodump-ng wlan0;aireplay-ng --deauth;aircrack-ng capture.cap;a;airmon-ng start wlan0 activates monitor mode required for network analysis, creating a virtual interface (e.g., wlan0mon).",
+      "Which attack blocks Wi-Fi clients?;Deauth Attack;Evil Twin;Bluejacking;Bluesnarfing;a;The deauthentication attack (aireplay-ng --deauth) sends disconnection packets to force clients to reconnect.",
+      "Which component identifies a Wi-Fi network?;SSID;BSSID;ESSID;MAC Address;a;SSID (Service Set Identifier) is the public network name visible during Wi-Fi scanning.",
+      "Which technique steals Bluetooth data?;Bluesnarfing;Bluejacking;Blueborne;BIAS;b;Bluesnarfing steals data (contacts, messages) via Bluetooth without consent."
+    ],
+    "moyen": [
+      "How to bypass WPA2 with KRACK?;Reinstall 4-way handshake;Disable TKIP;Use WPS;Change channel;a;KRACK exploits the 4-way handshake reinstallation vulnerability to decrypt traffic.",
+      "Which tool automates Wi-Fi attacks?;Wifite;Aircrack-ng;Kismet;Bluetoothctl;a;Wifite automates cracking (AP detection, handshake capture, dictionary) without manual commands.",
+      "How to identify an Evil Twin?;Same SSID but different BSSID;Stronger signal;No encryption;5GHz channels;a;An Evil Twin clones the legitimate SSID but has a different MAC address (BSSID).",
+      "Which attack exploits WPS PINs?;Pixie Dust Attack;Deauth;Bluejacking;MITM;a;Pixie Dust cracks WPS PINs via offline bruteforce by exploiting weak PRNG seeds.",
+      "Which command captures a handshake?;airodump-ng -c [channel] --bssid [MAC] -w capture;aireplay-ng --deauth;airmon-ng stop wlan0mon;hcxdumptool -i wlan0 -o capture;a;airodump-ng monitors a specific channel and writes captured handshakes to a file."
+    ],
+    "difficile": [
+      "How to attack WPA3 with Dragonfly?;Exploit timing leaks;Disable PMF;Use KRACK;Flood channel;a;Dragonfly exploits timing leaks in SAE to guess passwords via side-channel attacks.",
+      "Which tool performs BLE MITM attacks?;GATTacker;MDK4;Fern Wifi Cracker;hcitool;a;GATTacker simulates BLE devices to intercept communications via Man-in-the-Middle attacks.",
+      "How to detect a Rogue AP?;Analyze BSSID anomalies;Port scanning;Test WPS;Check encryption;a;Rogue APs often have anomalies (signal power, unknown BSSID, unusual channels) detectable with Kismet.",
+      "Which vulnerability targets Bluetooth without pairing?;Blueborne;BIAS;Bluesnarfing;Bluejacking;a;Blueborne exploits vulnerabilities in the Bluetooth stack to take control without prior pairing.",
+      "How to secure a network against Evil Twins?;Implement 802.1X;Disable SSID broadcast;Change channel;Use WEP;a;802.1X protocol with EAP authentication prevents connections to unauthorized APs."
+    ]
+  }
+}
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

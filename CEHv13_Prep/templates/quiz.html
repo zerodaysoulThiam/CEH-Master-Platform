@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="body-content">
+    <h1>Quiz - Module {{ module }}</h1>
+    {% if show_quiz %}
+    <div id="timer" class="alert alert-info">Temps restant : <span id="time"></span></div>
+    <script>
+    let duration = { duration };
+    let display = document.getElementById('time');
+
+    function startTimer(seconds) {
+        let timer = seconds, minutes, secondsLeft;
+        let interval = setInterval(() => {
+            minutes = parseInt(timer / 60, 10);
+            secondsLeft = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            secondsLeft = secondsLeft < 10 ? "0" + secondsLeft : secondsLeft;
+            display.textContent = minutes + ":" + secondsLeft;
+
+            if (--timer < 0) {
+                clearInterval(interval);
+                alert("⏰ Temps écoulé ! Test soumis automatiquement.");
+                document.querySelector("form").submit();
+            }
+        }, 1000);
+    }
+
+    window.onload = function () {
+        startTimer(duration);
+    };
+    </script>
+    {% endif %}
+
+    <form method="POST" novalidate>
+        {% for question in questions %}
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">{{ loop.index }}. {{ question['question'] }}</h3>
+
+                <label class="option-label">
+                    <input type="radio" name="question{{ loop.index0 }}" value="A" required>
+                    <span>{{ question['option_a'] }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="question{{ loop.index0 }}" value="B">
+                    <span>{{ question['option_b'] }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="question{{ loop.index0 }}" value="C">
+                    <span>{{ question['option_c'] }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="question{{ loop.index0 }}" value="D">
+                    <span>{{ question['option_d'] }}</span>
+                </label>
+
+                {% if question['option_e'] %}
+                <label class="option-label">
+                    <input type="radio" name="question{{ loop.index0 }}" value="E">
+                    <span>{{ question['option_e'] }}</span>
+                </label>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <input type="hidden" name="submitted" value="1">
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Envoyer</button>
+    </form>
+
+    {% if score is defined %}
+    <script>
+    alert("Votre score est {{ score }} / {{ questions|length }}");
+    window.location.href = "{{ url_for('cours', module=module) }}";  // redirection vers la page de cours
+    </script>
+    {% endif %}
+
+</div>
+{% endblock %}

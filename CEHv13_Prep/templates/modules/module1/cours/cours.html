@@ -1,0 +1,1795 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 1{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Cours - Module 1: Introduction to Ethical Hacking</h1>
+    <table class="table-of-contents">
+        <caption>📚 Table des matières - Module 1</caption>
+        <tr>
+            <td><a href="#data-leakage-backup-and-recovery">Data Leakage, Backup, and Recovery</a></td>
+            <td><a href="#hacker-types">Hacker Types</a></td>
+        </tr>
+        <tr>
+            <td><a href="#hacking-stages">Hacking Stages</a></td>
+            <td><a href="#identity-access-management">Identity Access Management (IAM)</a></td>
+        </tr>
+        <tr>
+            <td><a href="#incident-management">Incident Management</a></td>
+            <td><a href="#information-security-controls">Information Security Controls</a></td>
+        </tr>
+        <tr>
+            <td><a href="#laws-standards-and-regulations">Laws, Standards, and Regulations</a></td>
+            <td><a href="#network-security">Network Security</a></td>
+        </tr>
+        <tr>
+            <td><a href="#penetration-testing-phases">Penetration Testing Phases</a></td>
+            <td><a href="#penetration-testing">Penetration Testing</a></td>
+        </tr>
+        <tr>
+            <td><a href="#physical-security">Physical Security</a></td>
+            <td><a href="#risk-management">Risk Management</a></td>
+        </tr>
+        <tr>
+            <td><a href="#security-policies">Security Policies</a></td>
+            <td><a href="#security-threats-and-attacks">Security Threats and Attacks</a></td>
+        </tr>
+        <tr>
+            <td><a href="#threat-intelligence-and-forensics">Threat Intelligence and Forensics</a></td>
+            <td></td>
+        </tr>
+    </table>
+
+
+    <section id="data-leakage-backup-and-recovery">
+        <h1>Fuite de données, sauvegarde et récupération</h1>
+
+        <h2>Fuite de données</h2>
+        <p>La fuite de données correspond à toute divulgation non autorisée d'informations sensibles, provenant de n'importe qui ou de n'importe quel système.</p>
+        <ul>
+            <li>Peut inclure les emails, liens malveillants, vol d'appareil, etc.</li>
+            <li>
+                Les conséquences de la fuite de données :
+                <ul>
+                    <li>Perte de confiance, par exemple la confiance envers les gouvernements a diminué ces dernières années.</li>
+                    <li>Perte financière, par exemple Sony a perdu des profits sur ses films après qu'ils aient été <a href="https://fr.wikipedia.org/wiki/Piratage_de_Sony_Pictures" target="_blank" rel="noopener noreferrer">fuités</a> avant leur sortie officielle.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Menaces liées à la fuite de données</h3>
+
+        <h4>Menaces externes</h4>
+        <ul>
+            <li>Espionnage industriel, phishing, malwares.</li>
+            <li>
+                Partenaires commerciaux, consultants lors de l'externalisation :
+                <ul>
+                    <li>Moins de surveillance que les employés internes.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Menaces internes</h4>
+        <ul>
+            <li>Appelées aussi <strong>menaces internes</strong> ou <strong>insiders</strong>.</li>
+            <li>Plus dangereuses que les menaces externes car elles ont un accès plus important aux données de l'entreprise.</li>
+            <li>Exemples : écoute clandestine, observation par-dessus l’épaule, <a href="./../10-social-engineering/social-engineering-types.md#dumpster-diving">fouille dans les poubelles</a> pour récupérer des informations.</li>
+        </ul>
+
+        <h2>Prévention des pertes de données (DLP)</h2>
+        <p>La prévention des pertes de données, ou DLP, consiste à identifier et surveiller les informations importantes qui ne doivent pas sortir de l'organisation.</p>
+        <ul>
+            <li>Peut bloquer l'envoi, notifier l'expéditeur, ou alerter les administrateurs qui analysent et réagissent aux données sensibles en transit.</li>
+            <li>Outil important pour les systèmes de messagerie d'entreprise.</li>
+            <li>Utilise diverses techniques de contrôle d'accès aux données, comme scanner le contenu des emails à la recherche d’empreintes, de classifications ou de numéros de compte bancaire.</li>
+        </ul>
+
+        <h2>Sauvegarde des données</h2>
+        <p>La sauvegarde consiste à faire une copie de données existantes pour les protéger contre la perte ou la corruption, ce qui peut entraîner des pertes financières importantes.</p>
+        <ul>
+            <li>Sans sauvegarde, les données sont beaucoup plus vulnérables, notamment aux attaques de type ransomware.</li>
+        </ul>
+
+        <h3>Supports de sauvegarde</h3>
+
+        <h4>Bandes magnétiques</h4>
+        <ul>
+            <li>Plus ancien support, encore utilisé par de nombreuses entreprises.</li>
+            <li>Durée de conservation : environ 30 ans.</li>
+            <li>
+                Pour récupérer une donnée, il faut avancer la bande jusqu'à l'emplacement du fichier.
+                <ul>
+                    <li>Pratique pour restaurer un système complet d’un coup.</li>
+                    <li>Peu adapté aux sauvegardes incrémentales ou à la récupération de fichiers isolés.</li>
+                    <li>La seule façon de vérifier que la sauvegarde fonctionne est de faire une restauration complète.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Disques optiques</h4>
+        <ul>
+            <li>Deux à trois fois plus lents que les disques durs.</li>
+            <li>Durée de conservation : environ 25 ans.</li>
+        </ul>
+
+        <h4>Disques durs</h4>
+        <ul>
+            <li>Moins coûteux et facilement accessibles.</li>
+            <li>Moins stables que les bandes magnétiques.</li>
+            <li>Durée de conservation : environ 9 à 20 ans.</li>
+        </ul>
+
+        <h4>Disques SSD</h4>
+        <ul>
+            <li>Inclut aussi les clés USB (stockage flash).</li>
+            <li>Résistants aux chocs, à la température, même à un passage en machine.</li>
+            <li>Durée de conservation : environ 10 ans.</li>
+        </ul>
+
+        <h4>Stockage cloud</h4>
+        <ul>
+            <li>Nécessite peu d'infrastructure.</li>
+            <li>Dépend d'une connexion internet stable.</li>
+            <li>Pas de durée de conservation fixe, très fiable.</li>
+        </ul>
+
+        <h4>Cartes SD et micro-SD</h4>
+        <ul>
+            <li>Petite capacité et coûteux.</li>
+            <li>Durée de conservation : environ 10 ans.</li>
+        </ul>
+
+        <h3>Étapes d'une stratégie de sauvegarde</h3>
+        <ol>
+            <li><strong>Identifier les données importantes</strong> : tout sauvegarder coûte cher et prend beaucoup de place.</li>
+            <li><strong>Choisir un support de sauvegarde approprié</strong> : fiable, solide et de préférence peu coûteux. (ex : USB pour particulier, HDD/SSD pour entreprise)</li>
+            <li>
+                <strong>Choisir une stratégie de sauvegarde adaptée</strong> : fonctionnalités, planification, suivi des modifications, protocoles...
+                <ul>
+                    <li>Solutions gratuites : plus de travail et formation initiale requise (ex : cron sous Linux).</li>
+                    <li>Solutions payantes : coût de licence récurrent, formation comprise.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Choisir le niveau RAID adéquat</strong> :
+                <ul>
+                    <li><strong>RAID 1</strong> : 2 disques, les données sont dupliquées, si un disque tombe en panne, l’autre fonctionne.</li>
+                    <li><strong>RAID 5</strong> : 3 disques, permet de reconstruire les données en cas de défaillance d’un disque.</li>
+                    <li>RAID n’est pas seulement pour sauvegarde, mais aussi pour accélérer les lectures et écritures.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Choisir la méthode de sauvegarde</strong> :
+                <ul>
+                    <li><strong>Cold backup</strong> : réalisé quand le système est arrêté (ex : nuit, week-end).</li>
+                    <li><strong>Hot backup</strong> : réalisé pendant que le système est en fonctionnement, pour une sauvegarde en temps réel.</li>
+                    <li><strong>Warm backup</strong> : hybride, sauvegardes périodiques pendant que le système est utilisé.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Choisir l’emplacement des sauvegardes</strong> :
+                <ul>
+                    <li>Sur site : même bâtiment, vulnérable aux mêmes risques (incendie, attaque, etc.).</li>
+                    <li>Hors site : sauvegarde dans un lieu distant.</li>
+                    <li>Cloud : plus sécurisé et économique, mais peut poser des questions de confidentialité, donc chiffrement recommandé.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Choisir le type de sauvegarde</strong> :
+                <ul>
+                    <li><strong>Sauvegarde complète</strong> : tout sauvegarder, coûteux en temps et espace.</li>
+                    <li><strong>Sauvegarde incrémentale</strong> : sauvegarde les modifications depuis la dernière sauvegarde, restauration plus longue car toutes les sauvegardes sont nécessaires.</li>
+                    <li><strong>Sauvegarde différentielle</strong> : sauvegarde les modifications depuis la dernière sauvegarde complète, restauration plus rapide.</li>
+                </ul>
+            </li>
+            <li><strong>Mettre en place la solution adéquate</strong> : combinaison adaptée selon les besoins.</li>
+            <li>
+                <strong>Effectuer des tests de restauration</strong> : tester régulièrement la récupération des données, idéalement deux fois par an.
+                <ul>
+                    <li><strong>Exercices de récupération</strong> : simuler une panne, restaurer et valider l’intégrité des applications après récupération.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h2>Récupération des données</h2>
+        <p>La récupération des données consiste à restaurer des données perdues suite à :</p>
+        <ul>
+            <li>Perte accidentelle (désastre naturel, corruption de fichiers).</li>
+            <li>Destruction intentionnelle.</li>
+        </ul>
+        <p>DR signifie "Disaster Recovery" (récupération après sinistre).</p>
+        <p>La plupart des données sont récupérables, mais la restauration peut échouer si les sauvegardes sont corrompues.</p>
+    </section>
+
+
+    <section id="hacker-types">
+        <h1> Les Types de Hackers</h1>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Hacker</h3>
+            <ul>
+                <li>Personne utilisant ses compétences techniques pour accéder à des systèmes.</li>
+                <li>À l'origine, terme désignant une personne curieuse et ingénieuse.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Black Hat Hackers (Chapeau noir)</h3>
+            <ul>
+                <li>Objectif : exploitation malveillante ou lucrative.</li>
+                <li>Violent la loi et les règles.</li>
+                <li>Activités : vol d'infos, sabotage, etc.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>White Hat Hackers (Chapeau blanc)</h3>
+            <ul>
+                <li>Aussi appelés hackers éthiques.</li>
+                <li>Objectif : sécuriser les systèmes en découvrant les failles.</li>
+                <li>Respectent la loi et travaillent avec autorisation.</li>
+                <li>Peuvent participer à des programmes de récompense (bug bounty).</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Hacking éthique</h3>
+            <ul>
+                <li>Autorisé par l'entreprise ou le propriétaire du système.</li>
+                <li>Analyse et renforcement de la sécurité.</li>
+                <li>Étapes : identifier → évaluer → corriger → informer.</li>
+                <li>Questions clés : Que voit un attaquant ? Que peut-il faire ? Traces d’attaques ?</li>
+                <li>Doit être limité au périmètre autorisé et rester confidentiel.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Grey Hat Hackers (Chapeau gris)</h3>
+            <ul>
+                <li>Entre bienveillance et malveillance.</li>
+                <li>Peuvent enfreindre la loi, sans intentions clairement nuisibles.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Suicide Hackers</h3>
+            <ul>
+                <li>Agissent pour une cause, même en sachant qu’ils seront arrêtés.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Script Kiddies</h3>
+            <ul>
+                <li>Débutants qui utilisent des outils qu’ils ne comprennent pas.</li>
+                <li>Potentiellement dangereux pour eux-mêmes et les autres.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Cyberterroristes</h3>
+            <ul>
+                <li>Motivés par des idéologies religieuses ou politiques.</li>
+                <li>Objectif : créer la peur, le chaos, la destruction.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <h3>Hackers sponsorisés par des États</h3>
+            <ul>
+                <li>Recrutés par des gouvernements.</li>
+                <li>Objectif : espionnage ou sabotage d’autres États, entreprises ou individus.</li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Hacktivistes</h3>
+            <ul>
+                <li>Hackent pour défendre une cause politique ou sociale.</li>
+                <li>Peuvent divulguer des données pour protester.</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <section id="hacking-stages">
+
+        <h1>Étapes du hacking</h1>
+
+        <h2 id="1-reconnaissance">1. Reconnaissance</h2>
+        <ul>
+            <li>Également appelée <strong>footprinting</strong>, <strong>fingerprinting</strong> ou <strong>collecte d'informations</strong></li>
+            <li>📝 La reconnaissance est une étape préliminaire consistant à faire des recherches ou un repérage sur la cible.</li>
+            <li>📝 C'est une étape indispensable, une attaque ne peut réussir sans reconnaissance.</li>
+        </ul>
+
+        <h2 id="2-scanning">2. Scan</h2>
+        <ul>
+            <li>Le hacker utilise les informations collectées lors de la reconnaissance pour réaliser un scan plus technique.</li>
+            <li>Souvent, il cartographie les routeurs et pare-feux.</li>
+            <li>Utilisation d'outils comme les scanners de ports, les mappers réseau, scanners de vulnérabilités, etc.</li>
+        </ul>
+
+        <h3>Reconnaissance vs Scan</h3>
+        <p>Lors du scan, on agit sur les informations préalablement collectées pour approfondir la collecte.</p>
+
+        <table style="width:100%; border-collapse: separate; border-spacing: 10px;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Reconnaissance</th>
+                    <th style="text-align:left;">Scan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="#1-reconnaissance">Scanner le réseau périphérique pour obtenir les adresses IP</a></td>
+                    <td>Utiliser par exemple <code>nmap</code> pour connaître la configuration</td>
+                </tr>
+                <tr>
+                    <td>Collecter des e-mails</td>
+                    <td>Utiliser le phishing pour récolter des données personnelles</td>
+                </tr>
+                <tr>
+                    <td>Localiser physiquement les services</td>
+                    <td>Pratiquer le "dumpster diving" (fouille des poubelles)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="3-gaining-access">3. Accès au système</h2>
+        <ul>
+            <li>Étape d'attaque</li>
+            <li>Étapes :</li>
+            <ol>
+                <li>Trouver un point d'entrée vers le système d'exploitation ou une application</li>
+                <li>L'utiliser pour lancer l'attaque</li>
+                <ul>
+                    <li>Les hackers peuvent escalader leurs privilèges pour obtenir le contrôle total du système ou réseau</li>
+                </ul>
+            </ol>
+            <li>Exemples :</li>
+            <ul>
+                <li>Craquage de mot de passe par force brute ou dictionnaire</li>
+                <li>Exploitation d'un débordement de tampon (buffer overflow)</li>
+                <li>Détournement de session (session hijacking)</li>
+                <li>Attaques par déni de service (DoS)</li>
+            </ul>
+        </ul>
+
+        <h2 id="4-maintaining-access">4. Maintien de l'accès</h2>
+        <ul>
+            <li>Garder les privilèges administrateur/root pour continuer à utiliser le système</li>
+            <li>Après intrusion, tenter d'élever les privilèges pour faire plus de dégâts</li>
+            <li>Maintenir un accès persistant, car la connexion peut se couper et il faudra recommencer</li>
+            <li>Empêcher d'autres hackers d'accéder au système en installant des portes dérobées (backdoors), rootkits ou chevaux de Troie (trojans)</li>
+            <li>💡 Installer des outils pour garder un accès persistant et collecter des données, comme un keylogger</li>
+            <li>💡 Utiliser la machine compromise comme proxy pour masquer les traces</li>
+            <li>❗ En tant que pentester, documenter ces techniques pour éviter d'impliquer d'autres personnes à tort</li>
+        </ul>
+
+        <h2 id="5-clearing-tracks">5. Effacement des traces</h2>
+        <ul>
+            <li>Les hackers font tout pour cacher leurs activités</li>
+            <li>Le but est de garder l'accès tout en restant invisibles</li>
+            <li>Si détecté, la vulnérabilité sera corrigée et l'accès perdu</li>
+            <li>Important d'effacer les traces rapidement, ou de ne pas en laisser</li>
+            <li>Actions courantes :</li>
+            <ul>
+                <li>Effacer certaines entrées des fichiers journaux (logs), mais pas toutes pour éviter les soupçons</li>
+                <li>Dissimuler les activités pour qu'elles ressemblent à des actions légitimes</li>
+                <li>Exemple : un bon keylogger se cache derrière un comportement légitime, mimant d'autres programmes</li>
+            </ul>
+        </ul>
+
+    </section>
+
+
+    <section id="identity-access-management">
+        <h1>Gestion des identités et des accès (IAM)</h1>
+        <p>
+            La gestion des identités et des accès (IAM) garantit que les bonnes personnes ont accès aux bonnes ressources, au bon moment.
+            C'est un cadre de bonnes pratiques utilisé par les organisations pour sécuriser leurs systèmes.
+        </p>
+
+        <h2>Modules principaux</h2>
+        <ol>
+            <li><strong>Module de gestion des accès :</strong> authentification et autorisation.</li>
+            <li><strong>Module de gestion des identités :</strong> gestion des utilisateurs et des services d'annuaire d'entreprise.</li>
+        </ol>
+
+        <section id="composants-iam">
+            <h2>Composants de l'IAM</h2>
+
+            <section id="gestion-acces">
+                <h3>Gestion des accès</h3>
+
+                <section id="authentification">
+                    <h4>Authentification</h4>
+                    <p>Inclut la gestion des sessions et des mots de passe.</p>
+
+                    <article id="sso">
+                        <h5>Authentification unique (SSO)</h5>
+                        <p>
+                            Permet d'utiliser un seul jeu d'identifiants pour accéder à plusieurs applications.
+                            C'est un service centralisé d'authentification et de gestion de session, facilitant l'administration et l'expérience utilisateur.
+                        </p>
+                    </article>
+
+                    <article id="mfa">
+                        <h5>Authentification multi-facteurs (MFA)</h5>
+                        <p>
+                            Méthode qui demande plusieurs preuves d'identité (au moins deux) pour accéder à une ressource.
+                            <strong>2FA</strong> (authentification à deux facteurs) est une forme courante de MFA.
+                        </p>
+                        <p><strong>Types de facteurs d'authentification :</strong></p>
+                        <ul>
+                            <li><strong>Connaissance :</strong> quelque chose que l'utilisateur sait (ex. mot de passe, code PIN). Risque : enregistrement d'écran.</li>
+                            <li><strong>Possession :</strong> quelque chose que l'utilisateur possède (ex. carte à puce, token). Risque : clonage.</li>
+                            <li><strong>Inhérence :</strong> quelque chose que l'utilisateur est (ex. biométrie : empreinte, visage, voix, iris). Risque : tromperie via manipulation.</li>
+                            <li><strong>Localisation :</strong> où se trouve l'utilisateur (ex. réseau, pays). Risque : usage de proxy.</li>
+                        </ul>
+                    </article>
+
+                    <article id="otp">
+                        <h5>Mot de passe à usage unique (OTP)</h5>
+                        <p>
+                            Mot de passe valable une seule fois et limité dans le temps. Utilisé pour renforcer la sécurité, souvent pour VPN ou banque en ligne.
+                        </p>
+
+                        <section id="otp-token">
+                            <h6>Token OTP</h6>
+                            <p>
+                                Outil matériel ou logiciel générant des OTPs. Le serveur d'authentification utilise le même algorithme pour valider.
+                            </p>
+                            <p><strong>Types de tokens :</strong></p>
+                            <ul>
+                                <li>
+                                    <strong>Synchrones :</strong>
+                                    <ul>
+                                        <li><em>Basés sur l'heure :</em> token et serveur synchronisés sur le temps.</li>
+                                        <li><em>Basés sur un compteur :</em> incrémenté par action utilisateur (ex. allumer, entrer un code).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Asynchrones :</strong> aussi appelés tokens défi-réponse, où le serveur envoie un défi à l'utilisateur.</li>
+                            </ul>
+                        </section>
+                    </article>
+                </section> <!-- fin authentification -->
+
+                <section id="autorisation">
+                    <h4>Autorisation</h4>
+                    <p>Détermine ce que l'utilisateur peut faire une fois authentifié, via des règles d'accès.</p>
+
+                    <article id="role-based-authorization">
+                        <h5>Autorisation basée sur les rôles (RBAC)</h5>
+                        <p>
+                            Restreint l'accès aux systèmes aux utilisateurs autorisés selon leur rôle.
+                        </p>
+                        <p>Types de contrôles d'accès :</p>
+                        <ul>
+                            <li><strong>Contrôle d'accès obligatoire (MAC) :</strong> contrôle basé sur des labels de sécurité, géré par le système (ex. Unix).</li>
+                            <li><strong>Contrôle d'accès discrétionnaire (DAC) :</strong> contrôle géré par le propriétaire des données, qui définit les permissions.</li>
+                        </ul>
+                        <table border="1">
+                            <thead>
+                                <tr><th>Contrôle d'accès</th><th>Droits utilisateur</th><th>Utilisation</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Discrétionnaire (DAC)</td><td>Contrôle total</td><td>Systèmes de fichiers OS</td></tr>
+                                <tr><td>Obligatoire (MAC)</td><td>Pas de contrôle utilisateur, règles prédéfinies</td><td>Systèmes de fichiers OS</td></tr>
+                                <tr><td>Basé sur les rôles (RBAC)</td><td>Pas de contrôle utilisateur, règles prédéfinies</td><td>Cloud computing</td></tr>
+                            </tbody>
+                        </table>
+                    </article>
+                </section> <!-- fin autorisation -->
+            </section> <!-- fin gestion accès -->
+
+            <section id="gestion-identite">
+                <h3>Gestion des identités</h3>
+
+                <article id="gestion-utilisateurs">
+                    <h4>Gestion des utilisateurs</h4>
+                    <ul>
+                        <li>Administration déléguée</li>
+                        <li>Gestion des utilisateurs et des rôles</li>
+                        <li>Provisionnement (création et suppression automatique des comptes)</li>
+                        <li>Gestion des mots de passe</li>
+                        <li>Self-service (réinitialisation, mise à jour des infos par l’utilisateur)</li>
+                        <li>Audit de conformité pour respecter les politiques et réglementations</li>
+                    </ul>
+                </article>
+
+                <article id="annuaire-entreprise">
+                    <h4>Service d'annuaire d'entreprise</h4>
+                    <p>
+                        Répertoire central où tous les composants IAM vont chercher leurs données.
+                    </p>
+                    <ul>
+                        <li>Service d'annuaire (ex. LDAP)</li>
+                        <li>Synchronisation des données</li>
+                        <li>Métarépertoire (fusion de plusieurs annuaires)</li>
+                        <li>Annuaire virtuel</li>
+                    </ul>
+                </article>
+            </section> <!-- fin gestion identite -->
+
+        </section> <!-- fin composants IAM -->
+    </section>
+
+
+    <section id="incident-management">
+        <h1>Gestion des incidents (Incident management)</h1>
+        <p><strong>Définition :</strong> Processus d’identification, de hiérarchisation et de résolution des incidents de sécurité.</p>
+        <p><strong>But :</strong> Remettre le système à la normale et déclencher des alertes pour éviter d’autres risques.</p>
+
+        <h3>Étapes principales (flexibles) :</h3>
+        <ol>
+            <li>
+                <strong>Préparation</strong><br>
+                Savoir comment réagir avant que l’incident arrive (politiques, formation, outils).
+            </li>
+            <li>
+                <strong>Détection et analyse</strong><br>
+                Comprendre ce qui s’est passé (quoi, comment, pourquoi, où).
+            </li>
+            <li>
+                <strong>Catégorisation et priorisation</strong><br>
+                Classer l’incident selon sa gravité.
+            </li>
+            <li>
+                <strong>Notification</strong><br>
+                Informer les bonnes personnes concernées.
+            </li>
+            <li>
+                <strong>Confinement</strong><br>
+                Empêcher l’incident de causer plus de dégâts (ex: mettre en quarantaine).
+            </li>
+            <li>
+                <strong>Investigation forensique</strong><br>
+                Étudier en détail ce qui s’est passé et pourquoi.
+            </li>
+            <li>
+                <strong>Éradication</strong><br>
+                Supprimer complètement la menace.
+            </li>
+            <li>
+                <strong>Récupération</strong><br>
+                Remettre le système en état de fonctionnement.
+            </li>
+            <li>
+                <strong>Post-incident</strong><br>
+                Documenter et analyser pour éviter que ça se reproduise.
+            </li>
+        </ol>
+
+
+
+        <h2>Plan d’urgence (Emergency response plan)</h2>
+        <p>Plan qui aide une entreprise à gérer les urgences : qui contacter, quoi faire, comment limiter les dégâts.</p>
+
+
+
+        <h2>Gestion des événements et incidents de sécurité (SIEM)</h2>
+        <p>Analyse en temps réel des alertes de sécurité des réseaux et applications. Aide les centres de sécurité (SOC) à fonctionner.</p>
+
+        <h3>SIM vs SEM :</h3>
+        <ul>
+            <li><strong>SIM (Security Information Management)</strong> : stockage long terme, analyse et rapports des logs.</li>
+            <li><strong>SEM (Security Event Manager)</strong> : surveillance en temps réel, corrélation des événements, alertes.</li>
+        </ul>
+
+        <p><strong>Exemple :</strong> Splunk (outil populaire SIEM)</p>
+
+        <h3>Cas d’usage du SIEM</h3>
+        <ul>
+            <li>Détecter anomalies, attaques inconnues, erreurs de configuration, cyberattaques.</li>
+            <li>Trier, normaliser et classer automatiquement les logs.</li>
+            <li>Visualiser pour voir des motifs ou comportements suspects.</li>
+            <li>Détecter communications cachées ou malveillantes.</li>
+        </ul>
+
+        <h3>Composants du SIEM</h3>
+        <ul>
+            <li><strong>Agrégation</strong> : rassemblement des données logs.</li>
+            <li><strong>Corrélation</strong> : associer événements similaires (souvent avec IA).</li>
+            <li><strong>Alertes</strong> : analyser automatiquement les événements corrélés.</li>
+            <li><strong>Tableaux de bord</strong> : visualiser anomalies.</li>
+            <li><strong>Conformité</strong> : produire des rapports réglementaires.</li>
+            <li><strong>Conservation</strong> : garder les données pour enquêtes futures.</li>
+            <li><strong>Analyse forensic</strong> : rechercher dans les logs sur plusieurs systèmes et périodes.</li>
+        </ul>
+
+
+        <h2>Équipes de sécurité</h2>
+
+        <h3>Centre d’opérations de sécurité (SOC)</h3>
+        <p>Fonction centralisée qui surveille et améliore la sécurité de l’organisation. Prévention, détection, analyse et réponse aux incidents. Utilise le SIEM pour ses tâches.</p>
+
+        <h3>Équipe de réponse aux incidents (SIRT, CSIRT, CERT)</h3>
+        <p>Spécialisée dans la réponse rapide aux incidents. Développe et améliore le plan de réponse. Reçoit des informations sur les menaces du SOC. Évalue d’abord l’effort et l’impact avant d’agir.</p>
+        <p><em>Exemples :</em> US-CERT (USA), CERT-SE (Suède), TR-CERT (Turquie).</p>
+
+        <h3>Analyse du comportement utilisateur (UBA)</h3>
+        <p>Surveille les comportements des utilisateurs pour détecter des menaces internes ou attaques. Permet de repérer des écarts par rapport au comportement normal.</p>
+        <p><em>Exemples :</em> détection d’attaques internes, tentatives de connexion suspectes, accès anormaux à des comptes privilégiés.</p>
+
+    </section>
+
+
+    <section id="information-security-controls">
+        <h1>Vue d'ensemble des contrôles de sécurité de l'information</h1>
+
+        <h3>Information Assurance (IA)</h3>
+        <p>Maintenir la sécurité de l’information pendant son utilisation, son stockage, son traitement et son transfert :</p>
+        <ul>
+            <li><strong>Intégrité</strong> : Pas de modification non autorisée des données (ex : restreindre l’accès physique).</li>
+            <li><strong>Disponibilité</strong> : L’information doit être disponible à tout moment (ex : marché boursier).</li>
+            <li><strong>Confidentialité</strong> : Pas de fuite d’information (ex : politiques de sécurité en place).</li>
+            <li><strong>Authenticité</strong> : Seules les personnes autorisées peuvent accéder aux ressources.</li>
+            <li><strong>Non-répudiation</strong> : Impossible de nier une action (ex : signatures, journaux, vidéos de surveillance).</li>
+        </ul>
+
+        <p><strong>Pour garantir cela, on met en place :</strong></p>
+        <ul>
+            <li>Politiques de sécurité</li>
+            <li>Stratégie d’authentification réseau et utilisateur</li>
+            <li>Identification des menaces et vulnérabilités (ex : test de pénétration)</li>
+            <li>Identification des problèmes et besoins en ressources</li>
+            <li>Plan de sécurité basé sur les besoins identifiés</li>
+            <li>Certification et accréditation pour détecter et corriger les failles</li>
+            <li>Formation du personnel</li>
+        </ul>
+
+        <h3>Types de contrôles</h3>
+        <h4>Par type :</h4>
+        <ul>
+            <li><strong>Contrôles physiques</strong> : ex : barrières, portes, serrures, extincteurs</li>
+            <li><strong>Contrôles techniques (ou logiques)</strong> : ex : jetons de sécurité</li>
+            <li><strong>Contrôles administratifs</strong> : ex : politiques de sécurité, plans de continuité</li>
+        </ul>
+
+        <h4>Par fonction :</h4>
+        <ul>
+            <li><strong>Contrôles préventifs</strong> : empêchent les menaces (ex : authentification, chiffrement)</li>
+            <li><strong>Contrôles de détection</strong> : détectent un problème après coup (ex : alarmes, audits, alertes)</li>
+            <li><strong>Contrôles correctifs</strong> : réparent après détection (ex : sauvegardes, restauration)</li>
+        </ul>
+
+        <h3>Programme de gestion de la sécurité de l'information</h3>
+        <p>Regroupe toutes les actions de l’organisation pour protéger ses données sensibles : politiques, règles, formations, plans de continuité, indicateurs de sécurité, etc.</p>
+
+        <h3>Architecture de sécurité de l'information en entreprise (EISA)</h3>
+        <p>Régule la structure et le comportement de l'organisation concernant la sécurité.</p>
+        <ul>
+            <li>Surveillance en temps réel du réseau</li>
+            <li>Détection des violations de sécurité et récupération</li>
+            <li>Efficacité des dépenses en sécurité</li>
+            <li>Soutien au service informatique via des politiques et de la formation</li>
+            <li>Évaluation des risques des ressources informatiques</li>
+        </ul>
+
+        <h4>Cadre de gestion de la sécurité :</h4>
+        <p>Réduit les risques autant que possible. Il combine politiques, procédures, lignes directrices et normes.</p>
+
+        <h3>Défense en profondeur (Defense in Depth)</h3>
+        <p>Utilisation de plusieurs couches de protection, comme dans un jeu de tower defense.</p>
+        <p>Chaque couche renforce les autres et compense les éventuelles failles.</p>
+
+        <h4>Les 7 couches :</h4>
+        <ol>
+            <li><strong>Politiques, procédures, sensibilisation</strong> : classification des données, gestion des risques, formations…</li>
+            <li><strong>Sécurité physique</strong> : cartes d’identité, caméras, clôtures…</li>
+            <li><strong>Périmètre</strong> : filtrage réseau, gestion des identités, chiffrement…</li>
+            <li><strong>Réseau interne</strong> : segmentation, pare-feu internes…</li>
+            <li><strong>Hôte</strong> : antivirus, mises à jour, correctifs…</li>
+            <li><strong>Services</strong> : journaux d’audit, authentification, bonnes pratiques de codage…</li>
+            <li><strong>Données</strong> : sauvegardes, chiffrement, contrôle d’accès…</li>
+        </ol>
+    </section>
+
+
+    <section id="information-security-overview">
+        <h1>Information Security Overview</h1>
+
+
+        <h2>Information Security</h2>
+        <ul>
+            <li>Protecting information and information systems.</li>
+            <li>Defines sets of processes and activities performed to protect information.</li>
+            <li>
+                Goal: prevent unauthorized users from stealing or misusing information or services.
+                <ul>
+                    <li>
+                        If sensitive information falls into the wrong hands, it may cause huge losses including:
+                        <ul>
+                            <li>Finances</li>
+                            <li>Brand reputation</li>
+                            <li>Customers</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+
+
+        <h2>Essential Terms</h2>
+
+        <article id="hack-value">
+            <h3>Hack Value</h3>
+            <ul>
+                <li>Hackers' evaluation of whether something is worth or interesting.</li>
+                <li>
+                    High hack value examples:
+                    <ul>
+                        <li>Accessing credit card information to generate money.</li>
+                        <li>Accessing names just to prove difficulty.</li>
+                    </ul>
+                </li>
+            </ul>
+        </article>
+
+        <article id="vulnerability">
+            <h3>Vulnerability</h3>
+            <p>Weakness which can compromise the system and be used for a possible attack.</p>
+            <ul>
+                <li>
+                    Examples:
+                    <ul>
+                        <li>A policy (e.g. inserting USBs into laptops).</li>
+                        <li>Design/implementation errors (e.g. disguised USBs on all OSes).</li>
+                    </ul>
+                </li>
+            </ul>
+        </article>
+
+        <article id="exploit">
+            <h3>Exploit</h3>
+            <p>Breaches vulnerabilities. Can also refer to software that uses them.</p>
+            <p>Example: connecting a malicious USB.</p>
+        </article>
+
+        <article id="payload">
+            <h3>Payload</h3>
+            <p>Part of malware or exploit code that performs harmful actions.</p>
+            <ul>
+                <li>Create backdoors</li>
+                <li>Damage or delete files</li>
+                <li>Hijack computers (e.g. via keyloggers or RATs)</li>
+            </ul>
+        </article>
+
+        <article id="zero-day-attack">
+            <h3>Zero Day Attack</h3>
+            <ul>
+                <li>Exploits unknown vulnerabilities before a patch exists.</li>
+                <li>
+                    Terms:
+                    <ul>
+                        <li><strong>Zero-day vulnerability:</strong> Not yet known or patched.</li>
+                        <li><strong>Zero-day exploit:</strong> Attacks using zero-day vulnerabilities.</li>
+                    </ul>
+                </li>
+                <li>
+                    Flow:
+                    <ol>
+                        <li>Discovery</li>
+                        <li>Exploitation</li>
+                        <li>Attack (Day Zero)</li>
+                        <li>Vendor learns & creates patch</li>
+                        <li>Patch applied (not always!)</li>
+                    </ol>
+                </li>
+                <li>Window of Vulnerability (WOV): Time before most systems are patched.</li>
+                <li>Examples: Spectre, Meltdown</li>
+            </ul>
+        </article>
+
+        <article id="daisy-chaining">
+            <h3>Daisy Chaining</h3>
+            <p>Using one compromised device to access others in the network.</p>
+            <ol>
+                <li>Initial access (e.g. via home router)</li>
+                <li>Scan other connected devices</li>
+                <li>Use attack vectors (e.g. phishing, DNS changes)</li>
+                <li>Gain further access</li>
+                <li>Steal sensitive data</li>
+            </ol>
+        </article>
+
+        <article id="doxing">
+            <h3>Doxing</h3>
+            <p>Finding and publishing someone’s PII for malicious purposes.</p>
+            <ol>
+                <li>Gather private information</li>
+                <li>Use info for identity theft, coercion, etc.</li>
+            </ol>
+        </article>
+
+        <article id="bot">
+            <h3>Bot</h3>
+            <p>Software controlled to perform tasks; can be used maliciously.</p>
+            <ul>
+                <li>Control infected machines</li>
+                <li>Create botnets</li>
+            </ul>
+        </article>
+
+
+
+        <h2>CIA Triad</h2>
+        <p>Also known as the <strong>three principles of information security</strong>.</p>
+        <img src="{{ url_for('static', filename='img/mod1/cia-triad.png') }}" alt="CIA Triad">
+        <ul>
+            <li><strong>Confidentiality</strong>: only authorized access</li>
+            <li><strong>Integrity</strong>: accuracy and untampered data</li>
+            <li><strong>Availability</strong>: access when needed</li>
+        </ul>
+
+
+
+        <h2>Elements of Information Security</h2>
+
+        <article id="confidentiality">
+            <h3>Confidentiality</h3>
+            <p>Only authorized users can access data.</p>
+            <p><strong>Controls:</strong> encryption, classification, access control, disposal</p>
+        </article>
+
+        <article id="integrity">
+            <h3>Integrity</h3>
+            <p>Prevents unauthorized changes to data.</p>
+            <p><strong>Controls:</strong> hashing, access control</p>
+        </article>
+
+        <article id="availability">
+            <h3>Availability</h3>
+            <p>Ensures data/resources are accessible when needed.</p>
+            <p><strong>Controls:</strong> redundancy, backups, antivirus, DDoS protection</p>
+        </article>
+
+        <article id="authenticity">
+            <h3>Authenticity</h3>
+            <p>Verifies identity or integrity of users/documents.</p>
+            <p><strong>Controls:</strong> biometrics, smart cards, digital certificates</p>
+        </article>
+
+        <article id="non-repudiation">
+            <h3>Non-repudiation</h3>
+            <p>Sender/recipient cannot deny having sent/received a message.</p>
+            <img src="{{ url_for('static', filename='img/mod1/non-repudiation.png') }}" alt="Non-repudiation">
+            <p><strong>Controls:</strong> digital signatures, logging</p>
+        </article>
+
+
+
+        <h2>Functionality, Usability, Security Triangle</h2>
+        <img src="{{ url_for('static', filename='img/mod1/functionality-usability-security-triangle.png') }}" alt="Functionality, Usability, Security Triangle">
+        <p>Any change in one aspect affects the others.</p>
+        <p>Example: stronger security reduces usability and functionality due to additional checks.</p>
+        <p>💡 Balance all three for optimal results.</p>
+
+
+
+        <h2>Document Types</h2>
+        <ul>
+            <li><strong>Standard:</strong> Mandatory rules for consistency</li>
+            <li><strong>Baseline:</strong> Minimum required security level</li>
+            <li><strong>Guideline:</strong> Recommended but flexible actions</li>
+            <li><strong>Procedure:</strong> Step-by-step instructions for tasks</li>
+        </ul>
+
+    </section>
+
+
+    <section id="laws-standards-and-regulations">
+        <h2>Lois, normes et réglementations en cybersécurité</h2>
+
+        <h3>Systèmes juridiques</h3>
+        <p>Il existe deux grandes familles de systèmes juridiques dans le monde, bien que la majorité des pays appliquent une combinaison des deux :</p>
+        <ul>
+            <li>
+                <strong>Droit commun (Common law)</strong> :
+                <ul>
+                    <li>Basé sur la jurisprudence et les précédents judiciaires.</li>
+                    <li>Exemples : États-Unis, Royaume-Uni, Inde, Canada.</li>
+                    <li>
+                        Deux branches principales :
+                        <ul>
+                            <li><strong>Droit civil</strong> : Conflits entre personnes ou entités, vise à résoudre les litiges et compenser les victimes.</li>
+                            <li><strong>Droit pénal</strong> : Vise la sanction et la réhabilitation pour des actes dangereux ou immoraux.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Droit civil (Civil law)</strong> :
+                <ul>
+                    <li>Basé sur des codes et lois écrites.</li>
+                    <li>Exemples : France, Allemagne, Espagne, Suède, Turquie.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Norme PCI DSS</h3>
+        <p>La norme PCI DSS (<em>Payment Card Industry Data Security Standard</em>) s'applique à toute entité traitant les paiements par carte bancaire. Elle définit des bonnes pratiques de sécurité pour protéger les données des titulaires de carte.</p>
+        <ul>
+            <li>
+                <strong>Objectifs principaux :</strong>
+                <ul>
+                    <li>Construire un réseau sécurisé (ex. pare-feu, suppression des mots de passe par défaut).</li>
+                    <li>Protéger les données des titulaires (stockage sécurisé, chiffrement des transmissions).</li>
+                    <li>Gérer les vulnérabilités (antivirus, mises à jour logicielles régulières).</li>
+                    <li>Contrôler l’accès (identifiants uniques, restriction physique).</li>
+                    <li>Surveiller les réseaux (logs, tests réguliers, pentests annuels).</li>
+                    <li>Maintenir une politique de sécurité documentée.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Normes ISO/IEC 27000</h3>
+        <p>La famille ISO 27000 est une série de normes internationales sur la gestion de la sécurité de l'information (ISMS).</p>
+        <ul>
+            <li><strong>ISO/IEC 27001</strong> : Spécifie les exigences pour la mise en place d’un SMSI basé sur l’analyse de risques.</li>
+            <li><strong>ISO/IEC 27002</strong> : Recommande des contrôles pour la sécurité de l'information (contrôle d'accès, cryptographie, sécurité physique...).</li>
+        </ul>
+
+        <h3>HIPAA (États-Unis)</h3>
+        <p>La loi HIPAA (<em>Health Insurance Portability and Accountability Act</em>) vise à protéger les données médicales personnelles aux États-Unis.</p>
+        <ul>
+            <li>Comprend des règles sur la confidentialité, la sécurité, l’échange électronique de données et l’identification des prestataires de soins.</li>
+            <li>Repose sur trois types de garanties : administratives (analyse des risques), physiques (contrôle des postes de travail) et techniques (chiffrement, audit, contrôle d’accès).</li>
+        </ul>
+
+        <h3>FISMA (États-Unis)</h3>
+        <p>Le <strong>Federal Information Security Management Act</strong> impose aux agences fédérales américaines de protéger leurs systèmes informatiques.</p>
+        <p>Les lignes directrices sont détaillées dans la norme <strong>NIST SP 800-53</strong>, qui définit des contrôles de sécurité et de confidentialité applicables aux systèmes d’information fédéraux.</p>
+
+        <h3>Loi Sarbanes-Oxley (SOX)</h3>
+        <p>Adoptée après les scandales financiers comme Enron, la loi SOX impose la conservation de documents financiers fiables et sécurisés. Elle s’applique surtout aux entreprises cotées en bourse.</p>
+
+        <h3>Loi DMCA</h3>
+        <p>Le <strong>Digital Millennium Copyright Act</strong> est une loi américaine sur le droit d’auteur, applicable à la protection du contenu numérique sur Internet.</p>
+        <p>Elle oblige les plateformes à réagir rapidement aux violations de copyright et interdit de contourner les protections technologiques.</p>
+
+        <h3>COBIT</h3>
+        <p>COBIT (Control Objectives for Information and Related Technologies) est un cadre de gouvernance des systèmes d'information développé par ISACA.</p>
+        <ul>
+            <li>Il aide les entreprises à aligner leurs objectifs informatiques et métiers, à gérer les risques et à se conformer aux lois.</li>
+            <li>Structure de processus : Évaluer, planifier, construire, livrer, surveiller (EDM, APO, BAI, DSS, MEA).</li>
+            <li>Intègre des modèles de maturité, des lignes directrices de gestion et des objectifs de contrôle.</li>
+        </ul>
+
+        <h3>Législation européenne (UE)</h3>
+        <ul>
+            <li><strong>RGPD (Règlement Général sur la Protection des Données)</strong> : Règlement majeur protégeant les données personnelles des citoyens de l’UE. Il impose des obligations strictes aux organisations sur la collecte, le traitement et la conservation des données.</li>
+            <li><strong>SCC (Standard Contractual Clauses)</strong> : Clauses contractuelles types utilisées pour encadrer les transferts de données hors UE vers des pays ne garantissant pas un niveau de protection adéquat.</li>
+            <li><strong>Privacy Shield</strong> : Ancien accord UE–États-Unis invalidé en 2020 pour insuffisance de protection face à la surveillance américaine.</li>
+            <li><strong>Safe Harbor</strong> : Prédécesseur du Privacy Shield, également annulé pour des raisons similaires.</li>
+        </ul>
+
+        <h3>Autres lois et cadres notables</h3>
+        <ul>
+            <li><strong>NIS2 (UE)</strong> : Directive sur la sécurité des réseaux et de l'information, imposant des exigences de cybersécurité aux entités critiques.</li>
+            <li><strong>CCPA (États-Unis, Californie)</strong> : Loi sur la confidentialité des consommateurs, similaire au RGPD.</li>
+            <li><strong>LOI LCEN (France)</strong> : Loi sur la Confiance dans l'Économie Numérique, régulant la responsabilité des acteurs numériques et la lutte contre les contenus illicites.</li>
+        </ul>
+
+        <p><em>Note :</em> La conformité à ces lois et normes n’est pas seulement une obligation légale mais une pratique essentielle pour garantir la sécurité, la transparence et la confiance dans le traitement des données.</p>
+    </section>
+
+
+    <section id="network-security">
+        <h1>Sécurité des Réseaux</h1>
+
+        <h2>Contrôles de sécurité réseau</h2>
+        <p>La sécurité des réseaux repose sur un ensemble de mécanismes qui visent à protéger l'intégrité, la confidentialité et la disponibilité des données et des services réseau. Les principaux contrôles comprennent :</p>
+        <ul>
+            <li><strong>Contrôle d'accès</strong> : qui peut accéder à quoi, comment et dans quelles conditions.</li>
+            <li><strong>Identification</strong> : attribution d’une identité unique à chaque utilisateur ou processus.</li>
+            <li><strong>Authentification</strong> : vérification que l’identité déclarée est bien réelle (ex. : mot de passe, carte à puce, empreinte digitale).</li>
+            <li><strong>Autorisation</strong> : définition de ce que l'utilisateur est autorisé à faire une fois identifié.</li>
+            <li><strong>Comptabilisation</strong> (ou <em>Accounting</em>) : enregistrement et journalisation des actions et accès effectués sur le réseau.</li>
+            <li><strong>Cryptographie</strong> : sécurisation des données en transit ou en stockage par le chiffrement.</li>
+            <li><strong>Politique de sécurité</strong> : ensemble des règles qui régissent l’usage du réseau et la gestion des risques.</li>
+        </ul>
+
+        <h3>Contrôle d'accès</h3>
+        <p>Le contrôle d’accès détermine qui peut accéder à quelles ressources dans un système ou un réseau :</p>
+        <ul>
+            <li><strong>Contrôle d’accès physique</strong> : restreint l’accès à des lieux physiques (salles serveurs, bureaux).</li>
+            <li><strong>Contrôle d’accès logique</strong> : restreint l’accès aux systèmes, bases de données et réseaux.</li>
+        </ul>
+
+        <h4>Terminologie importante</h4>
+        <ul>
+            <li><strong>Sujet</strong> : entité qui agit, généralement un utilisateur ou un processus.</li>
+            <li><strong>Objet</strong> : ressource que le sujet cherche à utiliser (fichier, serveur, application...).</li>
+            <li><strong>Opération</strong> : action effectuée par le sujet sur l’objet (lecture, écriture, suppression).</li>
+            <li><strong>Moniteur de référence</strong> : mécanisme logiciel ou matériel qui applique les règles de sécurité définies.</li>
+        </ul>
+
+        <h4>Étapes du contrôle d’accès</h4>
+        <ul>
+            <li><strong>Identification</strong> : déclaration d’une identité (ex. : nom d’utilisateur, N° de sécurité sociale).</li>
+            <li><strong>Authentification</strong> : vérification de l’identité via les justificatifs (ex. : mot de passe, biométrie).</li>
+            <li><strong>Autorisation</strong> : attribution de droits d’accès spécifiques selon le profil de l’utilisateur.</li>
+            <li><strong>Comptabilisation</strong> : suivi des activités (journaux d’accès, alertes, audits).</li>
+        </ul>
+
+        <h2>Zonage de sécurité réseau</h2>
+        <p>Le zonage réseau consiste à regrouper des systèmes ou des sous-réseaux ayant des niveaux de sécurité similaires afin de simplifier la gestion de la sécurité et appliquer des règles adaptées à chaque zone.</p>
+        <p>Chaque zone est isolée logiquement par des pare-feux physiques ou logiciels qui filtrent le trafic selon des règles prédéfinies.</p>
+
+        <h3>Zone de sécurité</h3>
+        <p>Une zone de sécurité est un regroupement logique de systèmes ou d’utilisateurs ayant des caractéristiques ou fonctions communes. Les règles de sécurité sont appliquées globalement à cette zone.</p>
+
+        <h4>Caractéristiques d’une zone</h4>
+        <ul>
+            <li>Application de politiques spécifiques de sécurité réseau.</li>
+            <li>Détection et blocage du trafic malveillant (via IDS/IPS).</li>
+            <li>Gestion de listes d’adresses IP connues ou autorisées.</li>
+            <li>Inventaire des interfaces réseau associées à la zone.</li>
+            <li>Utilisation d’interfaces de maintenance : elles doivent être physiquement protégées car peu surveillées.</li>
+        </ul>
+
+        <p><strong>Bonnes pratiques :</strong> Utiliser une segmentation réseau forte et minimiser les interfaces ouvertes entre zones.</p>
+
+        <h3>Exemples de zones réseau</h3>
+        <ul>
+            <li><strong>Zone Internet</strong> : zone non contrôlée, exposée aux menaces externes.</li>
+            <li>
+                <strong>Zone DMZ (zone démilitarisée)</strong> :
+                <ul>
+                    <li>Zone tampon entre l’Internet et le réseau interne.</li>
+                    <li>Contient souvent les serveurs publics (web, messagerie).</li>
+                    <li>Protégée par un double pare-feu pour filtrer le trafic entrant et sortant.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Zone de production</strong> :
+                <ul>
+                    <li>Zone restreinte hébergeant les ressources critiques.</li>
+                    <li>Accès très contrôlé, même en interne.</li>
+                    <li>Trafic surveillé par des systèmes de détection d’intrusion.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Zone Intranet</strong> :
+                <ul>
+                    <li>Zone interne avec un niveau modéré de sécurité.</li>
+                    <li>Utilisée par les employés pour accéder aux services internes.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Zone de gestion</strong> :
+                <ul>
+                    <li>Zone très sécurisée réservée à l'administration des systèmes.</li>
+                    <li>Accès restreint à un nombre limité d’administrateurs autorisés.</li>
+                    <li>Souvent accessible uniquement via des connexions VPN ou des machines dédiées.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <p><strong>Note :</strong> Une interface réseau peut appartenir à plusieurs zones selon son usage (ex. : interface de maintenance et interface de production).</p>
+
+    </section>
+
+
+    <section id="penetration-testing-phases">
+        <h1>Phases du Test d’Intrusion (Penetration Testing)</h1>
+
+        <h3>1. Phase Pré-Attaque</h3>
+
+        <p>Cette phase comprend la planification, la préparation et la reconnaissance. Elle est cruciale pour définir les règles, objectifs, responsabilités et limites du test.</p>
+
+        <h4>Contrats et aspects juridiques</h4>
+        <ul>
+            <li><strong>Accord contractuel :</strong> Aucun test ne doit être effectué sans un accord clair et signé entre le testeur et le client.</li>
+            <li><strong>Accord de non-divulgation (NDA) :</strong> Interdit au testeur de partager les découvertes, assurant la confidentialité des informations.</li>
+            <li><strong>Contrat de test d’intrusion :</strong> Définit le périmètre, les limites, les objectifs, les livrables, et dégage le testeur de toute responsabilité légale en cas de dommages causés involontairement.</li>
+            <li>💡 <em>Il est recommandé de faire relire ces documents par un juriste spécialisé.</em></li>
+        </ul>
+
+        <h4>Règles d'engagement (ROE)</h4>
+        <ul>
+            <li>Document officiel autorisant le test, incluant les horaires, les systèmes ciblés, les adresses IP autorisées, les techniques acceptées ou interdites (ex : pas de DDoS).</li>
+            <li>Utilisé pour définir ce qui est autorisé ou non, comme le ferait une armée sur un champ de bataille.</li>
+        </ul>
+
+        <h4>Compréhension des besoins du client</h4>
+        <ul>
+            <li>Le testeur doit s'assurer que le client comprend ce qu’il demande et que cela correspond à ses objectifs de sécurité.</li>
+            <li>Création de checklists, clarification des attentes, définition des livrables et des échéances.</li>
+        </ul>
+
+        <h4>Définition du périmètre</h4>
+        <ul>
+            <li>Définit les systèmes et zones à tester : sécurité réseau, applications, sécurité physique, etc.</li>
+            <li>Objectifs typiques : rapports techniques, évaluation du fonctionnement, cartographie des données, etc.</li>
+        </ul>
+
+        <h4>Collecte d’informations</h4>
+        <p>But : réunir un maximum d’informations sur la cible afin de planifier l’attaque efficacement.</p>
+        <ul>
+            <li>Emplacements physiques et logiques des équipements</li>
+            <li>Connexions analogiques (téléphones, réseaux GSM)</li>
+            <li>Informations de contact — souvent récupérées via l’ingénierie sociale ou l’observation</li>
+            <li>Accès physique déguisé : par exemple, se faire passer pour un technicien</li>
+            <li>Techniques comme le <a href="#">dumpster diving</a> ou l’étude des employés via les réseaux sociaux</li>
+        </ul>
+
+        <h3>2. Phase d’Attaque</h3>
+
+        <p>C’est ici que l’attaque est réellement menée à partir des données collectées précédemment.</p>
+
+        <h4>a. Pénétration du périmètre</h4>
+        <ul>
+            <li>Contourner les firewalls, IDS/IPS à l’aide de techniques de scan et de crafting de paquets réseau.</li>
+            <li>Tester les règles de filtrage, identifier les ports ouverts, les services exposés, etc.</li>
+            <li>Identifier les équipements en place (adresse IP, MAC, fabricant, localisation).</li>
+        </ul>
+
+        <h4>b. Acquisition de la cible</h4>
+        <ul>
+            <li>Scanner la machine ciblée à la recherche de vulnérabilités exploitables.</li>
+            <li>Techniques : probing actif, scan de vulnérabilités, énumération des services et comptes utilisateurs.</li>
+            <li>Exploitation de failles via des identifiants récupérés, souvent grâce à l’ingénierie sociale.</li>
+        </ul>
+
+        <h4>c. Escalade des privilèges</h4>
+        <ul>
+            <li>Une fois dans le système, l’objectif est de passer d’un accès limité à un accès administrateur.</li>
+            <li>Techniques : bruteforce, exploitation de failles logicielles, versions obsolètes, trojans, phishing, etc.</li>
+            <li>💡 Beaucoup d’organisations négligent la sécurité interne une fois le périmètre franchi.</li>
+            <li><strong>Contre-mesures :</strong> principe du moindre privilège, authentification forte (MFA), segmentation réseau.</li>
+        </ul>
+
+        <h4>d. Exécution, implantation, retrait</h4>
+        <ul>
+            <li>Implantation de malwares (backdoors, rootkits, chevaux de Troie, etc.) pour prendre le contrôle total.</li>
+            <li>Utilisation de techniques comme les attaques DoS/DDoS, les débordements mémoire, etc.</li>
+            <li>Phase de retrait : effacer les traces (logs, fichiers temporaires), neutraliser les alertes de sécurité.</li>
+            <li>💡 Tester les contournements antivirus en environnement VM similaire au système de la cible.</li>
+        </ul>
+
+        <h3>3. Phase Post-Attaque</h3>
+        <ul>
+            <li>Restaurer l’état initial du système pour éviter des effets durables ou illégaux.</li>
+            <li>Supprimer tout malware installé, rétablir les configurations, supprimer les comptes créés.</li>
+            <li>
+                <strong>Documentation finale :</strong> Rapport détaillé incluant :
+                <ul>
+                    <li>Chronologie des actions</li>
+                    <li>Failles découvertes</li>
+                    <li>Méthodes d’exploitation</li>
+                    <li>Recommandations de remédiation</li>
+                </ul>
+            </li>
+            <li>❗ Laisser des traces ou des implants est une violation grave de la loi.</li>
+        </ul>
+
+    </section>
+
+
+    <section id="penetration-testing">
+        <h1>Test d'intrusion (Penetration Testing)</h1>
+
+        <p>Le test d'intrusion consiste à simuler une attaque informatique dans le but de découvrir des vulnérabilités, évaluer la sécurité d’un système d'information et proposer des solutions correctives. Cette méthode permet une analyse approfondie des failles techniques, des défauts de conception et de l'efficacité des mesures de sécurité en place.</p>
+
+        <h3>Objectifs</h3>
+        <ul>
+            <li>Identifier les menaces potentielles et les failles de sécurité.</li>
+            <li>Évaluer les dispositifs de sécurité en place.</li>
+            <li>Préconiser des mesures de protection adaptées.</li>
+            <li>Respecter les normes et réglementations en vigueur (RGPD, ISO 27001, etc.).</li>
+            <li>Améliorer le retour sur investissement en sécurité (ROSI).</li>
+            <li>Prévenir les attaques futures et renforcer l'infrastructure de sécurité.</li>
+            <li>Tester les équipements réseau (pare-feux, routeurs, etc.).</li>
+        </ul>
+
+        <h3>Activités essentielles lors d’un test d’intrusion</h3>
+        <ul>
+            <li>Définir les paramètres du test (périmètre, limites, conditions).</li>
+            <li>Faire signer un accord mutuel (charte ou contrat).</li>
+            <li>Collaborer avec des testeurs compétents.</li>
+            <li>Signer un accord de confidentialité (NDA).</li>
+            <li>Sélectionner les types de tests les plus adaptés aux besoins du client.</li>
+            <li>Utiliser une méthodologie rigoureuse et documenter les résultats.</li>
+            <li>Rédiger un rapport final détaillé avec des recommandations concrètes.</li>
+        </ul>
+
+        <h3>Différence entre audit, évaluation de vulnérabilités et test d’intrusion</h3>
+        <ul>
+            <li><strong>Audit de sécurité :</strong> Vérifie la conformité aux politiques et normes de sécurité.</li>
+            <li><strong>Évaluation de vulnérabilités :</strong> Identifie les failles potentielles sans tester leur exploitabilité.</li>
+            <li><strong>Test d’intrusion :</strong> Combine les deux précédents, démontre l’exploitation des failles et évalue les impacts réels.</li>
+        </ul>
+
+        <h3>Approche Red Team / Blue Team</h3>
+        <ul>
+            <li><strong>Équipe rouge :</strong> Attaque. Simule les comportements des pirates informatiques pour identifier les failles.</li>
+            <li><strong>Équipe bleue :</strong> Défense. Protège l’infrastructure et détecte les intrusions en temps réel.</li>
+            <li><strong>Équipe violette :</strong> Hybride. Fait le lien entre rouge et bleu, améliore les processus de sécurité en continu.</li>
+        </ul>
+
+        <h3>Types de tests d’intrusion</h3>
+        <ul>
+            <li><strong>White Box (boîte blanche) :</strong> Le testeur a une connaissance complète du système. Plus rapide et rentable.</li>
+            <li><strong>Black Box (boîte noire) :</strong> Le testeur n’a aucune information préalable. Reflète un scénario réel d’attaque externe. Plus coûteux.</li>
+            <li><strong>Grey Box (boîte grise) :</strong> Le testeur dispose de quelques informations limitées. Bon compromis entre temps, coût et efficacité.</li>
+        </ul>
+
+        <h4>Tests annoncés vs non annoncés</h4>
+        <ul>
+            <li><strong>Test annoncé :</strong> L’équipe IT est informée, souvent pour tester un composant spécifique.</li>
+            <li><strong>Test non annoncé :</strong> L’équipe IT n’est pas informée. Permet de tester les réactions en situation réelle.</li>
+        </ul>
+
+        <h4>Tests internes vs externes</h4>
+        <ul>
+            <li><strong>Interne :</strong> Cible les ressources à l’intérieur du réseau d’entreprise.</li>
+            <li><strong>Externe :</strong> Cible les services exposés sur Internet (serveurs web, messagerie, FTP, etc.).</li>
+        </ul>
+
+        <h3>Tests spéciaux</h3>
+        <ul>
+            <li><strong>Blind Testing :</strong> Le testeur a très peu d’informations, mais l’entreprise est au courant du test.</li>
+            <li><strong>Double Blind :</strong> Ni l’entreprise ni le testeur ne connaissent les détails. C’est la méthode la plus proche d’une attaque réelle mais aussi la plus coûteuse.</li>
+        </ul>
+
+        <h3>Méthodologies de test d’intrusion</h3>
+        <p>Les méthodologies guident la conduite des tests afin d’assurer leur rigueur et leur reproductibilité.</p>
+
+        <h4>Méthodologies propriétaires</h4>
+        <ul>
+            <li><strong>IBM :</strong> Adaptée aux entreprises de taille moyenne, rapide à mettre en œuvre.</li>
+            <li><strong>McAfee Foundstone :</strong> Approche robuste pour les grandes entreprises.</li>
+            <li><strong>EC-Council LPT :</strong> Utilisée pour l’audit de sécurité avancé.</li>
+        </ul>
+
+        <h4>Méthodologies open-source</h4>
+        <ul>
+            <li><strong>OWASP :</strong> Ressources sur la sécurité des applications web (Top 10 des vulnérabilités, etc.). Idéal pour les développeurs.</li>
+            <li><strong>OSSTMM :</strong> Manuel de tests de sécurité standardisé. Définit des niveaux de conformité (contractuelle, légale, normative).</li>
+            <li><strong>ISSAF :</strong> Guide pratique pour la conduite de tests d'intrusion.</li>
+            <li><strong>NIST :</strong> Fournit des standards reconnus à l’échelle internationale (ex. SP 800-53).</li>
+        </ul>
+
+        <h3>Exemples pratiques de tests d’intrusion</h3>
+        <ul>
+            <li>Test de résistance des systèmes d’authentification avec des attaques par dictionnaire.</li>
+            <li>Évaluation d’un routeur pour vérifier s’il utilise un système d’exploitation obsolète.</li>
+            <li>Simulation d’un phishing pour mesurer la sensibilisation des utilisateurs.</li>
+        </ul>
+
+        <p>Le test d’intrusion est une démarche proactive, stratégique et essentielle pour toute organisation souhaitant améliorer sa posture de cybersécurité et anticiper les menaces futures.</p>
+    </section>
+
+    <section id="physical-security">
+        <h1>Sécurité Physique</h1>
+        <p>
+            La sécurité physique désigne la protection de tous les actifs d’une organisation contre les menaces et les attaques, qu’elles soient naturelles ou causées par l’homme. Elle vise à empêcher l’accès non autorisé, la manipulation ou le vol de données, les actes malveillants (espionnage, sabotage), tout en garantissant la sécurité des employés et en limitant les attaques d’ingénierie sociale.
+        </p>
+
+        <h3>Catégories de menaces</h3>
+        <ul>
+            <li><strong>Menaces naturelles ou environnementales :</strong> incendies, inondations, tremblements de terre, poussière, tempêtes.</li>
+            <li><strong>Menaces causées par l’homme :</strong> terrorisme, guerre, explosions, vandalisme, vol, et attaques comme le <em>dumpster diving</em> (fouille de poubelles).</li>
+        </ul>
+
+        <h3>Types de contrôles de sécurité physique</h3>
+
+        <h4>1. Contrôles préventifs</h4>
+        <p>Mis en œuvre avant qu'une menace ne survienne afin d'en réduire ou éviter l'impact.</p>
+        <ul>
+            <li><strong>Contrôles techniques :</strong> pare-feux, systèmes d’authentification.</li>
+            <li><strong>Contrôles administratifs :</strong> politiques de sécurité, procédures d’accès.</li>
+            <li>
+                <strong>Contrôles physiques :</strong>
+                <ul>
+                    <li>Extincteurs</li>
+                    <li>Portes sécurisées</li>
+                    <li><strong>Portique de sécurité (Mantrap) :</strong> vestibule sécurisé à deux portes, nécessitant deux authentifications successives.</li>
+                    <li><strong>Tourniquet :</strong> permet le passage d’une seule personne à la fois, utilisé dans les gares, bâtiments sensibles, etc.</li>
+                    <li><strong>Bollard (poteau de sécurité) :</strong> empêche les attaques au véhicule bélier. À l'origine utilisés pour amarrer des bateaux.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Protection contre l’électricité statique :</strong>
+                <ul>
+                    <li>L’humidité doit rester entre 45 % et 55 %.</li>
+                    <li>Utilisation de bracelets antistatiques et de systèmes de mise à la terre pour éviter la corrosion des composants électroniques.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>2. Contrôles de détection</h4>
+        <p>Permettent de savoir quand un incident se produit ou s’est produit.</p>
+        <ul>
+            <li>Journaux d’audit</li>
+            <li>Systèmes d’alarme</li>
+            <li>Caméras de surveillance</li>
+            <li>Capteurs de mouvement</li>
+        </ul>
+
+        <h4>3. Contrôles de dissuasion</h4>
+        <p>Aussi appelés contrôles de découragement, ils visent à dissuader les intrus de passer à l’action.</p>
+        <ul>
+            <li>Panneaux d’avertissement (ex. : « Attention au chien », « Zone sous vidéosurveillance », « Accès réservé au personnel autorisé »)</li>
+        </ul>
+
+        <h4>4. Contrôles de récupération</h4>
+        <p>Utilisés après un incident pour restaurer les systèmes dans leur état initial.</p>
+        <ul>
+            <li>Systèmes de sauvegarde</li>
+            <li>Plans de reprise après sinistre</li>
+        </ul>
+
+        <h4>5. Contrôles compensatoires</h4>
+        <p>Ne préviennent pas directement les attaques, mais permettent de revenir à un état normal quand tout le reste échoue.</p>
+        <ul>
+            <li>Groupes électrogènes, batteries en cas de coupure de courant</li>
+            <li>Stockage alternatif, réseau de secours</li>
+        </ul>
+
+        <h3>Mesures générales de sécurité physique</h3>
+        <ul>
+            <li>Sécuriser les locaux et leurs alentours</li>
+            <li>Contrôler l’accès à la zone d’accueil</li>
+            <li>Verrouiller les serveurs et les postes de travail lorsqu’ils ne sont pas utilisés</li>
+            <li>Protéger les équipements comme les modems, supports amovibles, fax</li>
+            <li>Mettre en place un système de contrôle d’accès par badge ou biométrie</li>
+            <li>Effectuer un entretien régulier du matériel informatique</li>
+            <li>Éviter l’écoute clandestine (filtrage des communications, câbles blindés)</li>
+            <li>Contrôler la température et l’humidité de l’environnement</li>
+            <li>Maintenir une pression d’air positive dans les salles sensibles pour empêcher les contaminants d’y entrer</li>
+        </ul>
+    </section>
+
+
+    <section id="risk-management">
+        <h1>Gestion des risques</h1>
+        <p>La gestion des risques est un processus continu qui consiste à identifier, évaluer et traiter les risques potentiels afin de limiter leur impact sur une organisation. Aucun système n'est totalement exempt de risques, mais des contrôles adéquats permettent de les réduire considérablement.</p>
+
+        <h3>Définitions clés</h3>
+        <ul>
+            <li><strong>Risque :</strong> menace de perte, de dommage ou de perturbation.</li>
+            <li><strong>Atténuation du risque :</strong> ensemble des actions visant à réduire la probabilité d’occurrence ou l’impact d’un risque.</li>
+            <li><strong>Équation du risque :</strong> <code>Risque = Menace × Vulnérabilité × Actif</code></li>
+            <li><strong>Probabilité :</strong> évaluation de la chance qu’un événement se produise.</li>
+            <li><strong>Impact :</strong> estimation des conséquences potentielles d’un événement.</li>
+        </ul>
+
+        <h3>Types de risques</h3>
+        <ul>
+            <li><strong>Risque inhérent :</strong> risque initial avant toute mesure de sécurité.</li>
+            <li><strong>Risque résiduel :</strong> risque restant après mise en place des contrôles.</li>
+            <li><strong>Risque de contrôle :</strong> lié à une faiblesse des contrôles internes.</li>
+            <li><strong>Risque d'audit :</strong> erreur potentielle lors d'un audit, souvent liée à un risque de détection insuffisante.</li>
+            <li><strong>Risque de détection :</strong> non-identification d'une anomalie ou d'une menace lors d’un contrôle.</li>
+        </ul>
+
+        <h3>Niveaux de risque</h3>
+        <p>Les niveaux de risque sont déterminés par la combinaison de la probabilité et des conséquences :</p>
+        <table>
+            <thead>
+                <tr><th>Niveau</th><th>Conséquences</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Élevé / Extrême</td><td>Graves dommages</td><td>Mesures immédiates obligatoires</td></tr>
+                <tr><td>Moyen</td><td>Dommages modérés</td><td>Actions correctives dès que possible</td></tr>
+                <tr><td>Faible</td><td>Impact négligeable</td><td>Mesures préventives recommandées</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Évaluation des risques</h3>
+        <p>Elle permet de classer les risques en fonction de leur gravité et probabilité. Elle comprend :</p>
+        <ul>
+            <li>Analyse des menaces et vulnérabilités</li>
+            <li>Estimation de l’impact sur les actifs critiques</li>
+            <li>Classement des risques pour priorisation</li>
+        </ul>
+
+        <h3>Objectifs de la gestion des risques</h3>
+        <ul>
+            <li>Identifier les risques</li>
+            <li>Analyser leurs impacts</li>
+            <li>Élaborer des stratégies de réponse</li>
+            <li>Classer les risques par priorité</li>
+            <li>Mettre en œuvre les contrôles adéquats</li>
+            <li>Assurer un suivi continu</li>
+        </ul>
+
+        <h3>Phases de la gestion des risques</h3>
+        <ol>
+            <li><strong>Identification :</strong> recenser menaces, vulnérabilités, actifs</li>
+            <li><strong>Évaluation :</strong> déterminer la probabilité et l’impact</li>
+            <li><strong>Traitement :</strong> prioriser et définir la réponse</li>
+            <li><strong>Suivi :</strong> s'assurer que les mesures prises sont efficaces</li>
+        </ol>
+
+        <h3>Réponses possibles aux risques</h3>
+        <ul>
+            <li><strong>Éviter :</strong> modifier les plans pour ne plus être exposé au risque</li>
+            <li><strong>Atténuer :</strong> réduire la probabilité ou l'impact</li>
+            <li><strong>Transférer :</strong> assurance, sous-traitance, partenaires</li>
+            <li><strong>Accepter :</strong> tolérer un niveau de risque résiduel</li>
+            <li><strong>Partager :</strong> répartir le risque entre plusieurs parties</li>
+        </ul>
+
+        <h3>Continuité d'activité et reprise après sinistre (BCDR)</h3>
+        <ol>
+            <li><strong>Analyse d’impact et évaluation des risques :</strong> inclut les catastrophes naturelles ou humaines</li>
+            <li><strong>Plan de continuité d’activité (PCA) :</strong> garantit la reprise rapide des fonctions critiques</li>
+            <li><strong>Plan de reprise après sinistre (PRS) :</strong> décrit comment l’organisation réagit aux incidents majeurs</li>
+        </ol>
+
+        <h3>Annualized Loss Expectancy (ALE)</h3>
+        <ul>
+            <li><strong>ALE = ARO × SLE</strong> (Taux d’occurrence annuel × Pertes d’un seul incident)</li>
+            <li><strong>SLE = AV × EF</strong> (Valeur de l’actif × Facteur d’exposition)</li>
+            <li><strong>Exemple :</strong> Actif = 100 000€, EF = 25% → SLE = 25 000€, ARO = 2 → ALE = 50 000€/an</li>
+            <li><strong>Coût total de possession (TCO) :</strong> coût annuel d’une solution de sécurité</li>
+            <li><strong>Retour sur investissement (ROI) :</strong> bénéfices économiques liés à l’investissement</li>
+        </ul>
+
+        <h3>Modélisation des menaces</h3>
+        <p>Évaluation proactive de la sécurité d'une application ou d'un système :</p>
+        <ul>
+            <li>Identification des menaces (ex: OWASP Top 10)</li>
+            <li>Analyse des composants, flux de données et vulnérabilités</li>
+            <li>Amélioration continue de la sécurité (configuration, code, chiffrement)</li>
+        </ul>
+
+        <h4>Étapes de la modélisation</h4>
+        <ol>
+            <li>Définir les objectifs de sécurité (confidentialité, intégrité, disponibilité)</li>
+            <li>Analyser l’architecture de l’application</li>
+            <li>Décomposer les composants et leurs interactions</li>
+            <li>Identifier les menaces et failles potentielles</li>
+            <li>Prioriser les vulnérabilités détectées</li>
+        </ol>
+
+        <h3>Cycle de développement sécurisé (SDL)</h3>
+        <p>Cadre proposé par Microsoft pour intégrer la sécurité dans chaque phase du développement logiciel :</p>
+        <ol>
+            <li><strong>Formation :</strong> des développeurs à la sécurité</li>
+            <li><strong>Exigences :</strong> définir les objectifs de sécurité</li>
+            <li><strong>Conception :</strong> modélisation des menaces, analyse de surface d’attaque</li>
+            <li><strong>Implémentation :</strong> pratiques sécurisées, analyse statique</li>
+            <li><strong>Vérification :</strong> tests dynamiques, fuzzing, revues de sécurité</li>
+            <li><strong>Publication :</strong> plan de réponse aux incidents, certification</li>
+            <li><strong>Réaction :</strong> mécanisme de remontée des vulnérabilités par les utilisateurs</li>
+        </ol>
+    </section>
+
+
+    <section id="security-policies">
+        <h1>Politiques de sécurité</h1>
+        <p>Les politiques de sécurité sont des règles et des exigences que le système informatique et les employés doivent respecter pour garantir la sécurité de l’information. Elles définissent clairement les comportements, les procédures et les outils autorisés pour protéger les données et les infrastructures.</p>
+
+        <h3>Qu'est-ce qu'une politique de sécurité ?</h3>
+        <ul>
+            <li>Document écrit décrivant les règles à suivre par tous les utilisateurs.</li>
+            <li>Inclut la liste des matériels et logiciels autorisés.</li>
+            <li>Précise où trouver les procédures associées.</li>
+            <li>Indique les exceptions possibles ainsi que les sanctions en cas de non-respect (avertissement, sanction disciplinaire, licenciement).</li>
+        </ul>
+        <p>Il existe deux grands types de politiques :</p>
+        <ul>
+            <li><strong>Politiques techniques</strong> : définissent la configuration des systèmes (pare-feu, mots de passe, accès réseau...)</li>
+            <li><strong>Politiques administratives</strong> : définissent les comportements attendus des employés (usage acceptable, confidentialité...)</li>
+        </ul>
+
+        <h3>Pourquoi mettre en place des politiques de sécurité ?</h3>
+        <p>Leur objectif principal est de réduire les risques en empêchant que des incidents coûteux ne surviennent, comme des fuites de données, des intrusions ou des interruptions de service.</p>
+        <p>Par exemple, un bon accord de confidentialité (NDA) signé par tous les employés est une politique efficace qui ne peut être contestée.</p>
+
+        <h3>Types de politiques selon la tolérance au risque</h3>
+        <p>On peut classer les politiques du plus permissif au plus strict :</p>
+        <ol>
+            <li><strong>Politique permissive</strong> (« promiscuous ») : aucune restriction, liberté totale (utile seulement avec des équipes très expérimentées et responsables).</li>
+            <li><strong>Politique permissive avec blocage</strong> : laisse faire la plupart des actions, mais bloque tout ce qui est identifié comme malveillant.</li>
+            <li><strong>Politique prudente</strong> : très restrictive, n’autorise que ce qui est sûr.</li>
+            <li><strong>Politique paranoïaque</strong> : restrictions maximales, utilisée pour les données ultra-sensibles (exemple : accès aux données gouvernementales très surveillées).</li>
+        </ol>
+
+        <h4>Exemples :</h4>
+        <ul>
+            <li><em>Politique permissive</em> : liberté d’utilisation, sauf ce qui est clairement dangereux.</li>
+            <li><em>Politique paranoïaque</em> : dans Linux, la commande « panic » bloque tout le trafic réseau pour éviter tout risque.</li>
+        </ul>
+
+        <h3>Sous-types de politiques courantes</h3>
+        <ul>
+            <li><strong>Politique de mot de passe</strong> : impose des règles pour la création de mots de passe forts (minimum 8 caractères, mélange de majuscules, minuscules, chiffres et symboles).</li>
+            <li><strong>Politique de gestion des comptes utilisateurs</strong> : règles pour la création, les droits et responsabilités des comptes, gestion des groupes d’utilisateurs.</li>
+            <li><strong>Politique de protection de l’information</strong> : directives pour le traitement, le stockage et la transmission sécurisée des données sensibles.</li>
+            <li><strong>Politique d’accès spécial</strong> : règles spécifiques pour certaines personnes ou services avec des accès particuliers.</li>
+            <li><strong>Politique de sécurité des emails</strong> : contrôle l’utilisation correcte des emails professionnels, interdit les clics sur des liens suspects.</li>
+            <li><strong>Politique d’utilisation acceptable</strong> : décrit ce qui est autorisé ou interdit sur le réseau (ex. interdiction du scan de ports, ne jamais partager son mot de passe).</li>
+            <li><strong>Politique de contrôle d’accès</strong> : définit qui peut accéder à quelles ressources (humains et systèmes), par exemple l’accès restreint aux équipements sensibles.</li>
+            <li><strong>Politique d’accès à distance</strong> : règles sur la connexion à distance (VPN obligatoire, mots de passe forts, accès contrôlé).</li>
+            <li><strong>Politique de gestion des pare-feux</strong> : qui surveille, comment, quel type de pare-feu est utilisé.</li>
+            <li><strong>Politique de connexion réseau</strong> : règles pour l’installation de nouveaux équipements et modifications réseau, souvent avec obligation d’utiliser VPN hors bureau.</li>
+            <li><strong>Politique de sécurité réseau</strong> : règles générales sur l’accès aux données, navigation web, utilisation de mots de passe, etc.</li>
+            <li><strong>Politique de chiffrement</strong> : choix des algorithmes de chiffrement, éviter les méthodes faibles, garantir l’uniformité.</li>
+            <li><strong>Politique d’authentification</strong> : conditions pour s’authentifier, interdiction de connexions non sécurisées, obligation de multi-facteurs (MFA).</li>
+        </ul>
+
+        <h3>Comment mettre en place une politique de sécurité ?</h3>
+        <ol>
+            <li>Réaliser une analyse des risques pour identifier les menaces et vulnérabilités.</li>
+            <li>Utiliser des standards et bonnes pratiques reconnues.</li>
+            <li>Impliquer la direction et les responsables de l’entreprise.</li>
+            <li>Définir clairement les sanctions en cas de non-respect.</li>
+            <li>Diffuser la politique à tous les employés.</li>
+            <li>S’assurer que tous ont lu et compris la politique.</li>
+            <li>Faire respecter les règles de façon cohérente.</li>
+            <li>Former et sensibiliser régulièrement les équipes.</li>
+            <li>Mettre à jour la politique en fonction de l’évolution des risques et technologies.</li>
+        </ol>
+
+        <p>Le département des ressources humaines joue un rôle clé pour former, sensibiliser, surveiller la bonne application des politiques et appliquer les sanctions.</p>
+
+        <h3>Approches d’implémentation</h3>
+        <ul>
+            <li><strong>Approche descendante (Top-down)</strong> : la direction fixe la stratégie et encadre la mise en œuvre. C’est la méthode la plus efficace pour que tous les employés adhèrent aux politiques.</li>
+            <li><strong>Approche ascendante (Bottom-up)</strong> : les équipes techniques tentent d’imposer les règles sans soutien de la direction, ce qui est souvent inefficace et incomplet.</li>
+        </ul>
+    </section>
+
+
+    <section id="security-threats-and-attacks">
+        Security Threats and Attacks>
+        <h1>Menaces et attaques en sécurité informatique</h1>
+
+        <p>
+            Plus les informations sont précieuses, plus les menaces et les risques d’attaques sont élevés.
+            La sécurité informatique vise à protéger ces données contre toute compromission.
+        </p>
+
+        <h2>Menaces de sécurité</h2>
+        <p>
+            Une <strong>menace</strong> est tout ce qui peut potentiellement causer un dommage à un système informatique.
+        </p>
+
+        <h3>Types de menaces</h3>
+
+        <h4>Menaces réseau</h4>
+        <p>
+            Un réseau est un ensemble d'appareils connectés permettant l’échange de données. Un attaquant peut intercepter ces échanges pour voler des informations.
+        </p>
+        <ul>
+            <li>Exemples : attaques par déni de service (DoS), attaques par force brute sur mots de passe, attaques sur clés compromises, attaques contre les pare-feu et systèmes de détection d'intrusion (IDS), empoisonnement DNS ou ARP, attaques de type "homme du milieu" (MITM), usurpation d'identité, détournement de session, espionnage (sniffing)...</li>
+        </ul>
+
+        <h4>Menaces sur les hôtes (ordinateurs, serveurs)</h4>
+        <p>
+            Ce sont des attaques visant à accéder ou manipuler les données stockées sur un système.
+        </p>
+        <ul>
+            <li>Exemples : attaques par mots de passe, accès non autorisé, profilage, malwares, collecte d’informations (footprinting), exécution de code arbitraire, élévation de privilèges, portes dérobées, menaces physiques...</li>
+        </ul>
+
+        <h4>Menaces au niveau des applications</h4>
+        <p>
+            Ces menaces exploitent les vulnérabilités des logiciels, souvent dues à une mauvaise programmation, un manque de validation des données ou des erreurs dans le code.
+        </p>
+        <ul>
+            <li>Exemples : injection SQL, scripts intersites (cross-site scripting), détournement de session, usurpation d’identité, mauvaise configuration, divulgation d’informations, manipulation de champs cachés, mauvaise gestion des sessions, attaques cryptographiques, dépassement de tampon (buffer overflow), hameçonnage (phishing)...</li>
+        </ul>
+
+        <h2>Attaques de sécurité</h2>
+        <p>
+            Une <strong>attaque</strong>, ou cyberattaque, est une tentative d'accès non autorisé à un système ou réseau. Elle est la concrétisation d’une menace.
+        </p>
+
+        <h3>Motivations des attaques</h3>
+        <p>
+            Toute attaque est motivée par un objectif, une vulnérabilité exploitée et une méthode (exploit).
+            Les motivations courantes incluent :
+        </p>
+        <ul>
+            <li>Interruption des activités</li>
+            <li>Vol d’informations précieuses</li>
+            <li>Manipulation des données</li>
+            <li>Vol d’argent ou d’informations financières</li>
+            <li>Revanche ou sabotage</li>
+            <li>Demande de rançon (ransomware)</li>
+        </ul>
+
+        <h3>Types d’attaques</h3>
+
+        <h4>Attaques sur les systèmes d’exploitation</h4>
+        <p>
+            La compromission du système d’exploitation permet un contrôle total, rendant la protection des applications inefficace.
+            Les vulnérabilités communes incluent bugs, dépassements de tampon, systèmes non corrigés (non patchés).
+        </p>
+        <p>
+            Exemple célèbre : la faille <a href="https://fr.wikipedia.org/wiki/EternalBlue" target="_blank" rel="noopener noreferrer">EternalBlue</a> exploitée par le ransomware WannaCry.
+        </p>
+        <p>
+            Les attaques exploitent souvent les protocoles réseau, le craquage de mots de passe, la sécurité des systèmes de fichiers.
+            Un système d’exploitation sécurisé est régulièrement mis à jour, surveillé et configuré.
+        </p>
+
+        <h4>Attaques dues à une mauvaise configuration</h4>
+        <p>
+            Lorsque la sécurité d’un système est mal configurée, un attaquant peut en prendre le contrôle facilement.
+            Par exemple, utiliser des mots de passe par défaut ou laisser des serveurs ouverts au public sans restriction.
+        </p>
+
+        <h4>Attaques au niveau des applications</h4>
+        <p>
+            Souvent causées par un développement rapide sans tests adéquats, elles peuvent provoquer des fuites d’informations, des dépassements de tampon, des injections SQL, ou du phishing.
+        </p>
+        <p>
+            Exemple : le client Transmission pour macOS, compromis par un lien de téléchargement falsifié, diffusait un malware.
+        </p>
+
+        <h4>Attaques sur les bibliothèques et frameworks ("Shrink-wrap code")</h4>
+        <p>
+            Exploiter une vulnérabilité dans une bibliothèque utilisée par plusieurs applications permet d’attaquer plusieurs cibles.
+            Il est important d’utiliser des bibliothèques matures, régulièrement mises à jour.
+        </p>
+
+        <h4>Vecteurs d’attaque</h4>
+        <p>
+            Ce sont les moyens par lesquels un attaquant transmet sa charge malveillante (payload) vers une cible.
+            Parmi eux :
+        </p>
+        <ul>
+            <li>Menaces dans le cloud : fuites ou pertes de données</li>
+            <li>Objets connectés (IoT) : souvent vulnérables à cause de limitations matérielles et de sécurité</li>
+            <li>Ransomwares : logiciels bloquant l’accès aux fichiers en demandant une rançon</li>
+            <li>Menaces mobiles : attaques sur smartphones et tablettes</li>
+        </ul>
+
+        <h4>Menaces persistantes avancées (APT)</h4>
+        <p>
+            Ce sont des attaques furtives et continues visant des cibles spécifiques, souvent des gouvernements ou grandes entreprises.
+            Elles utilisent des malwares sur mesure, restent longtemps présentes sans être détectées, et volent des données par petites quantités.
+        </p>
+        <p>
+            Exemples célèbres :
+            <a href="https://fr.wikipedia.org/wiki/Sony_Pictures_hack" target="_blank" rel="noopener noreferrer">piratage de Sony Pictures</a>,
+            la fuite massive de données du gouvernement américain en 2020.
+        </p>
+
+        <h4>Virus et vers (worms)</h4>
+        <p>
+            Les virus nécessitent une action de l’utilisateur pour se propager, tandis que les vers peuvent se répandre automatiquement.
+        </p>
+
+        <h4>Botnets</h4>
+        <p>
+            Réseaux de machines infectées contrôlées par des hackers, utilisées par exemple pour lancer des attaques par déni de service distribué (DDoS).
+        </p>
+
+        <h4>Attaques internes (Insider attacks)</h4>
+        <p>
+            Réalisées par des personnes ayant un accès légitime, comme des employés mécontents ou infiltrés. Elles sont difficiles à détecter et à prévenir.
+        </p>
+
+        <h5>Types d’attaquants internes</h5>
+        <ul>
+            <li>Employé avec accès normal</li>
+            <li>Employé avec privilèges élevés</li>
+            <li>Personnes ayant un accès limité (ex. agent de sécurité)</li>
+            <li>Personnes proches utilisant les accès d’un employé</li>
+            <li>Personnes extérieures exploitant des accès ouverts ou volés</li>
+        </ul>
+
+        <h5>Mesures contre les attaques internes</h5>
+        <ul>
+            <li>Restriction des accès</li>
+            <li>Journalisation des accès</li>
+            <li>Surveillance active des utilisateurs privilégiés</li>
+            <li>Gestion du personnel pour limiter les mécontentements</li>
+            <li>Séparation des tâches pour éviter qu’une seule personne ait trop de pouvoirs</li>
+        </ul>
+
+        <h4>Hameçonnage (Phishing)</h4>
+        <p>
+            Technique d’ingénierie sociale visant à tromper les utilisateurs pour qu’ils divulguent leurs informations personnelles ou financières.
+        </p>
+
+        <h4>Menaces sur les applications web</h4>
+        <p>
+            Exploitation des failles liées à une mauvaise validation des données, souvent détectables par des outils en ligne.
+        </p>
+
+        <h2>La guerre de l’information à l’ère moderne</h2>
+        <p>
+            L’utilisation des technologies de l’information pour obtenir un avantage sur un adversaire.
+            Cela inclut l’espionnage industriel, la cyber-guerre entre états, le vol de propriété intellectuelle, et plus.
+        </p>
+        <p>
+            Types de guerre de l’information :
+        </p>
+        <ul>
+            <li><strong>Guerre de commandement et contrôle (C2)</strong> : neutraliser les centres de décision</li>
+            <li><strong>Guerre basée sur le renseignement</strong> : utiliser la technologie pour perturber l’ennemi</li>
+            <li><strong>Guerre électronique</strong> : intercepter ou dégrader les communications</li>
+            <li><strong>Guerre psychologique</strong> : influencer les esprits par la propagande ou la terreur</li>
+            <li><strong>Guerre des hackers</strong> : collecte et sabotage via des hackers d’état ou mercenaires</li>
+        </ul>
+
+    </section>
+
+    <section id="threat-intelligence-and-forensics">
+        <h1>Renseignement sur les menaces et investigation numérique</h1>
+
+        <h3>La Cyber Kill Chain</h3>
+        <p>
+            Le concept de <strong>Cyber Kill Chain</strong> est un cadre développé par <a href="https://www.lockheedmartin.com/" target="_blank">Lockheed Martin</a> pour aider à identifier et stopper les intrusions informatiques.
+            Il est inspiré du modèle militaire de "chaîne de destruction" (kill chain), qui comprend : identification de la cible, décision d’attaque, ordre d’attaque et destruction.
+        </p>
+        <p>
+            Ce modèle décrit les étapes qu’un cybercriminel doit franchir pour atteindre son objectif. Bien qu'efficace contre les menaces extérieures, il est critiqué pour sa faible adaptation aux menaces internes.
+            Un exemple célèbre : <a href="https://www.commerce.senate.gov/services/files/24d3c229-4f2f-405d-b8db-a3a67f183883" target="_blank">Analyse du piratage de Target en 2013</a>.
+        </p>
+
+        <h4>Les 7 étapes de la Cyber Kill Chain</h4>
+        <ol>
+            <li><strong>Reconnaissance</strong> : collecte d’informations sur la cible (emails, technologies, organigramme…). On parle ici aussi de <em>footprinting</em> ou OSINT.</li>
+            <li><strong>Armes</strong> (Weaponization) : création d’un vecteur d’attaque à partir des informations obtenues (ex. : campagne de phishing personnalisée).</li>
+            <li><strong>Livraison</strong> : envoi du vecteur d’attaque via e-mail, clé USB, site web piégé, etc.</li>
+            <li><strong>Exploitation</strong> : déclenchement du code malveillant (ex. : exécution de code arbitraire, attaque d’authentification).</li>
+            <li><strong>Installation</strong> : installation d’un programme malveillant sur la machine cible (ex. : backdoor pour maintenir l’accès).</li>
+            <li><strong>Commandement et Contrôle (C2)</strong> : communication bidirectionnelle entre l’attaquant et le système compromis (souvent masquée par des techniques de chiffrement).</li>
+            <li><strong>Actions sur l’objectif</strong> : réalisation de l’objectif final (ex. : vol de données, sabotage, rançonnage…).</li>
+        </ol>
+
+        <h4>Réponses défensives possibles</h4>
+        <ul>
+            <li><strong>Détecter</strong> : identifier les signes d'une activité malveillante.</li>
+            <li><strong>Refuser</strong> : bloquer l'accès non autorisé ou la fuite d'information.</li>
+            <li><strong>Perturber</strong> : interrompre la communication avec l'attaquant.</li>
+            <li><strong>Dégrader</strong> : limiter l'efficacité de l’attaque ou attaquer les outils de l’attaquant.</li>
+            <li><strong>Tromper</strong> : induire l'attaquant en erreur (ex. honeypots).</li>
+            <li><strong>Contenir</strong> : segmenter le réseau pour limiter la propagation.</li>
+        </ul>
+
+        <h3>Identification des menaces</h3>
+
+        <h4>Tactiques, Techniques et Procédures (TTPs)</h4>
+        <p>
+            Les <strong>TTPs</strong> sont des schémas de comportement utilisés pour analyser et anticiper les attaques. Ils sont couramment utilisés dans les études de contre-terrorisme et de cybersécurité pour profiler les cybercriminels, en particulier les groupes APT (Advanced Persistent Threat).
+            Par exemple, lors de <a href="https://en.wikipedia.org/wiki/2020_United_States_federal_government_data_breach" target="_blank">la fuite massive de données aux USA en 2020</a>, les attaquants ont volé des tokens SAML pour compromettre l’infrastructure SSO, comme l’indique cette <a href="https://media.defense.gov/2020/Dec/17/2002554125/-1/-1/0/AUTHENTICATION_MECHANISMS_CSA_U_OO_198854_20.PDF" target="_blank">analyse de la NSA</a>.
+        </p>
+
+        <h4>Détails des TTPs</h4>
+        <ul>
+            <li><strong>Tactiques</strong> : buts généraux de l’attaque (ex. : collecte d'informations, compromission initiale, exfiltration de données).</li>
+            <li><strong>Techniques</strong> : méthodes spécifiques (ex. : phishing, exploitation de vulnérabilités, obfuscation, etc.).</li>
+            <li><strong>Procédures</strong> : déroulement détaillé des actions (ex. : vol d'emails d’entreprise puis lancement d’un spear phishing).</li>
+        </ul>
+
+        <h4>Comportements des adversaires</h4>
+        <p>
+            Cela inclut les outils ou méthodes utilisés comme PowerShell, tunneling DNS, Web Shells, scripts automatisés, etc. Ces éléments permettent une élévation de privilège ou un contournement des défenses.
+        </p>
+
+        <h4>Indicateurs de compromission (IoCs)</h4>
+        <p>
+            Les <strong>IoCs</strong> sont des preuves techniques qu’un système a été compromis. On les regroupe en quatre catégories :
+        </p>
+        <ul>
+            <li><strong>Indicateurs liés aux emails</strong> : adresse de l’expéditeur, objet, pièces jointes suspectes, liens malveillants.</li>
+            <li><strong>Indicateurs réseau</strong> : noms de domaine inhabituels, adresses IP malveillantes, requêtes DNS suspectes.</li>
+            <li><strong>Indicateurs système (hôte)</strong> : noms de fichiers, clés de registre, hachages de fichiers, DLL suspectes.</li>
+            <li><strong>Indicateurs comportementaux</strong> : injection de code en mémoire, exécution distante de commandes, scripts PowerShell déclenchés à l'ouverture d’un document.</li>
+        </ul>
+
+        <p>
+            Pour aller plus loin, vous pouvez consulter le guide de référence : <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-150.pdf" target="_blank">NIST SP 800-150</a>.
+        </p>
+    </section>
+</div>
+
+    {% endblock %}

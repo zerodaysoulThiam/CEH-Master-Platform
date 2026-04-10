@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 19 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 19 : Cloud Computing</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+  "fr": {
+    "facile": [
+      "Quel modèle cloud permet de gérer uniquement les applications?;IaaS;PaaS;SaaS;IDaaS;b;PaaS fournit un environnement de développement complet géré par le fournisseur, l'utilisateur se concentre sur les applications.",
+      "Quelle technologie utilise des conteneurs légers partageant le noyau OS?;Machines virtuelles;Docker;Hyperviseur;BIOS;b;Docker utilise des conteneurs isolés partageant le noyau de l'OS hôte, contrairement aux VM.",
+      "Quelle caractéristique définit le serverless computing?;Gestion serveur par le fournisseur;Contrôle total de l'infrastructure;Persistance des données;Coûts fixes élevés;a;Le serverless délègue entièrement la gestion de l'infrastructure au fournisseur cloud.",
+      "Quelle menace cloud implique des buckets S3 publics?;DDoS;Fuite de données;Ransomware;Shadow IT;b;Les buckets S3 mal configurés exposent des données sensibles à des accès non autorisés.",
+      "Quel mécanisme limite les risques d'évasion de conteneur?;--no-new-privileges;--icc=true;Exécution en root;Partage du socket Docker;a;Cette option Docker bloque l'escalade de privilèges, réduisant les risques d'accès à l'hôte."
+    ],
+    "moyen": [
+      "Quelle pratique réduit les risques liés au modèle de responsabilité partagée?;Désactivation MFA;Utilisation de SaaS;Séparation des rôles propriétaire/gestionnaire;Ignorer les SLA;c;Séparer les rôles évite les conflits d'intérêts et réduit les risques de compromission interne.",
+      "Quel avantage des conteneurs impacte directement la sécurité?;Immutable infrastructure;Taille des images;Ports ouverts par défaut;Accès SSH facilité;a;Le modèle immuable rend plus difficile l'injection de malwares pendant l'exécution.",
+      "Quelle limitation affecte les fonctions serverless?;Cold start;Persistance des données;Contrôle complet;Scalabilité manuelle;a;Le délai d'initialisation au premier appel impacte les performances des applications temps réel.",
+      "Quel outil détecte les mauvaises configurations AWS?;Sqlmap;Prowler;Wireshark;Metasploit;b;Prowler est spécialisé dans l'audit de sécurité des environnements AWS.",
+      "Quelle attaque cible le firmware BMC dans le cloud?;XSS;Cloudborne;MITC;CSRF;b;Cloudborne exploite les vulnérabilités du Baseboard Management Controller pour installer des backdoors."
+    ],
+    "difficile": [
+      "Comment prévenir les attaques side-channel en environnement multi-tenant?;Augmenter le partage CPU;Désactiver TPM;Isolation matérielle via RoT;Ignorer les logs;c;Les Roots of Trust (RoT) assurent une isolation matérielle contre l'extraction de données via ressources partagées.",
+      "Quelle technique exploite l'introspection GraphQL?;Scan de ports;Requêtes profondes malveillantes;Fragmentation IP;Sniffing réseau;b;L'introspection révèle le schéma GraphQL, permettant des injections dans les arguments et requêtes imbriquées.",
+      "Quel risque priorise l'OWASP Docker Top 10 n°1?;Exécution en root;Journalisation;Gestion des secrets;Ségrégation réseau;a;L'exécution des conteneurs avec des privilèges root facilite les évasions vers l'hôte.",
+      "Comment contourner l'authentification dans MongoDB?;{$ne: ''};{password: 1};{ $eq: '' };{ $set: };a;L'opérateur $ne permet de retourner des documents sans vérification du mot de passe.",
+      "Quelle mesure contredit le principe zero-trust dans le cloud?;Accès réseau étendu;Moindre privilège;MFA obligatoire;Chiffrement TLS;a;L'accès réseau étendu (NIST) augmente la surface d'attaque sans restriction géographique."
+    ]
+  },
+  "en": {
+    "facile": [
+      "Which cloud model allows managing only applications?;IaaS;PaaS;SaaS;IDaaS;b;PaaS provides a complete development environment managed by the provider, users focus on applications.",
+      "What technology uses lightweight containers sharing OS kernel?;Virtual Machines;Docker;Hypervisor;BIOS;b;Docker uses isolated containers sharing the host OS kernel, unlike VMs.",
+      "What defines serverless computing?;Provider-managed servers;Full infrastructure control;Data persistence;High fixed costs;a;Serverless fully delegates infrastructure management to the cloud provider.",
+      "Which cloud threat involves public S3 buckets?;DDoS;Data leakage;Ransomware;Shadow IT;b;Misconfigured S3 buckets expose sensitive data to unauthorized access.",
+      "Which mechanism reduces container escape risks?;--no-new-privileges;--icc=true;Root execution;Sharing Docker socket;a;This Docker option blocks privilege escalation, reducing host access risks."
+    ],
+    "moyen": [
+      "What practice reduces risks in shared responsibility model?;Disabling MFA;Using SaaS;Separating owner/manager roles;Ignoring SLAs;c;Role separation avoids conflicts and reduces internal compromise risks.",
+      "Which container advantage directly impacts security?;Immutable infrastructure;Image size;Open ports by default;SSH access;a;The immutable model makes malware injection harder during execution.",
+      "What limitation affects serverless functions?;Cold start;Data persistence;Full control;Manual scaling;a;Initialization delay during first invocation impacts real-time applications.",
+      "Which tool detects AWS misconfigurations?;Sqlmap;Prowler;Wireshark;Metasploit;b;Prowler specializes in auditing AWS environment security.",
+      "Which attack targets BMC firmware in cloud?;XSS;Cloudborne;MITC;CSRF;b;Cloudborne exploits Baseboard Management Controller vulnerabilities to install backdoors."
+    ],
+    "difficile": [
+      "How to prevent side-channel attacks in multi-tenant?;Increase CPU sharing;Disable TPM;Hardware isolation via RoT;Ignore logs;c;Roots of Trust (RoT) ensure hardware isolation against data extraction via shared resources.",
+      "Which technique exploits GraphQL introspection?;Port scanning;Malicious deep queries;IP fragmentation;Network sniffing;b;Introspection reveals GraphQL schema, enabling injections in arguments and nested queries.",
+      "Which risk tops OWASP Docker Top 10?;Root execution;Logging;Secrets management;Network segregation;a;Running containers as root facilitates host escapes.",
+      "How to bypass authentication in MongoDB?;{$ne: ''};{password: 1};{ $eq: '' };{ $set: };a;The $ne operator returns documents without password verification.",
+      "Which measure contradicts zero-trust in cloud?;Broad network access;Least privilege;Enforced MFA;TLS encryption;a;Broad network access (NIST) increases attack surface without geographical restrictions."
+    ]
+  }
+}
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

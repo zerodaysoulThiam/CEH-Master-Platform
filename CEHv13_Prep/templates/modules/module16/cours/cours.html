@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Hacking Wireless Networks{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+    <h1>Module 16: Hacking Wireless Networks</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#wireless-concepts">1. Wireless Concepts</a></td>
+                <td>Fondamentaux des réseaux sans fil</td>
+            </tr>
+            <tr>
+                <td><a href="#wireless-encryption">2. Wireless Encryption</a></td>
+                <td>Protocoles de chiffrement</td>
+            </tr>
+            <tr>
+                <td><a href="#wireless-threats">3. Wireless Threats</a></td>
+                <td>Risques et vulnérabilités</td>
+            </tr>
+            <tr>
+                <td><a href="#methodology">4. Wireless Hacking Methodology</a></td>
+                <td>Processus d'attaque</td>
+            </tr>
+            <tr>
+                <td><a href="#tools">5. Wireless Hacking Tools</a></td>
+                <td>Logiciels spécialisés</td>
+            </tr>
+            <tr>
+                <td><a href="#bluetooth">6. Bluetooth Hacking</a></td>
+                <td>Attaques Bluetooth</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">7. Wireless Attack Countermeasures</a></td>
+                <td>Protections</td>
+            </tr>
+            <tr>
+                <td><a href="#security-tools">8. Wireless Security Tools</a></td>
+                <td>Outils de sécurisation</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="wireless-concepts">
+        <h1>1. Wireless Concepts</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Fondamentaux Wi-Fi</h3>
+                <ul>
+                    <li><strong>SSID</strong>: Identifiant du réseau (Service Set Identifier)</li>
+                    <li><strong>BSSID</strong>: Adresse MAC du point d'accès</li>
+                    <li><strong>Canaux</strong>: Bandes de fréquence (2.4GHz, 5GHz, 6GHz)</li>
+                    <li><strong>Modes</strong>: Infrastructure vs Ad-hoc</li>
+                    <li><strong>Normes</strong>: 802.11a/b/g/n/ac/ax (Wi-Fi 6/6E)</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Composants clés</h5>
+                    <ul>
+                        <li>Points d'accès (AP)</li>
+                        <li>Cartes réseau sans fil (NIC)</li>
+                        <li>Contrôleurs Wi-Fi</li>
+                        <li>Antennes (omnidirectionnelles/directionnelles)</li>
+                        <li>Client sans fil</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Chiffres clés</h4>
+                        <ul>
+                            <li>87% des foyers utilisent le Wi-Fi</li>
+                            <li>62% des entreprises ont subi des attaques Wi-Fi</li>
+                            <li>74% des réseaux publics sont vulnérables</li>
+                            <li>Débit théorique Wi-Fi 6E: 10 Gbps</li>
+                        </ul>
+                    </div>
+                </div>
+                
+              <img src="{{ url_for('static', filename='img/norme.png') }}" alt="Normes WI-fi">
+
+            </div>
+        </div>
+    </section>
+    
+    <section id="wireless-encryption" class="mt-5">
+        <h1>2. Wireless Encryption</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protocoles de sécurité</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Protocole</th>
+                        <th>Sécurité</th>
+                        <th>Vulnérabilités</th>
+                    </tr>
+                    <tr>
+                        <td>WEP</td>
+                        <td class="bg-danger text-white">Très faible</td>
+                        <td>IV collisions, RC4 faible</td>
+                    </tr>
+                    <tr>
+                        <td>WPA</td>
+                        <td class="bg-warning">Faible</td>
+                        <td>TKIP vulnérable</td>
+                    </tr>
+                    <tr>
+                        <td>WPA2</td>
+                        <td class="bg-info">Moyenne</td>
+                        <td>KRACK attack, PMKID</td>
+                    </tr>
+                    <tr>
+                        <td>WPA3</td>
+                        <td class="bg-success">Forte</td>
+                        <td>Dragonfly attack (théorique)</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Mécanismes d'authentification</h4>
+                        <ul>
+                            <li><strong>PSK</strong>: Pre-Shared Key (clé partagée)</li>
+                            <li><strong>EAP</strong>: Extensible Authentication Protocol</li>
+                            <li><strong>RADIUS</strong>: Authentification centralisée</li>
+                            <li><strong>Captive Portal</strong>: Authentification web</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-warning">
+                    <div class="card-body">
+                        <h4>Attaque KRACK (Key Reinstallation Attack)</h4>
+                        <p>Exploite la réinstallation du handshake 4-way dans WPA2</p>
+                        <code>aireplay-ng --deauth 100 -a [BSSID] [interface]</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="wireless-threats" class="mt-5">
+        <h1>3. Wireless Threats</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types d'attaques</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Rogue AP</strong>: Point d'accès non autorisé</li>
+                        <li><strong>Evil Twin</strong>: Clone d'AP légitime</li>
+                        <li><strong>Deauth Attack</strong>: Désauthentification clients</li>
+                        <li><strong>MITM</strong>: Man-in-the-Middle via ARP spoofing</li>
+                        <li><strong>Packet Sniffing</strong>: Écoute du trafic non chiffré</li>
+                        <li><strong>WPS Attacks</strong>: Exploitation de PIN WPS</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Impact des attaques</h4>
+                        <ul>
+                            <li>Interception de données sensibles</li>
+                            <li>Usurpation d'identité</li>
+                            <li>Déni de service</li>
+                            <li>Propagation de malware</li>
+                            <li>Accès au réseau interne</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Exemple: Evil Twin</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Détecter le SSID cible</li>
+                            <li>Créer un AP avec même SSID</li>
+                            <li>Forcer les déconnexions de l'AP légitime</li>
+                            <li>Capturer les identifiants via captive portal</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="methodology" class="mt-5">
+        <h1>4. Wireless Hacking Methodology</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Processus d'attaque</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li><strong>Reconnaissance</strong>: Détection des réseaux</li>
+                        <li><strong>Scanning</strong>: Analyse des AP et clients</li>
+                        <li><strong>Fingerprinting</strong>: Identification du matériel</li>
+                        <li><strong>Attaque</strong>: Exploitation des vulnérabilités</li>
+                        <li><strong>Accès</strong>: Connexion au réseau</li>
+                        <li><strong>Post-exploitation</strong>: Pivotage et persistance</li>
+                    </ol>
+                </div>
+                
+                <h3 class="mt-4">Techniques de cracking</h3>
+                <ul>
+                    <li><strong>Dictionnaire</strong>: Utilisation de wordlists</li>
+                    <li><strong>Brute-force</strong>: Essai systématique</li>
+                    <li><strong>Rainbow Tables</strong>: Pré-calcul de hachages</li>
+                    <li><strong>GPU Acceleration</strong>: Hashcat avec GPU</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h4>Workflow WPA2</h4>
+                        <ol>
+                            <li>Mettre l'interface en mode monitor</li>
+                            <li>Capturer le handshake 4-way</li>
+                            <li>Lancer une attaque de désauthentification</li>
+                            <li>Extraire le hash avec cap2hccapx</li>
+                            <li>Cracker avec hashcat/hcxdumptool</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-warning">
+                    <div class="card-header">
+                        <h4>Commandes essentielles</h4>
+                    </div>
+                    <div class="card-body">
+                        <code>airmon-ng start wlan0</code><br>
+                        <code>airodump-ng wlan0mon</code><br>
+                        <code>aireplay-ng --deauth 10 -a [BSSID] wlan0mon</code><br>
+                        <code>aircrack-ng -w wordlist.txt capture.cap</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="tools" class="mt-5">
+        <h1>5. Wireless Hacking Tools</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Suite Aircrack-ng</h3>
+                <ul>
+                    <li><strong>airmon-ng</strong>: Gestion des interfaces</li>
+                    <li><strong>airodump-ng</strong>: Capture des paquets</li>
+                    <li><strong>aireplay-ng</strong>: Injection de paquets</li>
+                    <li><strong>aircrack-ng</strong>: Cracking des clés</li>
+                    <li><strong>airdecap-ng</strong>: Déchiffrement des captures</li>
+                </ul>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Matériel recommandé</h5>
+                    <ul>
+                        <li>Cartes Alfa Network (AWUS036NHA)</li>
+                        <li>Adaptateurs Pineapple</li>
+                        <li>Antennes à gain élevé</li>
+                        <li>Ordinateur portable avec port USB 3.0</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Outils complémentaires</h4>
+                        <table class="table text-white">
+                            <tr>
+                                <th>Outil</th>
+                                <th>Fonction</th>
+                            </tr>
+                            <tr>
+                                <td>Kismet</td>
+                                <td>Détection passive</td>
+                            </tr>
+                            <tr>
+                                <td>Wifite</td>
+                                <td>Automatisation des attaques</td>
+                            </tr>
+                            <tr>
+                                <td>Fern Wifi Cracker</td>
+                                <td>GUI pour tests de pénétration</td>
+                            </tr>
+                            <tr>
+                                <td>MDK4</td>
+                                <td>Attaques DoS avancées</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="bluetooth" class="mt-5">
+        <h1>6. Bluetooth Hacking</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Technologies Bluetooth</h3>
+                <ul>
+                    <li>Bluetooth Classic (BR/EDR)</li>
+                    <li>Bluetooth Low Energy (BLE)</li>
+                    <li>Bluetooth Mesh</li>
+                </ul>
+                
+                <div class="card bg-warning">
+                    <div class="card-body">
+                        <h4>Attaques courantes</h4>
+                        <ul>
+                            <li><strong>Bluejacking</strong>: Envoi de messages non sollicités</li>
+                            <li><strong>Bluesnarfing</strong>: Vol de données</li>
+                            <li><strong>Blueborne</strong>: Exploitation sans appairage</li>
+                            <li><strong>BIAS</strong>: Bluetooth Impersonation Attack</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils Bluetooth</h4>
+                        <ul>
+                            <li><strong>hcitool</strong>: Contrôle des interfaces</li>
+                            <li><strong>bluelog</strong>: Détection des appareils</li>
+                            <li><strong>Bluetoothctl</strong>: CLI pour Bluetooth</li>
+                            <li><strong>BrakTooth</strong>: Exploit framework</li>
+                            <li><strong>GATTacker</strong>: Attaques MITM BLE</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-success text-white">
+                    <div class="card-body">
+                        <h4>Exemple: Attaque BLE</h4>
+                        <code>gatttool -b [MAC] --char-write-req -a 0x002a -n 01</code><br>
+                        <code>bettercap -iface hci0</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>7. Wireless Attack Countermeasures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Bonnes pratiques</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Utiliser WPA3 ou WPA2 avec AES</li>
+                        <li>Désactiver WPS</li>
+                        <li>Changer les identifiants par défaut</li>
+                        <li>Mettre à jour le firmware régulièrement</li>
+                        <li>Utiliser un SSID unique</li>
+                        <li>Configurer un VLAN invité</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Configuration sécurisée</h3>
+                <ul>
+                    <li>Désactiver l'administration à distance</li>
+                    <li>Activer le filtrage MAC (limité)</li>
+                    <li>Réduire la puissance du signal</li>
+                    <li>Configurer le taux de renouvellement des clés</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Politiques de sécurité</h4>
+                        <ul>
+                            <li>Authentification 802.1X/EAP</li>
+                            <li>Certificats numériques pour les appareils</li>
+                            <li>Segmentation réseau stricte</li>
+                            <li>Surveillance continue du spectre</li>
+                            <li>Tests d'intrusion réguliers</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-primary text-white">
+                    <div class="card-body">
+                        <h4>Contre-mesures Bluetooth</h4>
+                        <ul>
+                            <li>Désactiver Bluetooth si inutilisé</li>
+                            <li>Utiliser le mode "non-découvrable"</li>
+                            <li>Rejeter les appairages non sollicités</li>
+                            <li>Mettre à jour les pilotes Bluetooth</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="security-tools" class="mt-5">
+        <h1>8. Wireless Security Tools</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Solutions professionnelles</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>WIPS</strong>: Wireless Intrusion Prevention Systems</li>
+                        <li><strong>NAC</strong>: Network Access Control</li>
+                        <li><strong>SIEM</strong>: Security Information and Event Management</li>
+                        <li><strong>Scanners RF</strong>: Détection des interférences</li>
+                    </ul>
+                </div>
+                
+                <div class="card mt-3 bg-info text-white">
+                    <div class="card-body">
+                        <h4>Outils open-source</h4>
+                        <ul>
+                            <li>Wireshark (analyse de trafic)</li>
+                            <li>Kismet (détection rogue AP)</li>
+                            <li>OpenWIPS-ng (système WIPS)</li>
+                            <li>Snort (détection d'intrusion)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h4>Méthodes de surveillance</h4>
+                        <ul>
+                            <li>Scans périodiques des réseaux</li>
+                            <li>Détection des anomalies de trafic</li>
+                            <li>Surveillance des canaux radio</li>
+                            <li>Analyse des logs des points d'accès</li>
+                            <li>Tests de pénétration automatisés</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 bg-warning">
+                    <div class="card-header">
+                        <h4>Audit de sécurité</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Cartographie du réseau sans fil</li>
+                            <li>Analyse des configurations</li>
+                            <li>Tests de résistance aux attaques</li>
+                            <li>Vérification de la couverture radio</li>
+                            <li>Rapport de vulnérabilités</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

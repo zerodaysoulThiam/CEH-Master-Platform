@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 4 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 4 : Enumeration</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+const quizData = {
+  module: "4",
+  fr: {
+    facile: [
+      "Quel est le rôle principal du DNS?;Chiffrer le trafic réseau;Associer des noms de domaine à des adresses IP;Créer des sous-domaines;Identifier les routeurs;a",
+      "Quel port est utilisé par défaut pour les requêtes DNS?;80;53;25;443;b",
+      "Quel type d’enregistrement DNS est utilisé pour les serveurs mail?;A;NS;MX;PTR;c",
+      "Quel outil permet d’effectuer des requêtes DNS en ligne de commande?;dig;ping;nmap;telnet;a",
+      "À quoi sert un transfert de zone DNS?;À crypter les échanges DNS;À récupérer les enregistrements d’une zone complète;À bloquer les DNS malveillants;À tester le TTL des requêtes;b"
+    ],
+    moyen: [
+      "Quelle technique consiste à vérifier si un nom de domaine est déjà en cache sur un serveur DNS?;Zone transfer;DNS poisoning;DNS cache snooping;Reverse DNS lookup;c",
+      "Quel outil permet de tester les transferts de zones DNS?;ftp;ssh;dig;telnet;c",
+      "Quel type d’enregistrement permet la résolution inverse (IP → nom)?;PTR;A;CNAME;NS;a",
+      "Quel protocole utilise les ports 135, 139, 445 pour l’énumération?;SNMP;NetBIOS/SMB;SMTP;DNS;b",
+      "Quelle commande Windows affiche les partages d’un hôte distant?;netstat;net view;ipconfig;ping;b"
+    ],
+    difficile: [
+      "Quel outil peut être utilisé pour faire du brute-force de sous-domaines?;nmap;dnsrecon;wireshark;tcpdump;b",
+      "Quel est le rôle du champ RID dans un SID Windows?;Indiquer la version du système;Identifier de manière unique un compte;Afficher la politique de mot de passe;Détecter les vulnérabilités réseau;b",
+      "Quel protocole permet de collecter des informations système via des OID?;LDAP;SNMP;SMB;NTP;b",
+      "Quelle commande récupère le nom système via SNMP?;snmpget -c public -v1 IP .1.3.6.1.2.1.1.5.0;netstat -a;telnet IP 23;whois IP;a",
+      "Que permet de faire une session nulle sous Windows?;Envoyer des paquets ICMP;Scanner un réseau;Accéder à des ressources partagées sans authentification;Écouter le trafic réseau;c"
+    ],
+    tresdifficile: [
+      "Quel outil permet d’énumérer les utilisateurs via SMB?;enum4linux;dirbuster;sqlmap;hping;a",
+      "Quelle est la différence entre AXFR et IXFR dans les transferts de zone?;Aucune, ce sont des synonymes;AXFR est un transfert complet, IXFR est incrémental;AXFR utilise UDP, IXFR TCP;AXFR est interne, IXFR externe;b",
+      "Comment empêcher les transferts de zone non autorisés?;Changer le port DNS;Bloquer tous les paquets DNS;Limiter les IP autorisées pour les transferts;Désactiver les requêtes DNS;c",
+      "Quel outil est recommandé pour visualiser les objets SNMP sur Windows?;Zenmap;SNMP Walk;Wireshark;Tor Browser;b",
+      "Quelle technique permet d’obtenir tous les comptes utilisateurs sur une machine Windows distante?;DumpSec;sqlmap;ping;fuzzing;a"
+    ]
+  },
+  en: {
+    facile: [
+      "What is the primary purpose of DNS?;To encrypt data;To map domain names to IP addresses;To create subdomains;To identify routers;b",
+      "Which default port is used for DNS requests?;80;53;25;443;b",
+      "Which DNS record type is used for mail servers?;A;NS;MX;PTR;c",
+      "Which tool allows DNS queries via command line?;dig;ping;nmap;telnet;a",
+      "What is a DNS zone transfer?;Encrypt DNS traffic;Obtain all DNS records of a zone;Block malicious domains;Test TTL of DNS requests;b"
+    ],
+    moyen: [
+      "Which technique checks if a domain name is in a DNS server cache?;Zone transfer;DNS poisoning;DNS cache snooping;Reverse DNS lookup;c",
+      "Which tool is used to test DNS zone transfers?;ftp;ssh;dig;telnet;c",
+      "Which record type is used for reverse DNS (IP to domain)?;PTR;A;CNAME;NS;a",
+      "Which protocol uses ports 135, 139, and 445 for enumeration?;SNMP;NetBIOS/SMB;SMTP;DNS;b",
+      "Which Windows command shows shared resources on a remote host?;netstat;net view;ipconfig;ping;b"
+    ],
+    difficile: [
+      "Which tool can brute-force subdomains?;nmap;dnsrecon;wireshark;tcpdump;b",
+      "What is the purpose of the RID field in a Windows SID?;OS version;Uniquely identify a user account;Password policy;Detect vulnerabilities;b",
+      "Which protocol retrieves system info using OIDs?;LDAP;SNMP;SMB;NTP;b",
+      "Which command fetches system name via SNMP?;snmpget -c public -v1 IP .1.3.6.1.2.1.1.5.0;netstat -a;telnet IP 23;whois IP;a",
+      "What does a null session allow in Windows?;Send ICMP packets;Scan a network;Access shared resources without authentication;Capture network traffic;c"
+    ],
+    tresdifficile: [
+      "Which tool enumerates users via SMB?;enum4linux;dirbuster;sqlmap;hping;a",
+      "What’s the difference between AXFR and IXFR?;None;AXFR is full transfer, IXFR is incremental;AXFR uses UDP, IXFR TCP;AXFR is internal, IXFR external;b",
+      "How can unauthorized zone transfers be prevented?;Change DNS port;Block all DNS traffic;Limit allowed IPs for transfers;Disable DNS entirely;c",
+      "Which GUI tool visualizes SNMP objects on Windows?;Zenmap;SNMP Walk;Wireshark;Tor Browser;b",
+      "Which tool lists all users on a remote Windows system?;DumpSec;sqlmap;ping;fuzzing;a"
+    ]
+  }
+};
+
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

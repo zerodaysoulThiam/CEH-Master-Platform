@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 12 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 12 : Evading IDS, Firewalls ans honeypots</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+ fr: {
+                facile: [
+                    "Quel outil est utilisé pour le banner grabbing ?;Nmap;Nessus;Aircrack;Hydra;a",
+                    "Quel protocole est souvent bloqué par les pare-feu lors d’un scan ICMP ?;TCP;UDP;ICMP;HTTP;c",
+                    "Quelle est la première étape pour établir une connexion TCP ?;ACK;FIN;SYN;RST;c",
+                    "Que signifie 'Nmap' ?;Network Mapper;Network Management;Net Mapping Tool;None of the above;a",
+                    "Quel port est utilisé pour le protocole SSH ?;21;22;23;25;b",
+                    "Quel flag TCP est utilisé pour terminer une connexion ?;SYN;ACK;RST;FIN;d",
+                    "Quel outil est une interface graphique de Nmap ?;Netcat;Angry IP;Zenmap;Wireshark;c",
+                    "Quel type de scan TCP est le plus furtif ?;Connect;SYN;FIN;ACK;b",
+                    "Quel port correspond au protocole HTTPS ?;443;80;23;110;a",
+                    "Quelle commande Nmap permet d’ignorer les pings ?;-sS;-T4;-Pn;-n;c"
+                ],
+                moyen: [
+                    "Qu’est-ce qu’un scan XMAS ?;Scan ICMP;Scan UDP;Scan TCP avec flags multiples;Scan de vulnérabilité;c",
+                    "Quelle commande affiche tous les ports de 1 à 65535 ?;nmap -sS; nmap -A; nmap -p-; nmap -Pn;c",
+                    "Quelle technique utilise un zombie pour scanner ?;ACK scanning;Idle scan;FIN scan;SYN scan;b",
+                    "Quelle option Nmap détecte l’OS cible ?;-O;-A;-V;-T4;a",
+                    "Quel outil permet d’analyser les paquets capturés ?;Netcat;Wireshark;Hping3;Nessus;b",
+                    "À quoi sert le flag URG en TCP ?;Finir une connexion;Envoyer des données importantes;Réinitialiser la session;Lancer la connexion;b",
+                    "Quel outil est plus bas niveau que Nmap pour le scan TCP/IP ?;Wireshark;Fing;Hping3;Angry IP Scanner;c",
+                    "Quelle méthode permet de fragmenter les paquets pour éviter la détection ?;Banner grabbing;Packet Sniffing;IP Fragmentation;Telnet grabbing;c",
+                    "Quel est le rôle du port 3389 ?;FTP;RDP;Telnet;SMTP;b",
+                    "Quelle technique tente de tromper les IDS ?;Banner hiding;IP spoofing;Google Dorking;GeoIP masking;b"
+                ],
+                difficile: [
+                    "Quel scan utilise un paquet TCP sans aucun flag ?;ACK;FIN;XMAS;NULL;d",
+                    "Quelle option Nmap active détection OS, version et traceroute ?;-A;-O;-sS;-V;a",
+                    "Qu’est-ce que le routage source strict ?;Définit les ports sources;Spécifie le chemin exact;Utilise un proxy;Modifie l’IP source;b",
+                    "Quel outil permet de chaîner des proxies sous Linux ?;ProxyJoin;ProxyLinks;ProxyChains;VPNControl;c",
+                    "Quelle méthode consiste à masquer le contenu des paquets via chiffrement ?;Proxying;SSL/TLS;Port Hiding;IP Decoy;b",
+                    "Quel flag TCP est utilisé pour envoyer immédiatement les données ?;ACK;PSH;RST;URG;b",
+                    "Que fait la commande 'nmap -sS -D RND:5 cible' ?;Scan TCP Connect;Scan UDP aléatoire;Scan SYN avec leurres;Scan ACK avec DNS;c",
+                    "Quel outil mobile détecte les hôtes et les ports depuis un smartphone ?;ScanMaster;IPScan Pro;Fing;ZenTool;c",
+                    "Quel scan détecte uniquement les hôtes actifs ?;Port scan;Ping sweep;Service scan;OS scan;b",
+                    "Le port 9100 est principalement utilisé par ?;VPN;Imprimantes;Firewalls;VoIP;b"
+                ],
+                tresdifficile: [
+                    "Quel est le risque du scan NULL ?;Inutile;Bruyant;Incompatible IPv6;Indétectable mais parfois inefficace;d",
+                    "Que permet de détecter la fenêtre TCP dans un scan ACK ?;Port ouvert;Version OS;Système de fichiers;Pare-feu non filtrant;a",
+                    "Que signifie l’option '-Q' dans Hping ?;Qualité réseau;Séquence TCP;Quantité de paquets;Quick scan;b",
+                    "Qu’est-ce qu’un ISN dans TCP ?;Index System Number;Initial Sequence Number;Internal Scan Node;Internet Server Name;b",
+                    "Pourquoi utiliser un zombie dans un idle scan ?;Pour gagner du temps;Pour éviter les firewalls;Pour anonymiser la source;Pour tester la bande passante;c",
+                    "Quel scan TCP est le moins détectable ?;Connect;SYN;NULL;ACK;c",
+                    "Quel flag TCP signale une réinitialisation brutale ?;ACK;RST;FIN;URG;b",
+                    "Quel est l'intérêt du champ 'Window Size' en TCP scan ?;Chiffrer les paquets;Définir la vitesse de transmission;Déterminer la capacité d’un système;Indiquer un OS ciblé;c",
+                    "Que fait l’option '--script' dans Nmap ?;Lance des scans UDP;Exécute des scripts NSE;Ajoute un proxy;Change la langue;b",
+                    "Quel port est rarement scanné mais peut révéler des impressions ?;9100;22;443;80;a"
+                ]
+            },
+            en: {
+                facile: [
+                    "Which tool is used for banner grabbing?;Nmap;Nessus;Aircrack;Hydra;a",
+                    "Which protocol is often blocked by firewalls in ICMP scans?;TCP;UDP;ICMP;HTTP;c",
+                    "What is the first step to establish a TCP connection?;ACK;FIN;SYN;RST;c",
+                    "What does 'Nmap' stand for?;Network Mapper;Network Management;Net Mapping Tool;None of the above;a",
+                    "Which port is used by SSH protocol?;21;22;23;25;b",
+                    "Which TCP flag terminates a connection?;SYN;ACK;RST;FIN;d",
+                    "Which GUI tool is a frontend for Nmap?;Netcat;Angry IP;Zenmap;Wireshark;c",
+                    "Which TCP scan type is most stealthy?;Connect;SYN;FIN;ACK;b",
+                    "Which port is for HTTPS?;443;80;23;110;a",
+                    "Which Nmap option skips ping?;-sS;-T4;-Pn;-n;c"
+                ],
+                moyen: [
+                    "What is a XMAS scan?;ICMP scan;UDP scan;TCP scan with multiple flags;Vulnerability scan;c",
+                    "Which command scans all ports from 1 to 65535?;nmap -sS; nmap -A; nmap -p-; nmap -Pn;c",
+                    "Which technique uses a zombie to scan a target?;ACK scan;Idle scan;FIN scan;SYN scan;b",
+                    "Which Nmap option detects target OS?;-O;-A;-V;-T4;a",
+                    "Which tool analyzes captured packets?;Netcat;Wireshark;Hping3;Nessus;b",
+                    "What does URG flag indicate in TCP?;End connection;Send urgent data;Reset session;Start connection;b",
+                    "Which tool is lower-level than Nmap for TCP/IP scan?;Wireshark;Fing;Hping3;Angry IP Scanner;c",
+                    "Which method fragments packets to avoid detection?;Banner grabbing;Packet Sniffing;IP Fragmentation;Telnet grabbing;c",
+                    "What is port 3389 used for?;FTP;RDP;Telnet;SMTP;b",
+                    "Which technique tries to trick IDS?;Banner hiding;IP spoofing;Google Dorking;GeoIP masking;b"
+                ],
+                difficile: [
+                    "Which scan uses a TCP packet with no flags?;ACK;FIN;XMAS;NULL;d",
+                    "Which Nmap option enables OS, version and traceroute detection?;-A;-O;-sS;-V;a",
+                    "What is strict source routing?;Defines source ports;Specifies exact path;Uses proxy;Changes source IP;b",
+                    "Which Linux tool chains multiple proxies?;ProxyJoin;ProxyLinks;ProxyChains;VPNControl;c",
+                    "Which method hides packet content via encryption?;Proxying;SSL/TLS;Port Hiding;IP Decoy;b",
+                    "Which TCP flag sends data immediately?;ACK;PSH;RST;URG;b",
+                    "What does 'nmap -sS -D RND:5 target' do?;TCP connect scan;Random UDP scan;SYN scan with decoys;ACK scan with DNS;c",
+                    "Which mobile app scans hosts and ports?;ScanMaster;IPScan Pro;Fing;ZenTool;c",
+                    "Which scan only detects live hosts?;Port scan;Ping sweep;Service scan;OS scan;b",
+                    "Port 9100 is mainly used by?;VPN;Printers;Firewalls;VoIP;b"
+                ],
+                tresdifficile: [
+                    "What is the risk of a NULL scan?;Useless;Noisy;IPv6 incompatible;Undetectable but may fail;d",
+                    "What does TCP window size help detect in ACK scan?;Open port;OS version;File system;Non-filtering firewall;a",
+                    "What does '-Q' in Hping collect?;Network quality;TCP sequence numbers;Packet count;Quick scan;b",
+                    "What is an ISN in TCP?;Index System Number;Initial Sequence Number;Internal Scan Node;Internet Server Name;b",
+                    "Why use a zombie in an idle scan?;Speed;Bypass firewalls;Anonymity;Bandwidth test;c",
+                    "Which TCP scan is least detectable?;Connect;SYN;NULL;ACK;c",
+                    "Which TCP flag signals abrupt termination?;ACK;RST;FIN;URG;b",
+                    "Why is TCP Window Size relevant in scan?;Encrypt packets;Speed rate;System behavior;Identify OS;c",
+                    "What does '--script' option do in Nmap?;Run UDP scan;Execute NSE scripts;Add proxy;Change language;b",
+                    "Which port reveals printer status?;9100;22;443;80;a"
+                ]
+            }
+        };
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

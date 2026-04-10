@@ -1,0 +1,916 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 19{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+    <h1>Cours - Module 19: Le Cloud</h1>
+
+    <table class="table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Sujet</th>
+                <th>Description (en français)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#cloud-computing-concepts">Cloud Computing Concepts</a></td>
+                <td>Principes fondamentaux de l'informatique en nuage, y compris les modules de service (IaaS, PaaS, SaaS) et les types de déploiement (public, privé, hybride).</td>
+            </tr>
+            <tr>
+                <td><a href="#container-technology">Container Technology</a></td>
+                <td>Technologie permettant d'exécuter des applications de manière isolée dans des conteneurs légers, garantissant portabilité et cohérence entre les environnements.</td>
+            </tr>
+            <tr>
+                <td><a href="#serverless-computing">Serverless Computing</a></td>
+                <td>Modèle d'exécution où l'infrastructure est entièrement gérée par le fournisseur cloud, permettant aux développeurs de se concentrer uniquement sur le code.</td>
+            </tr>
+            <tr>
+                <td><a href="#cloud-computing-threats">Cloud Computing Threats</a></td>
+                <td>Risques et menaces associés à l'informatique en nuage, tels que la perte de données, l'accès non autorisé, les attaques DDoS et les fuites de données.</td>
+            </tr>
+            <tr>
+                <td><a href="#cloud-hacking">Cloud Hacking</a></td>
+                <td>Techniques utilisées par les attaquants pour compromettre les services cloud, exploiter les mauvaises configurations ou voler des données sensibles.</td>
+            </tr>
+            <tr>
+                <td><a href="#cloud-security">Cloud Security</a></td>
+                <td>Ensemble de mesures et de pratiques pour sécuriser les environnements cloud, incluant la gestion des identités, le chiffrement, et la surveillance.</td>
+            </tr>
+            <tr>
+                <td><a href="#container-security">Container Security</a></td>
+                <td>Pratiques visant à sécuriser les conteneurs et leur infrastructure, en contrôlant les images, les dépendances et les communications interconteneurs.</td>
+            </tr>
+        </tbody>
+    </table>
+	
+
+  <section id="cloud-computing-concepts">
+    <h1>1. Cloud Computing concepts</h1>
+    <p>Le cloud computing permet l'accès à la demande à des ressources informatiques via Internet, sans avoir à gérer l'infrastructure sous-jacente.</p>
+
+    <h2>Avant le cloud computing</h2>
+    <ul>
+      <li>Les données et applications étaient hébergées localement (on-premises).</li>
+      <li>Les systèmes étaient centralisés, isolés et segmentés.</li>
+    </ul>
+
+    <h2>Définition selon le NIST</h2>
+    <p>Le NIST définit le cloud computing comme un modèle permettant un accès pratique, à la demande, via un réseau à un ensemble partagé de ressources informatiques configurables.</p>
+    <p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-145.pdf" target="_blank">Voir la définition complète</a></p>
+
+    <h3>Caractéristiques essentielles</h3>
+    <ul>
+      <li><strong>Self-service à la demande :</strong> les utilisateurs peuvent provisionner des ressources automatiquement sans intervention humaine.</li>
+      <li><strong>Accès réseau étendu :</strong> disponible sur divers appareils via Internet.</li>
+      <li><strong>Mutualisation des ressources :</strong> ressources partagées entre plusieurs clients avec isolement logique.</li>
+      <li><strong>Élasticité rapide :</strong> possibilité d’augmenter ou réduire rapidement les ressources selon les besoins.</li>
+      <li><strong>Service mesuré :</strong> la consommation est surveillée et facturée à l’usage.</li>
+    </ul>
+
+    <h2>Modèles de service</h2>
+    <h3>IaaS (Infrastructure as a Service)</h3>
+    <p>Fournit des ressources de base comme des machines virtuelles, le stockage et les réseaux. L'utilisateur gère le système d’exploitation et les applications.</p>
+
+    <h3>PaaS (Platform as a Service)</h3>
+    <p>Fournit un environnement de développement complet géré par le fournisseur. L'utilisateur se concentre sur le développement sans gérer l'infrastructure.</p>
+
+    <h3>SaaS (Software as a Service)</h3>
+    <p>Fournit des applications hébergées et accessibles via un navigateur. L'utilisateur n’a aucun contrôle sur l’infrastructure.</p>
+
+    <h3>Autres modèles</h3>
+    <ul>
+      <li><strong>IDaaS :</strong> services d’authentification gérés comme SSO, MFA.</li>
+      <li><strong>SECaaS :</strong> services de sécurité comme l’antivirus, la détection d'intrusion.</li>
+      <li><strong>CaaS :</strong> services de gestion de conteneurs et de clusters.</li>
+      <li><strong>FaaS :</strong> exécution de fonctions sans gestion de serveurs (ex : AWS Lambda).</li>
+    </ul>
+
+    <h2>Responsabilités partagées</h2>
+    <ul>
+      <li><strong>On-premises :</strong> tout est géré par l’entreprise.</li>
+      <li><strong>IaaS :</strong> le fournisseur gère le matériel, l’entreprise gère les logiciels.</li>
+      <li><strong>PaaS :</strong> le fournisseur gère aussi le système et les plateformes.</li>
+      <li><strong>SaaS :</strong> tout est géré par le fournisseur sauf la configuration de l’application.</li>
+    </ul>
+
+    <h2>Modèles de déploiement</h2>
+    <ul>
+      <li><strong>Cloud privé :</strong> dédié à une seule organisation, sur site ou chez un prestataire.</li>
+      <li><strong>Cloud public :</strong> partagé via Internet, hébergé par un fournisseur.</li>
+      <li><strong>Cloud communautaire :</strong> partagé entre plusieurs organisations ayant les mêmes objectifs.</li>
+      <li><strong>Cloud hybride :</strong> combinaison de plusieurs clouds (public, privé...)</li>
+      <li><strong>Multi-cloud :</strong> utilisation de plusieurs fournisseurs cloud différents.</li>
+    </ul>
+
+    <h2>Acteurs du cloud (selon NIST)</h2>
+    <ul>
+      <li><strong>Consommateur :</strong> utilisateur final des services cloud.</li>
+      <li><strong>Fournisseur :</strong> entité qui fournit les services cloud.</li>
+      <li><strong>Auditeur :</strong> effectue des évaluations indépendantes.</li>
+      <li><strong>Broker :</strong> intermédiaire entre fournisseurs et consommateurs.</li>
+      <li><strong>Transporteur :</strong> assure la connectivité réseau.</li>
+    </ul>
+
+    <h2>Séparation des responsabilités</h2>
+    <p>Permet de mieux gérer la sécurité :</p>
+    <ul>
+      <li><strong>Propriétaire des données :</strong> décide de leur utilisation.</li>
+      <li><strong>Gestionnaire :</strong> assure la protection et la maintenance.</li>
+      <li><strong>Risque :</strong> si une même personne cumule les deux rôles.</li>
+    </ul>
+
+    <h2>Avantages du cloud</h2>
+    <ul>
+      <li>Économies de coûts.</li>
+      <li>Élasticité et flexibilité.</li>
+      <li>Haute disponibilité.</li>
+      <li>Accès rapide à l’innovation.</li>
+      <li>Meilleure reprise après sinistre.</li>
+    </ul>
+
+    <h2>Inconvénients du cloud</h2>
+    <ul>
+      <li>Dépendance au fournisseur.</li>
+      <li>Problèmes de sécurité et de conformité.</li>
+      <li>Moins de contrôle sur l’infrastructure.</li>
+      <li>Dépendance à la connexion Internet.</li>
+      <li>Possibilité de verrouillage contractuel (vendor lock-in).</li>
+    </ul>
+
+    <h2>Réglementations</h2>
+    <ul>
+      <li><strong>FedRAMP :</strong> régulation américaine du cloud.</li>
+      <li><strong>PCI DSS :</strong> sécurité des données bancaires, y compris dans le cloud.</li>
+    </ul>
+
+    <h2>Accords de niveau de service (SLA)</h2>
+    <p>Les SLA définissent les engagements du fournisseur envers le client (temps de disponibilité, support, sécurité...)</p>
+
+    <h2>Références</h2>
+    <ul>
+      <li><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-145.pdf" target="_blank">Définition NIST du Cloud Computing</a></li>
+      <li><a href="https://www.nist.gov/system/files/documents/itl/cloud/NIST_SP-500-291_Version-2_2013_June18_FINAL.pdf" target="_blank">Architecture NIST du Cloud Computing</a></li>
+      <li><a href="https://aws.amazon.com/lambda/" target="_blank">AWS Lambda</a></li>
+      <li><a href="https://azure.microsoft.com/en-us/services/functions/" target="_blank">Azure Functions</a></li>
+      <li><a href="https://cloud.google.com/functions" target="_blank">Google Cloud Functions</a></li>
+    </ul>
+  </section>
+  
+<section id="container-technology">
+  <h1>2. Container Technology</h1>
+
+  <p>
+    La <strong>technologie des conteneurs</strong> révolutionne le déploiement des applications en permettant leur exécution dans des environnements isolés, reproductibles et portables. Contrairement à la virtualisation classique, elle repose sur un <strong>partage du noyau de l’OS</strong> et s’appuie sur des outils comme Docker, Kubernetes, Podman, etc.
+  </p>
+
+  <h2>Introduction</h2>
+  <p>
+    Un <strong>conteneur</strong> est une unité standard de logiciel qui emballe le code et toutes ses dépendances pour que l’application s’exécute rapidement et de manière fiable dans différents environnements. Les conteneurs sont <strong>plus légers</strong> que les machines virtuelles car ils partagent le noyau de l’OS hôte.
+  </p>
+
+  <h2>Container vs Virtual Machine</h2>
+  <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Conteneur</th>
+        <th>Machine Virtuelle (VM)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Isolation</td>
+        <td>Processus isolés, même noyau OS</td>
+        <td>OS complet isolé, avec hyperviseur</td>
+      </tr>
+      <tr>
+        <td>Démarrage</td>
+        <td>En quelques secondes</td>
+        <td>En quelques minutes</td>
+      </tr>
+      <tr>
+        <td>Taille</td>
+        <td>Quelques Mo à centaines de Mo</td>
+        <td>Plusieurs Go</td>
+      </tr>
+      <tr>
+        <td>Performances</td>
+        <td>Meilleure (moins de surcharge)</td>
+        <td>Plus lente (hyperviseur)</td>
+      </tr>
+      <tr>
+        <td>Utilisation principale</td>
+        <td>Microservices, CI/CD</td>
+        <td>Exécution complète de systèmes</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Architecture d’un conteneur</h2>
+  <ul>
+    <li><strong>Application</strong> : Code, binaires, bibliothèques</li>
+    <li><strong>Conteneur Runtime</strong> : ex. Docker, containerd</li>
+    <li><strong>Hôte OS</strong> : système d’exploitation supportant le runtime</li>
+    <li><strong>Noyau Linux partagé</strong> : pas de système invité (contrairement aux VM)</li>
+  </ul>
+
+  <h2>Avantages des conteneurs</h2>
+  <ul>
+    <li><strong>Portabilité</strong></li>
+    <li><strong>Isolation</strong></li>
+    <li><strong>Rapidité</strong></li>
+    <li><strong>Efficacité</strong></li>
+    <li><strong>Scalabilité</strong></li>
+    <li><strong>Reproductibilité</strong></li>
+  </ul>
+
+  <h2>Docker : Le standard de facto</h2>
+
+  <h3>Composants Docker</h3>
+  <ul>
+    <li><strong>Docker Engine</strong></li>
+    <li><strong>Docker CLI</strong></li>
+    <li><strong>Dockerfile</strong></li>
+    <li><strong>Docker Image</strong></li>
+    <li><strong>Docker Container</strong></li>
+    <li><strong>Docker Hub</strong></li>
+  </ul>
+
+  <h3>Commandes de base</h3>
+  <pre><code>docker build -t nom_image .
+docker run -d -p 8080:80 nom_image
+docker ps
+docker exec -it nom_conteneur bash
+docker stop nom_conteneur</code></pre>
+
+  <h2>Dockerfile : Structure d’une image</h2>
+  <pre><code>FROM python:3.11
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+CMD ["python", "app.py"]</code></pre>
+
+  <ul>
+    <li><strong>FROM</strong> : image de base</li>
+    <li><strong>WORKDIR</strong> : répertoire de travail</li>
+    <li><strong>COPY</strong> : copie des fichiers</li>
+    <li><strong>RUN</strong> : exécution de commandes à la création de l’image</li>
+    <li><strong>CMD</strong> : commande exécutée au lancement du conteneur</li>
+  </ul>
+
+  <h2>Orchestration de conteneurs</h2>
+
+  <h3>Kubernetes (K8s)</h3>
+  <ul>
+    <li><strong>Pod</strong> : plus petite unité déployable</li>
+    <li><strong>Service</strong> : abstraction réseau</li>
+    <li><strong>Deployment</strong> : gère la réplication et la mise à jour</li>
+    <li><strong>Ingress</strong> : contrôle l'accès externe</li>
+  </ul>
+
+  <h3>Alternatives</h3>
+  <ul>
+    <li><strong>Docker Swarm</strong></li>
+    <li><strong>Nomad (HashiCorp)</strong></li>
+    <li><strong>OpenShift</strong></li>
+  </ul>
+
+  <h2>Container Registry</h2>
+  <ul>
+    <li><strong>Public</strong> : Docker Hub, GitHub Container Registry, Quay.io</li>
+    <li><strong>Privé</strong> : AWS ECR, GitLab, Harbor</li>
+  </ul>
+
+  <h2>Sécurité des conteneurs</h2>
+
+  <h3>Risques</h3>
+  <ul>
+    <li>Images malveillantes ou vulnérables</li>
+    <li>Conteneurs mal configurés</li>
+    <li>Fuite de données</li>
+  </ul>
+
+  <h3>Contremesures</h3>
+  <ul>
+    <li>Scanner les images : Trivy, Clair</li>
+    <li>Signer les images : Notary, Cosign</li>
+    <li>Utiliser des <strong>images minimales</strong> : Alpine, Distroless</li>
+    <li>Limiter les permissions : rootless containers</li>
+    <li>Isoler avec namespaces et cgroups</li>
+  </ul>
+
+  <h2>Container as a Service (CaaS)</h2>
+  <ul>
+    <li><strong>AWS ECS / EKS</strong></li>
+    <li><strong>Azure AKS</strong></li>
+    <li><strong>Google GKE</strong></li>
+  </ul>
+
+  <h2>Serverless vs Containers</h2>
+  <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Conteneur</th>
+        <th>Serverless (FaaS)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Démarrage</td>
+        <td>Rapide, mais pas instantané</td>
+        <td>Instantané (cold start possible)</td>
+      </tr>
+      <tr>
+        <td>Contrôle</td>
+        <td>Complet sur l'environnement</td>
+        <td>Moins de contrôle</td>
+      </tr>
+      <tr>
+        <td>Durée d’exécution</td>
+        <td>Persistante</td>
+        <td>Éphémère</td>
+      </tr>
+      <tr>
+        <td>Coût</td>
+        <td>Par ressource utilisée</td>
+        <td>Par appel ou consommation exacte</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Cas d’usage des conteneurs</h2>
+  <ul>
+    <li>Microservices</li>
+    <li>Développement multi-environnements</li>
+    <li>CI/CD</li>
+    <li>Tests automatisés</li>
+    <li>Migration vers le cloud</li>
+    <li>Éducation et formation</li>
+  </ul>
+
+  <h2>Meilleures pratiques</h2>
+  <ul>
+    <li>Construire des images légères</li>
+    <li>Éviter d'exécuter en tant que root</li>
+    <li>Utiliser <code>.dockerignore</code></li>
+    <li>Réduire le nombre de couches</li>
+    <li>Versionner les images</li>
+    <li>Automatiser les tests</li>
+  </ul>
+
+  <h2>Outils complémentaires</h2>
+  <ul>
+    <li><strong>Docker Compose</strong></li>
+    <li><strong>Podman</strong></li>
+    <li><strong>Buildah</strong></li>
+    <li><strong>K3s</strong></li>
+    <li><strong>Helm</strong></li>
+  </ul>
+
+  <h2>Conclusion</h2>
+  <p>
+    La technologie des conteneurs permet de <strong>moderniser les processus de développement et de déploiement</strong> avec efficacité, portabilité et sécurité. Grâce aux outils comme Docker et Kubernetes, elle constitue aujourd’hui un <strong>pilier essentiel du DevOps et du Cloud Computing</strong>.
+  </p>
+</section>
+
+
+<section id="serverless-computing">
+  <h1>3. Serverless Computing</h1>
+
+  <p>
+    Le <strong>serverless computing</strong> est un modèle d'exécution où les développeurs peuvent exécuter du code sans gérer l'infrastructure serveur sous-jacente. Le fournisseur cloud prend en charge la gestion, la scalabilité et la maintenance des serveurs.
+  </p>
+
+  <h2>Concepts clés</h2>
+  <ul>
+    <li><strong>Fonctions en tant que service (FaaS)</strong> : exécution de fonctions indépendantes, déclenchées par des événements.</li>
+    <li><strong>Backend en tant que service (BaaS)</strong> : services cloud prêts à l’emploi (base de données, authentification, stockage, etc.).</li>
+    <li><strong>Événements déclencheurs</strong> : HTTP, messages, fichiers, timers...</li>
+    <li><strong>Facturation à l’usage</strong> : paiement basé sur la durée d’exécution et les ressources consommées.</li>
+  </ul>
+
+  <h2>Avantages du Serverless</h2>
+  <ul>
+    <li><strong>Pas de gestion de serveur</strong></li>
+    <li><strong>Scalabilité automatique</strong></li>
+    <li><strong>Coût réduit</strong> (pay-as-you-go)</li>
+    <li><strong>Déploiement rapide</strong></li>
+    <li><strong>Focus sur le code métier</strong></li>
+  </ul>
+
+  <h2>Inconvénients</h2>
+  <ul>
+    <li><strong>Dépendance au fournisseur cloud</strong></li>
+    <li><strong>Limites d’exécution (timeout, ressources)</strong></li>
+    <li><strong>Difficulté à gérer les états persistants</strong></li>
+    <li><strong>Cold start</strong> : délai de démarrage lors de la première invocation</li>
+    <li><strong>Moins de contrôle sur l’environnement</strong></li>
+  </ul>
+
+  <h2>Principaux fournisseurs Serverless</h2>
+  <ul>
+    <li><strong>AWS Lambda</strong></li>
+    <li><strong>Azure Functions</strong></li>
+    <li><strong>Google Cloud Functions</strong></li>
+    <li><strong>IBM Cloud Functions</strong></li>
+    <li><strong>Oracle Functions</strong></li>
+  </ul>
+
+  <h2>Fonctionnement d’une fonction serverless</h2>
+  <pre><code>// Exemple simple d'une fonction AWS Lambda en Node.js
+exports.handler = async (event) =&gt; {
+  console.log("Event reçu :", event);
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: "Hello Serverless!" }),
+  };
+};</code></pre>
+
+  <h2>Modèles de déclencheurs</h2>
+  <ul>
+    <li>Requêtes HTTP via API Gateway</li>
+    <li>Événements de stockage (ex : upload sur S3)</li>
+    <li>Messages dans des files d’attente (ex : SNS, SQS)</li>
+    <li>Événements planifiés (cron jobs)</li>
+    <li>Modifications de base de données</li>
+  </ul>
+
+  <h2>Serverless vs Containers</h2>
+  <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th>Critère</th>
+        <th>Serverless</th>
+        <th>Conteneurs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Gestion serveur</td>
+        <td>Aucune gestion, tout est abstrait</td>
+        <td>Gestion partielle, notamment runtime</td>
+      </tr>
+      <tr>
+        <td>Scalabilité</td>
+        <td>Automatique, instantanée</td>
+        <td>Automatique mais parfois manuelle</td>
+      </tr>
+      <tr>
+        <td>Durée d’exécution</td>
+        <td>Éphémère, limité (ex : 15 min max)</td>
+        <td>Persistante</td>
+      </tr>
+      <tr>
+        <td>Coût</td>
+        <td>Pay-as-you-go (exécution uniquement)</td>
+        <td>Coût constant (instance/serveur)</td>
+      </tr>
+      <tr>
+        <td>Contrôle</td>
+        <td>Restreint</td>
+        <td>Complet</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Cas d’usage courants</h2>
+  <ul>
+    <li>APIs REST / Backend léger</li>
+    <li>Traitement d’événements (ex : IoT, logs)</li>
+    <li>Automatisation et tâches planifiées</li>
+    <li>Microservices éphémères</li>
+    <li>Prototypage rapide</li>
+  </ul>
+
+  <h2>Bonnes pratiques</h2>
+  <ul>
+    <li>Éviter les fonctions trop longues</li>
+    <li>Minimiser les dépendances</li>
+    <li>Gérer la configuration via des variables d’environnement</li>
+    <li>Surveiller les logs et métriques</li>
+    <li>Tester localement avec des simulateurs</li>
+    <li>Prévoir la gestion des erreurs et des timeout</li>
+  </ul>
+
+  <h2>Outils et frameworks serverless</h2>
+  <ul>
+    <li><strong>Serverless Framework</strong></li>
+    <li><strong>AWS SAM (Serverless Application Model)</strong></li>
+    <li><strong>Azure Durable Functions</strong></li>
+    <li><strong>Google Cloud Build & Deploy</strong></li>
+    <li><strong>OpenFaaS</strong></li>
+  </ul>
+
+  <h2>Conclusion</h2>
+  <p>
+    Le serverless computing facilite le développement rapide d’applications évolutives sans se soucier de l’infrastructure. Bien qu’il présente des limites et une dépendance fournisseur, il reste un paradigme clé du cloud moderne, complémentaire aux conteneurs et aux architectures microservices.
+  </p>
+</section>
+
+
+<section id="cloud-computing-threats">
+  <h1>4. Cloud Computing Threats</h1>
+
+  <p>
+    Le cloud computing offre de nombreux avantages, mais expose aussi à des risques spécifiques liés à la sécurité des données, des applications et des infrastructures. Il est important de comprendre ces menaces pour mieux s’en protéger.
+  </p>
+
+  <h2>Principales menaces dans le cloud</h2>
+  <ul>
+    <li><strong>Fuite de données</strong> : exposition accidentelle ou malveillante des données sensibles.</li>
+    <li><strong>Perte de données</strong> : suppression ou corruption des données sans possibilité de récupération.</li>
+    <li><strong>Compte compromis</strong> : accès non autorisé via le piratage des identifiants ou des clés API.</li>
+    <li><strong>Attaques par déni de service (DDoS)</strong> : surcharge des ressources pour rendre le service indisponible.</li>
+    <li><strong>Malwares et ransomwares</strong> : logiciels malveillants visant à voler, corrompre ou bloquer l’accès aux données.</li>
+    <li><strong>Failles dans les API cloud</strong> : vulnérabilités dans les interfaces de programmation utilisées pour gérer les services.</li>
+    <li><strong>Violations de conformité</strong> : non-respect des réglementations liées à la protection des données.</li>
+    <li><strong>Insider threats</strong> : menaces venant des employés ou partenaires malveillants ou négligents.</li>
+    <li><strong>Configuration incorrecte</strong> : mauvaise gestion des accès et paramètres de sécurité exposant les ressources.</li>
+  </ul>
+
+  <h2>Vecteurs d’attaque courants</h2>
+  <ul>
+    <li>Phishing ciblant les identifiants cloud</li>
+    <li>Exploitation des vulnérabilités logicielles</li>
+    <li>Attaques sur les services d’authentification (ex : MFA contourné)</li>
+    <li>Utilisation d’images ou scripts malveillants dans les environnements cloud</li>
+    <li>Escalade de privilèges via des failles dans les configurations</li>
+  </ul>
+
+  <h2>Conséquences possibles</h2>
+  <ul>
+    <li>Perte financière et interruption d’activité</li>
+    <li>Atteinte à la réputation</li>
+    <li>Sanctions légales pour non-conformité</li>
+    <li>Vol de propriété intellectuelle</li>
+    <li>Accès non autorisé à des informations confidentielles</li>
+  </ul>
+
+  <h2>Mesures de prévention</h2>
+  <ul>
+    <li>Mettre en place une gestion rigoureuse des accès (IAM)</li>
+    <li>Utiliser l’authentification multi-facteurs (MFA)</li>
+    <li>Chiffrer les données au repos et en transit</li>
+    <li>Surveiller les logs et les activités suspectes</li>
+    <li>Appliquer des correctifs de sécurité régulièrement</li>
+    <li>Former les utilisateurs aux bonnes pratiques de sécurité</li>
+    <li>Utiliser des outils de détection et prévention des intrusions</li>
+    <li>Configurer correctement les services cloud et éviter les configurations par défaut</li>
+  </ul>
+
+  <h2>Normes et réglementations importantes</h2>
+  <ul>
+    <li><strong>RGPD</strong> : protection des données personnelles en Europe</li>
+    <li><strong>ISO 27001</strong> : norme internationale sur la sécurité de l’information</li>
+    <li><strong>PCI DSS</strong> : sécurisation des données de carte bancaire</li>
+    <li><strong>HIPAA</strong> : protection des données de santé aux États-Unis</li>
+  </ul>
+
+  <h2>Bonnes pratiques</h2>
+  <ul>
+    <li>Auditer régulièrement la sécurité du cloud</li>
+    <li>Segmenter les réseaux et isoler les environnements</li>
+    <li>Mettre en place des politiques de sauvegarde et de restauration</li>
+    <li>Adopter le principe du moindre privilège</li>
+    <li>Utiliser des services cloud reconnus et bien sécurisés</li>
+  </ul>
+
+  <h2>Outils et services pour la sécurité cloud</h2>
+  <ul>
+    <li>Solutions CASB (Cloud Access Security Broker)</li>
+    <li>Firewall applicatif cloud (WAF)</li>
+    <li>Outils de gestion des identités (IAM)</li>
+    <li>Services de chiffrement et gestion des clés</li>
+    <li>Solutions SIEM pour la surveillance et l’analyse des logs</li>
+  </ul>
+
+  <h2>Conclusion</h2>
+  <p>
+    La sécurité dans le cloud nécessite une approche globale incluant des mesures techniques, organisationnelles et humaines. La connaissance des menaces et la mise en place de contrôles adaptés sont essentielles pour protéger les données et assurer la confiance dans les services cloud.
+  </p>
+</section>
+
+
+<section id="cloud-hacking">
+  <h1>5. Cloud Hacking</h1>
+
+  <p>
+    <strong>Cloud Hacking</strong> désigne l’ensemble des techniques et attaques visant les infrastructures, services et applications hébergés dans le cloud. Avec l’adoption massive du cloud computing, la sécurité des environnements cloud est devenue cruciale.
+  </p>
+
+  <h2>Qu’est-ce que le Cloud ?</h2>
+  <p>
+    Le cloud computing permet d’accéder à des ressources informatiques (serveurs, stockage, bases de données, logiciels) via Internet, fournies par des fournisseurs comme AWS, Azure, Google Cloud.
+  </p>
+
+  <h2>Enjeux de sécurité dans le Cloud</h2>
+  <ul>
+    <li>Confidentialité des données</li>
+    <li>Intégrité des services</li>
+    <li>Disponibilité des ressources</li>
+    <li>Gestion des accès et authentification</li>
+    <li>Surveillance et détection d’intrusions</li>
+  </ul>
+
+  <h2>Principaux vecteurs d’attaque en Cloud Hacking</h2>
+  <ul>
+    <li><strong>Exploitation de vulnérabilités</strong> dans les applications cloud ou l’infrastructure (ex : failles non corrigées).</li>
+    <li><strong>Vol de clés d’API</strong> ou de secrets d’authentification exposés.</li>
+    <li><strong>Attaques par force brute</strong> sur les comptes utilisateurs et administrateurs.</li>
+    <li><strong>Attaques par injection</strong> (SQL, NoSQL, commandes).</li>
+    <li><strong>Escalade de privilèges</strong> via des failles de configuration.</li>
+    <li><strong>Attaques de type Man-in-the-Middle</strong> sur les communications non chiffrées.</li>
+    <li><strong>Phishing et ingénierie sociale</strong> ciblant les employés ou administrateurs cloud.</li>
+    <li><strong>Exploitation de mauvaises configurations</strong> (ex : buckets S3 publics, règles firewall laxistes).</li>
+  </ul>
+
+  <h2>Techniques courantes en Cloud Hacking</h2>
+  <ul>
+    <li><strong>Reconnaissance</strong> : collecte d’informations sur les ressources cloud et configurations (ex : scan de ports, énumération de services).</li>
+    <li><strong>Exploitation des failles</strong> : injection, cross-site scripting, vulnérabilités dans les API cloud.</li>
+    <li><strong>Escalade de privilèges</strong> : exploitation des rôles mal configurés, failles IAM (Identity and Access Management).</li>
+    <li><strong>Pivoting</strong> : déplacement latéral vers d’autres ressources dans le cloud.</li>
+    <li><strong>Persistence</strong> : implantation de backdoors ou accès prolongé via clés compromises.</li>
+  </ul>
+
+  <h2>Principales vulnérabilités et erreurs fréquentes</h2>
+  <ul>
+    <li>Buckets de stockage publics (ex : Amazon S3)</li>
+    <li>Mauvaises configurations IAM</li>
+    <li>Utilisation de clés d’accès dans le code source public</li>
+    <li>Absence de chiffrement des données sensibles</li>
+    <li>Manque de surveillance des logs et alertes</li>
+    <li>Mauvaise gestion des versions des services et correctifs</li>
+    <li>Interfaces d’administration accessibles sans restrictions</li>
+  </ul>
+
+  <h2>Outils utilisés pour le Cloud Hacking</h2>
+  <ul>
+    <li><strong>ScoutSuite</strong> : audit de configurations cloud</li>
+    <li><strong>Prowler</strong> : vérification de la sécurité AWS</li>
+    <li><strong>CloudSploit</strong> : scanner de vulnérabilités cloud</li>
+    <li><strong>PacBot</strong> : plateforme d’analyse et de conformité cloud</li>
+    <li><strong>AWS CLI</strong> : pour interagir et tester les configurations</li>
+    <li><strong>Burp Suite</strong> : test des API et applications web cloud</li>
+    <li><strong>Nmap</strong> : scan de réseaux cloud</li>
+    <li><strong>Terraform Validator</strong> : analyse de la sécurité des infrastructures en tant que code</li>
+  </ul>
+
+  <h2>Principales plateformes cloud ciblées</h2>
+  <ul>
+    <li>Amazon Web Services (AWS)</li>
+    <li>Microsoft Azure</li>
+    <li>Google Cloud Platform (GCP)</li>
+    <li>IBM Cloud</li>
+    <li>Oracle Cloud</li>
+  </ul>
+
+  <h2>Bonnes pratiques pour sécuriser le cloud</h2>
+  <ul>
+    <li>Appliquer le principe du moindre privilège pour les comptes et rôles IAM</li>
+    <li>Activer l’authentification multi-facteur (MFA)</li>
+    <li>Surveiller et analyser régulièrement les logs d’accès</li>
+    <li>Mettre en place un chiffrement fort des données au repos et en transit</li>
+    <li>Effectuer des audits réguliers des configurations</li>
+    <li>Éviter de stocker des secrets dans le code source</li>
+    <li>Utiliser des outils de gestion de la conformité (CSPM)</li>
+    <li>Segmenter les réseaux et limiter les accès externes</li>
+  </ul>
+
+  <h2>Exemple d’attaque simple : Bucket S3 public</h2>
+  <pre><code>// Exemple de commande pour tester un bucket S3 public avec AWS CLI
+aws s3 ls s3://nom-du-bucket --no-sign-request
+
+// Si la liste des fichiers est affichée, le bucket est public et vulnérable
+</code></pre>
+
+  <h2>Exemple d’attaque IAM mal configuré</h2>
+  <p>
+    Un utilisateur ayant trop de privilèges (admin) peut exploiter des fonctions cloud pour prendre le contrôle total de l’infrastructure.
+  </p>
+
+  <h2>Impact du Cloud Hacking</h2>
+  <ul>
+    <li>Fuite massive de données confidentielles</li>
+    <li>Interruption de service ou déni de service</li>
+    <li>Atteinte à la réputation de l’entreprise</li>
+    <li>Perte financière (rançon, sanctions)</li>
+    <li>Compromission de la chaîne logistique logicielle</li>
+  </ul>
+
+  <h2>Ressources et formations recommandées</h2>
+  <ul>
+    <li><a href="https://aws.amazon.com/security/" target="_blank" rel="noopener">AWS Security Documentation</a></li>
+    <li><a href="https://azure.microsoft.com/fr-fr/resources/security-compliance/" target="_blank" rel="noopener">Azure Security Documentation</a></li>
+    <li><a href="https://cloud.google.com/security" target="_blank" rel="noopener">Google Cloud Security</a></li>
+    <li><a href="https://www.cloudsecurityalliance.org/" target="_blank" rel="noopener">Cloud Security Alliance (CSA)</a></li>
+    <li><a href="https://www.pluralsight.com/paths/aws-certified-security-specialty" target="_blank" rel="noopener">Formations sécurité AWS (Pluralsight)</a></li>
+    <li><a href="https://www.udemy.com/course/cloud-security/" target="_blank" rel="noopener">Cours Cloud Security sur Udemy</a></li>
+  </ul>
+
+  <h2>Conclusion</h2>
+  <p>
+    Le <strong>cloud hacking</strong> est un domaine en pleine expansion qui nécessite une vigilance constante, une bonne compréhension des architectures cloud et des pratiques de sécurité adaptées. La sécurisation du cloud repose sur la combinaison d’outils, de bonnes configurations, d’une surveillance active et d’une sensibilisation des équipes.
+  </p>
+</section>
+
+
+<section id="cloud-security">
+  <h1>🔐5- Cloud Security Overview</h1>
+
+  <p>
+    Cloud security fait référence à l’ensemble des politiques, des technologies et des contrôles mis en œuvre pour protéger les environnements, les applications et les données dans le cloud.
+  </p>
+
+  <h3>🛡️ Sécurité assurée par les fournisseurs de Cloud</h3>
+  <ul>
+    <li>Contrôle d'accès strict et politiques d’autorisation</li>
+    <li>Journalisation des accès pour la traçabilité</li>
+    <li>Obligation de justification pour certains accès sensibles (non-répudiation)</li>
+  </ul>
+
+  <h3>🔧 Trusted Computing (TC)</h3>
+  <p>
+    La <strong>Trusted Computing</strong> repose sur des composants matériels renforçant la sécurité au niveau de l'ordinateur.
+    Elle repose sur des <strong>Roots of Trust (RoT)</strong>, un ensemble de fonctions au sein du <em>Trusted Computing Module (TCM)</em> toujours considérées comme fiables par le système d'exploitation.
+  </p>
+
+  <h3>⚠️ Principaux risques liés au Cloud</h3>
+  <ul>
+    <li><strong>Vol de données</strong> : Interne ou externe, souvent silencieux (numéros de carte, numéros de sécurité sociale...)</li>
+    <li><strong>Perte de données</strong> : Via malware ou suppression accidentelle. <em>➡️ Sauvegardes indispensables !</em></li>
+    <li><strong>Utilisation abusive de la puissance de calcul</strong> : Pour casser des mots de passe ou lancer des attaques DDoS.</li>
+    <li><strong>Shadow IT</strong> : Utilisation de solutions IT non validées officiellement (souvent non sécurisées)</li>
+    <li><strong>Interfaces et API non sécurisées</strong> : Authentification faible ou mauvaise configuration</li>
+    <li><strong>Technologie partagée mal isolée</strong> : Risques dans les environnements multi-tenant (ex. compromission de l’hyperviseur)</li>
+    <li><strong>Faible visibilité sur le profil de risque</strong> : L’utilisateur ne sait pas exactement quelles protections sont mises en place.</li>
+    <li><strong>Attaques via erreurs d’infrastructure</strong> ou conception inadéquate</li>
+    <li><strong>Authentification faible</strong> : Risques d’escalade de privilèges ou de compromission croisée (ex: SAML forgé)</li>
+    <li><strong>Risques de conformité</strong> : Ex. transfert de données transfrontaliers non autorisés</li>
+    <li><strong>Cloud Cryptojacking</strong> : Usage non autorisé de ressources cloud pour miner de la crypto</li>
+  </ul>
+
+  <h3>🧨 Types d'attaques spécifiques au Cloud</h3>
+  <ul>
+    <li><strong>Attaques d’ingénierie sociale</strong> : Phishing, devinette de mots de passe</li>
+    <li><strong>XSS & SQLi</strong> : Injections dans les applications web déployées dans le cloud</li>
+    <li><strong>DNS attacks</strong> : empoisonnement, détournement de domaines</li>
+    <li><strong>Sniffing réseau & détournement de session</strong></li>
+    <li><strong>Cryptanalyse</strong> : Faiblesses dans le chiffrement</li>
+    <li><strong>DoS/DDoS</strong> : via infrastructures cloud massives</li>
+  </ul>
+
+  <h3>🧬 Attaques avancées et ciblées</h3>
+
+  <h4>📦 Wrapping Attack (XML rewriting)</h4>
+  <p>
+    Interception d’un message SOAP et modification de sa structure sans invalider la signature XML. Cela peut contourner l’authentification dans les services web.
+  </p>
+
+  <h4>🎯 Session Riding (CSRF)</h4>
+  <p>
+    Le pirate utilise les cookies d’un utilisateur connecté pour envoyer des requêtes en son nom. Cela fonctionne également dans les environnements cloud.
+  </p>
+
+  <h4>🔍 Side Channel Attacks (Cross-VM Breach)</h4>
+  <p>
+    Exploitation des ressources partagées dans les hyperviseurs pour extraire des données sensibles d'une autre VM. Ex: cache CPU, mémoire RAM partagée.
+  </p>
+
+  <h4>🌩️ Cloud Hopper (APT ciblée)</h4>
+  <p>
+    Opération menée par des groupes comme <a href="https://en.wikipedia.org/wiki/Red_Apollo#2014_to_2017:_Operation_Cloud_Hopper" target="_blank">APT10</a> pour infiltrer des fournisseurs de services cloud (MSPs), accéder aux réseaux clients et voler des données.
+  </p>
+
+  <h4>🧬 Cloudborne Attack</h4>
+  <p>
+    Exploitation du firmware <strong>BMC</strong> (Baseboard Management Controller) dans des serveurs bare-metal. Peut injecter des backdoors, provoquer des PDoS, etc.
+  </p>
+
+  <h4>🕵️‍♂️ Man-In-The-Cloud (MITC)</h4>
+  <p>
+    Usage malveillant des services de synchronisation comme Google Drive ou Dropbox pour exfiltrer des données sans traces sur l’appareil (utilisation de tokens détournés).
+  </p>
+
+  <h3>🛠️ Outils de sécurité Cloud recommandés</h3>
+  <ul>
+    <li>
+      <a href="https://www.coresecurity.com/core-labs/open-source-tools/core-cloudinspect" target="_blank"><strong>CloudInspect</strong></a> : Outil de pentesting pour Amazon EC2
+    </li>
+    <li>
+      <a href="https://www.cloudpassage.com/cloud-computing-security/" target="_blank"><strong>CloudPassage Halo</strong></a> : Automatisation des contrôles de sécurité et conformité
+    </li>
+    <li>
+      <a href="https://github.com/undergroundwires/privacy.sexy" target="_blank"><strong>privacy.sexy</strong></a> : Réduction de la collecte de données et durcissement OS/cloud
+    </li>
+  </ul>
+
+  <h3>📚 Pour aller plus loin</h3>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/2020_United_States_federal_government_data_breach" target="_blank">Enquête sur la brèche fédérale de 2020</a></li>
+    <li><a href="https://www.reuters.com/investigates/special-report/china-cyber-cloudhopper/" target="_blank">Reportage Reuters sur Cloud Hopper</a></li>
+    <li><a href="https://eclypsium.com/2019/01/26/the-missing-security-primer-for-bare-metal-cloud-services/" target="_blank">Recherche Eclypsium sur Cloudborne</a></li>
+  </ul>
+</section>
+
+<section id="container-security">
+  <h1>6. Containers</h1>
+  <p>Les conteneurs permettent d'exécuter plusieurs applications de manière isolée sur un même système hôte, optimisant ainsi l'utilisation des ressources. <strong><a href="https://www.docker.com/">Docker</a></strong> est devenu la norme pour leur exécution.</p>
+
+  <h2>Containers vs Machines virtuelles</h2>
+  <ul>
+    <li>Les deux réduisent les coûts grâce au matériel partagé (un seul serveur physique peut héberger plusieurs VMs ou conteneurs).</li>
+    <li>Une machine virtuelle virtualise un <strong>système d'exploitation complet</strong>, tandis qu’un <strong>conteneur isole uniquement une application</strong>.</li>
+  </ul>
+
+  <h2>Menaces liées aux containers</h2>
+  
+  <h3>Modèle de menace d’un container</h3>
+  <ul>
+    <li><strong>Évasion du container :</strong> L'attaquant prend le contrôle d'une application, puis tente d'exploiter l'hôte via des failles système ou noyau.</li>
+    <li><strong>Attaque d'autres containers via le réseau :</strong> L'attaquant tente de compromettre d'autres conteneurs.</li>
+    <li><strong>Attaque de l'orchestrateur :</strong> Failles dans les interfaces de gestion comme Kubernetes (souvent mal sécurisées par défaut).</li>
+    <li><strong>Compromission de l'hôte via le réseau :</strong> Ouvrir des ports ou exploiter des services non sécurisés.</li>
+    <li><strong>Attaques sur des ressources partagées :</strong> LDAP, Jenkins, systèmes de fichiers réseaux ou sniffing réseau.</li>
+    <li><strong>Épuisement des ressources :</strong> CPU, mémoire, I/O, etc. provoquant un déni de service.</li>
+    <li><strong>Compromission de l'hôte :</strong> via le réseau ou un autre container.</li>
+    <li><strong>Intégrité des images :</strong> L’attaquant injecte des charges malveillantes pendant le cycle CI/CD.</li>
+  </ul>
+  <img src="img/container-threat-modeling.png" alt="OWASP Container Threat Model">
+
+  <h3>Top 10 OWASP Docker</h3>
+  <ol>
+    <li><strong>Mapping utilisateur sécurisé :</strong> Docker s'exécute avec les privilèges root.</li>
+    <li><strong>Gestion des correctifs :</strong> Patcher les outils d’orchestration, OS et images.</li>
+    <li><strong>Ségrégation réseau :</strong> Sécuriser interfaces de gestion et services.</li>
+    <li><strong>Configuration sécurisée :</strong> Ne pas inclure de composants inutiles.</li>
+    <li><strong>Contexte de sécurité :</strong> Ne pas mélanger des containers sensibles avec d'autres moins sécurisés.</li>
+    <li><strong>Protection des secrets :</strong> Gérer mots de passe, tokens, clés privées.</li>
+    <li><strong>Protection des ressources :</strong> Empêcher qu’un conteneur monopolise les ressources.</li>
+    <li><strong>Intégrité des images :</strong> Vérification à chaque étape du déploiement.</li>
+    <li><strong>Principe d’immutabilité :</strong> Conteneurs en lecture seule si possible.</li>
+    <li><strong>Journalisation :</strong> Centraliser les logs avec horodatage et protection contre les altérations.</li>
+  </ol>
+
+  <h2>Exemples d'attaques sur les containers</h2>
+  <ul>
+    <li><strong>Images vulnérables :</strong> Logiciels obsolètes dans l'image (ex : <a href="https://nvd.nist.gov/vuln/detail/CVE-2018-11757">Apache OpenWhisk</a>).</li>
+    <li><strong>Docker non patché :</strong> Failles connues telles que :
+      <ul>
+        <li><a href="https://nvd.nist.gov/vuln/detail/CVE-2019-5736">CVE-2019-5736</a> : accès au système hôte.</li>
+        <li><a href="https://nvd.nist.gov/vuln/detail/CVE-2018-8115">CVE-2018-8115</a> : exécution distante de code.</li>
+        <li><a href="https://nvd.nist.gov/vuln/detail/CVE-2018-9862">CVE-2018-9862</a> : élévation de privilèges.</li>
+      </ul>
+    </li>
+    <li><strong>Conteneurs malveillants :</strong> (ex : crypto-mining <a href="https://www.fortinet.com/blog/threat-research/yet-another-crypto-mining-botnet">près d'une zone nucléaire</a>).</li>
+    <li><strong>Outils d’orchestration compromis :</strong> Kubernetes, OpenShift, etc. (<a href="https://www.cvedetails.com/vulnerability-list/vendor_id-15867/product_id-34016/Kubernetes-Kubernetes.html">liste CVEs Kubernetes</a>).</li>
+  </ul>
+
+  <h2>Avantages des containers face aux VMs</h2>
+  <ul>
+    <li>Pas d’<strong>accès SSH</strong> par défaut → Moins de vecteurs d'attaque.</li>
+    <li><strong>Pas d’accès utilisateur prévu</strong> → Moins de risques de fuites d’identifiants.</li>
+    <li><strong>Ports restreints</strong> par défaut.</li>
+    <li><strong>Durée de vie courte</strong> → Attaques plus difficiles à réussir.</li>
+    <li><strong>Modèle immutable</strong> → Plus difficile d’injecter des malwares.</li>
+    <li><strong>Pipelines CI/CD automatisés</strong> → Mise à jour rapide.</li>
+    <li><strong>APIs bien définies</strong> → Détection facile d’anomalies comportementales.</li>
+  </ul>
+
+  <h2>Contre-mesures de sécurité</h2>
+  <ul>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html">OWASP Docker Security Cheat Sheet</a> :
+      <ul>
+        <li>Mettre à jour l'hôte et Docker régulièrement</li>
+        <li>Ne pas exposer le socket Docker</li>
+        <li>Utiliser un utilisateur dédié</li>
+        <li>Limiter les privilèges avec <code>--no-new-privileges</code></li>
+        <li>Désactiver la communication entre conteneurs : <code>--icc=false</code></li>
+        <li>Activer les modules de sécurité Linux (seccomp, AppArmor, SELinux)</li>
+        <li>Limiter l'utilisation CPU, mémoire, processus, redémarrages, etc.</li>
+        <li>Monter les volumes en lecture seule</li>
+        <li>Analyser les images statiquement et dynamiquement</li>
+      </ul>
+    </li>
+    <li><strong>Validation du code source</strong> et des dépendances avant déploiement</li>
+    <li><strong>Validation d'authenticité</strong> des images</li>
+    <li><strong>Scan actif des conteneurs déployés</strong></li>
+    <li><strong>Inspection du trafic réseau</strong> (service firewall applicatif)</li>
+    <li><strong>Centralisation des logs</strong></li>
+    <li><strong>Injection dynamique de secrets</strong> (just-in-time)</li>
+    <li><strong>Vérification régulière des conteneurs en cours d’exécution</strong></li>
+    <li><strong>Utilisation d’images à jour</strong></li>
+    <li><strong>Ne jamais exécuter en root</strong> : <a href="https://docs.docker.com/engine/security/rootless/">rootless mode</a></li>
+  </ul>
+</section>
+
+</div>
+
+
+{% endblock %}

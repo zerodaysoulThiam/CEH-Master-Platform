@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 2{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+    <h1> Cours - Module 2: Footprinting and Reconnaissance </h1>
+
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#footprinting-overview">1. Introduction au Footprinting</a></td>
+                <td>Vue d’ensemble des techniques et objectifs du footprinting.</td>
+            </tr>
+            <tr>
+                <td><a href="#email-footprinting">2. Email Footprinting</a></td>
+                <td>Analyse et traçage d’adresses email pour collecter des informations.</td>
+            </tr>
+            <tr>
+                <td><a href="#network-footprinting">3. Network Footprinting</a></td>
+                <td>Collecte d’informations sur l’infrastructure réseau cible.</td>
+            </tr>
+            <tr>
+                <td><a href="#search-engines-and-online-resources">4. Moteurs de recherche et ressources en ligne</a></td>
+                <td>Utilisation de moteurs de recherche et d’outils en ligne pour collecter des données.</td>
+            </tr>
+            <tr>
+                <td><a href="#website-footprinting">5. Website Footprinting</a></td>
+                <td>Extraction d’informations à partir d’un site web cible.</td>
+            </tr>
+            <tr>
+                <td><a href="#whois-geoiplocation-and-dns-interrogation">6. WHOIS, géolocalisation IP et interrogation DNS</a></td>
+                <td>Techniques pour obtenir des infos sur les domaines, IP et serveurs DNS.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+
+    <section id="footprinting-overview">
+        <h1>1. Introduction au Footprinting</h1>
+
+        <p>
+            Le <strong>Footprinting</strong> est la première étape de toute démarche de piratage éthique ou de test d'intrusion. Il s'agit d'une phase de collecte d'informations visant à obtenir le maximum de données sur une cible, qu'il s'agisse d'une entreprise, d'un serveur ou d'une personne, sans interagir directement avec le système cible. Cette phase est essentielle pour comprendre l'environnement de la cible et planifier les prochaines étapes de l'attaque ou de l'audit.
+        </p>
+
+        <h3>🎯 Objectifs du Footprinting</h3>
+        <ul>
+            <li>Identifier les systèmes, réseaux et technologies utilisés par la cible.</li>
+            <li>Recueillir des informations sur les employés, les sous-domaines, les IPs, les serveurs, etc.</li>
+            <li>Préparer les futures attaques en minimisant les risques d’être détecté.</li>
+        </ul>
+
+        <h3>📦 Types de Footprinting</h3>
+        <ul>
+            <li><strong>Footprinting passif :</strong> collecte d'informations sans interagir avec la cible, par exemple via les moteurs de recherche, réseaux sociaux, archives Internet, etc.</li>
+            <li><strong>Footprinting actif :</strong> implique une interaction directe avec la cible, comme un ping ou une requête DNS. Plus risqué, car il peut générer des logs.</li>
+        </ul>
+
+        <h3>🔍 Méthodes de Footprinting passif</h3>
+        <ul>
+            <li>Recherche sur Google avec des <strong>Google Dorks</strong>.</li>
+            <li>Analyse des métadonnées dans les documents PDF, Word, etc.</li>
+            <li>Consultation de bases de données publiques comme <a href="https://whois.domaintools.com" target="_blank">WHOIS</a>.</li>
+            <li>Utilisation d’archives comme <a href="https://archive.org" target="_blank">Wayback Machine</a>.</li>
+            <li>Recherche sur les réseaux sociaux (LinkedIn, Facebook) pour identifier les employés et leurs rôles.</li>
+        </ul>
+
+        <h3>⚒️ Outils utilisés pour le Footprinting</h3>
+        <ul>
+            <li><strong>Maltego :</strong> outil d’analyse de relations et de liens.</li>
+            <li><strong>theHarvester :</strong> collecte des emails, noms de domaines et sous-domaines.</li>
+            <li><strong>Recon-ng :</strong> framework de reconnaissance modulaire en ligne de commande.</li>
+            <li><strong>Shodan :</strong> moteur de recherche d'appareils connectés à Internet.</li>
+            <li><strong>Nslookup / host / dig :</strong> outils de requête DNS.</li>
+        </ul>
+
+        <h3>💡 Bonnes pratiques</h3>
+        <ul>
+            <li>Commencez toujours par le <strong>footprinting passif</strong> avant de passer à l'actif.</li>
+            <li>Documentez chaque information collectée pour l’utiliser dans les étapes suivantes (scanning, enumeration, etc.).</li>
+            <li>Respectez la légalité : le footprinting passif est souvent légal car basé sur des données publiques, mais l'actif peut ne pas l’être sans autorisation explicite.</li>
+        </ul>
+
+        <p>
+            En résumé, le Footprinting est une étape de <strong>reconnaissance</strong> discrète, stratégique et indispensable dans tout processus de test de sécurité. Une bonne phase de collecte peut faire la différence entre un test efficace et une perte de temps.
+        </p>
+    </section>
+
+
+    <section id="email-footprinting" class="mt-5">
+        <h1>2. Email Footprinting</h1>
+
+        <p>
+            Le <strong>email footprinting</strong> (ou empreinte par courrier électronique) est une technique de reconnaissance consistant à obtenir des informations précieuses à partir des e-mails envoyés ou reçus. Ces informations peuvent être utilisées à des fins de veille, de ciblage marketing ou d’attaques par ingénierie sociale.
+        </p>
+
+        <h3>Suivi des emails</h3>
+        <p>
+            Le suivi des e-mails se fait généralement par l’analyse des <strong>en-têtes d’e-mail</strong> (email headers) et l’utilisation d’outils de traçage. Cela permet notamment d’obtenir :
+        </p>
+        <ul>
+            <li>L’adresse IP du destinataire</li>
+            <li>La géolocalisation approximative</li>
+            <li>Le statut de livraison du message</li>
+            <li>Les liens cliqués dans l’e-mail</li>
+            <li>Le navigateur et le système d’exploitation utilisés</li>
+            <li>La durée de lecture du message</li>
+        </ul>
+
+        <p>
+            Des outils de suivi des e-mails (email trackers) sont souvent utilisés par les <strong>commerciaux</strong>, les <strong>entreprises de marketing</strong> ou les attaquants. Ces outils peuvent notifier l’expéditeur lorsque l’e-mail est <strong>ouvert</strong> ou lorsqu’un <strong>lien est cliqué</strong>.
+        </p>
+
+        <h3>Analyse des en-têtes d’e-mail</h3>
+        <p>
+            L’analyse des en-têtes permet de déterminer si un e-mail est légitime ou potentiellement malveillant. Ces en-têtes contiennent :
+        </p>
+        <ul>
+            <li>Le nom et l’adresse IP de l’expéditeur</li>
+            <li>L’adresse e-mail d’origine</li>
+            <li>Le serveur de messagerie utilisé</li>
+            <li>Les horodatages d’envoi et de réception</li>
+            <li>Un identifiant unique de message</li>
+        </ul>
+
+        <h4>Protocoles d’authentification</h4>
+        <p>
+            Plusieurs protocoles sont intégrés dans les en-têtes pour authentifier l’expéditeur :
+        </p>
+
+        <ul>
+            <li>
+                <strong>SPF (Sender Policy Framework)</strong> : Vérifie si le serveur émetteur est autorisé à envoyer des mails pour un domaine. Exemple : <code>PASS avec l’IP 209.85.220.69</code>.
+            </li>
+            <li>
+                <strong>DKIM (DomainKeys Identified Mail)</strong> : Utilise une signature numérique pour vérifier que le message provient bien du domaine d’origine. Exemple : <code>PASS avec domain=google.com</code>.
+            </li>
+            <li>
+                <strong>DMARC (Domain-based Message Authentication, Reporting and Conformance)</strong> : Combine SPF et DKIM pour renforcer la vérification et appliquer des politiques (refuser ou accepter).
+            </li>
+        </ul>
+
+        <h3>Vérification de la légitimité d’un e-mail</h3>
+        <ul>
+            <li>Vérifiez soigneusement l’adresse <strong>FROM</strong></li>
+            <li>Surveillez les fautes d’orthographe dans le domaine (ex: "g00gle.com")</li>
+            <li>Analysez l’adresse IP de l’expéditeur (est-elle publique ? privée ? domestique ?)</li>
+            <li>Vérifiez si l’adresse IP correspond bien au domaine indiqué</li>
+        </ul>
+        <p>
+            Certains fournisseurs comme Google masquent l’IP de l’expéditeur en la relayant via des serveurs internes, rendant la traçabilité difficile.
+        </p>
+
+        <h3>Politiques des fournisseurs d’e-mails</h3>
+        <p>
+            Chaque fournisseur de messagerie (Gmail, Outlook, Yahoo, etc.) applique ses propres règles sur les serveurs SMTP. Certains bloquent l’affichage de l’adresse IP, interdisent certains types de pièces jointes ou limitent l’envoi massif. Un attaquant peut étudier ces politiques pour adapter ses tactiques.
+        </p>
+
+        <h3>Récupération de l’adresse IP d’un utilisateur</h3>
+        <p>
+            Il existe des méthodes pour récupérer l’adresse IP d’un destinataire :
+        </p>
+        <ul>
+            <li>Inclure une image hébergée sur un serveur que vous contrôlez</li>
+            <li>Inclure un lien traquant vers une ressource (même invisible)</li>
+            <li>Utiliser l’ingénierie sociale pour inciter l’utilisateur à cliquer</li>
+        </ul>
+        <p>Exemple d’exploitation :</p>
+        <ol>
+            <li>Installez Apache : <code>sudo apt install apache2</code></li>
+            <li>Démarrez le serveur : <code>sudo systemctl start apache2</code></li>
+            <li>Créez un fichier dans <code>/var/www/html</code> : <code>touch image.jpg</code></li>
+            <li>Surveillez les accès : <code>tail -f /var/log/apache2/access.log</code></li>
+            <li>Envoyez un e-mail contenant un lien vers <code>http://votre_IP/image.jpg</code></li>
+            <li>Récupérez l’adresse IP quand le fichier est chargé par le destinataire</li>
+        </ol>
+        <p>
+            Une fois l’IP obtenue, vous pouvez utiliser <code>geoiplookup</code> ou <code>ipinfo.io</code> pour obtenir sa géolocalisation.
+        </p>
+
+        <h3>Bonnes pratiques de protection</h3>
+        <ul>
+            <li>Désactiver l’affichage automatique des images dans les e-mails</li>
+            <li>Utiliser des fournisseurs de messagerie anonymes ou avec relais IP</li>
+            <li>Éviter de cliquer sur des liens suspects</li>
+            <li>Analyser les en-têtes d’e-mail avec des outils comme <a href="https://mxtoolbox.com/EmailHeaders.aspx" target="_blank">MXToolbox</a></li>
+        </ul>
+    </section>
+
+
+    <section id="network-footprinting">
+        <h1>3. Footprinting Réseau (Network Footprinting)</h1>
+
+        <p>
+            Le <strong>footprinting réseau</strong> est une étape essentielle du processus de reconnaissance dans un test d’intrusion. Il consiste à collecter des informations sur l’infrastructure réseau d’une cible afin de comprendre son architecture, les machines qui y sont connectées, et les services qu’elle expose. Cette phase est cruciale pour planifier efficacement les étapes suivantes d’un audit ou d'une attaque.
+        </p>
+
+        <h3>Objectifs du footprinting réseau</h3>
+        <ul>
+            <li>Identifier la plage d’adresses IP utilisée par la cible</li>
+            <li>Repérer les hôtes actifs et les services en écoute</li>
+            <li>Comprendre la structure du réseau</li>
+            <li>Déterminer les systèmes d’exploitation utilisés</li>
+            <li>Détecter la présence de pare-feu ou d’autres dispositifs de sécurité</li>
+        </ul>
+
+        <hr>
+
+        <h3>Nmap - Outil de découverte réseau</h3>
+
+        <p>
+            <strong>Nmap</strong> (Network Mapper) est un outil incontournable pour la découverte de réseau. Il permet de scanner des adresses IP ou des plages entières pour identifier :
+        </p>
+
+        <ul>
+            <li>Les hôtes actifs</li>
+            <li>Les ports ouverts</li>
+            <li>Les services et leurs versions</li>
+            <li>Les systèmes d’exploitation (via fingerprinting)</li>
+            <li>Les types de pare-feux ou de filtrage en place</li>
+        </ul>
+
+        <p>
+            Nmap est utilisé aussi bien par les administrateurs réseau que par les attaquants. Il aide à détecter des failles, mais aussi à s’assurer que les configurations réseau sont correctes (par exemple, vérifier si un port est bien fermé).
+        </p>
+
+        <pre><code>nmap -v -p 0-2000 -O -sV 178.128.203.1</code></pre>
+
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>-v</code></td><td>Mode verbeux, plus de détails sur le scan</td></tr>
+                <tr><td><code>-d</code></td><td>Mode debug, encore plus de détails (utile pour le dépannage)</td></tr>
+                <tr><td><code>-p</code></td><td>Spécifie les ports à scanner (ex. <code>-p 80</code> ou <code>-p 1-65535</code>)</td></tr>
+                <tr><td><code>-Pn</code></td><td>Désactive la détection d’hôtes (utile si la cible ne répond pas au ping)</td></tr>
+                <tr><td><code>-sn</code></td><td>Scan sans port (ping scan), juste pour détecter les hôtes en ligne</td></tr>
+                <tr><td><code>-sS</code></td><td>Scan SYN (stealth), envoie des paquets SYN pour détecter les ports ouverts sans établir de connexion complète</td></tr>
+                <tr><td><code>-sT</code></td><td>Scan TCP complet (connexion normale, plus détectable)</td></tr>
+                <tr><td><code>-sU</code></td><td>Scan UDP (utilisé pour les services DNS, SNMP, etc.)</td></tr>
+                <tr><td><code>-sV</code></td><td>Détection des versions des services</td></tr>
+                <tr><td><code>-O</code></td><td>Détection du système d’exploitation</td></tr>
+                <tr><td><code>-A</code></td><td>Scan agressif (inclut OS, version, traceroute, script par défaut)</td></tr>
+                <tr><td><code>-T4</code></td><td>Ajuste la vitesse du scan (de <code>T0</code> à <code>T5</code>) – <code>T4</code> est rapide et fiable</td></tr>
+                <tr><td><code>-oN</code></td><td>Sortie normale vers un fichier (<code>nmap -oN result.txt</code>)</td></tr>
+                <tr><td><code>-oX</code></td><td>Sortie au format XML</td></tr>
+                <tr><td><code>-iL</code></td><td>Lire les cibles depuis un fichier texte</td></tr>
+                <tr><td><code>-oG</code></td><td>Sortie au format “grepable”, utile pour automatiser</td></tr>
+                <tr><td><code>--open</code></td><td>Affiche uniquement les ports ouverts</td></tr>
+                <tr><td><code>--script</code></td><td>Lance des scripts NSE (ex. <code>--script=http-title</code>)</td></tr>
+                <tr><td><code>--top-ports</code></td><td>Scanne les ports les plus utilisés (<code>--top-ports 100</code>)</td></tr>
+                <tr><td><code>--traceroute</code></td><td>Effectue un traceroute après le scan</td></tr>
+                <tr><td><code>--reason</code></td><td>Affiche la raison pour laquelle Nmap pense qu’un port est dans un état donné</td></tr>
+                <tr><td><code>-6</code></td><td>Active le scan IPv6</td></tr>
+            </tbody>
+        </table>
+        <p>
+            💡 Pour plus d’options, vous pouvez consulter la documentation complète sur le site officiel :
+            <a href="https://nmap.org/book/man-briefoptions.html" target="_blank">https://nmap.org/book/man-briefoptions.html</a>
+        </p>
+        <p>
+            💡 Grâce aux versions détectées, il est possible de rechercher des failles connues dans des bases de données comme <a href="https://www.exploit-db.com/" target="_blank">Exploit-DB</a>.
+        </p>
+
+        <p>
+            ⚖️ Attention : dans plusieurs pays comme le Royaume-Uni et l'Allemagne, l'utilisation de Nmap sans autorisation est considérée comme illégale. Consultez la <a href="https://nmap.org/book/legal-issues.html" target="_blank">documentation officielle</a> pour plus d’informations légales.
+        </p>
+
+        <hr>
+
+        <h3>Traceroute - Analyse du chemin réseau</h3>
+
+        <p>
+            L’outil <strong>Traceroute</strong> permet d’identifier les routeurs intermédiaires entre votre machine et la cible. Cela permet de reconstituer le chemin que prend un paquet réseau et d’analyser la topologie du réseau.
+        </p>
+
+        <ul>
+            <li>Chaque saut (hop) représente un routeur intermédiaire</li>
+            <li>Il est possible de découvrir des routeurs de confiance, des pare-feux ou des segments réseau cachés</li>
+            <li>Certains sauts peuvent être invisibles ou volontairement filtrés</li>
+        </ul>
+
+        <p>
+            Traceroute utilise le champ TTL (Time To Live) des paquets IP :
+        </p>
+        <ul>
+            <li>Débute avec un TTL de 1 et l’incrémente à chaque saut</li>
+            <li>À chaque expiration du TTL, le routeur répond avec un message ICMP</li>
+            <li>On peut ainsi tracer chaque routeur sur le chemin vers la cible</li>
+        </ul>
+
+        <p>
+            Ces informations sont utiles pour créer des cartes réseau, contourner les protections, ou préparer des attaques comme le "Man-in-the-Middle".
+        </p>
+
+        <h4>Commandes utiles :</h4>
+        <ul>
+            <li><code>traceroute 178.128.203.1</code> (Unix, utilise UDP)</li>
+            <li><code>tracert 178.128.203.1</code> (Windows, utilise ICMP)</li>
+            <li><code>nmap --traceroute --script traceroute-geolocation 178.128.203.1 -d</code> (Traceroute avec géolocalisation)</li>
+            <li><code>hping3 --traceroute -S [IP cible]</code> (plus personnalisable, utilise TCP SYN)</li>
+        </ul>
+
+        <p>
+            🧠 Ces outils permettent également de repérer les équipements de sécurité, les points faibles de filtrage et d’optimiser les futures attaques ou audits de sécurité.
+        </p>
+    </section>
+
+
+    <section id="search-engines-and-online-resources">
+        <h1>4. Reconnaissance via les moteurs de recherche et ressources en ligne</h1>
+
+        <p>La phase de <strong>reconnaissance passive</strong> en cybersécurité consiste à collecter un maximum d'informations sur une cible sans interagir directement avec elle. Internet regorge de ressources pour obtenir ces données : employés, intranet, adresses e-mail, pages de connexion, fuites de données, infrastructures techniques, etc.</p>
+
+        <h3>Sources d'information</h3>
+        <ul>
+            <li>Réseaux sociaux (LinkedIn, Facebook, Twitter…)</li>
+            <li>Services de recherche de personnes (Pipl, Hunter.io…)</li>
+            <li>Services d’alertes (Google Alerts…)</li>
+            <li>Sites d’emploi (souvent riches en détails sur l’infrastructure de l’entreprise)</li>
+            <li>Services financiers, annuaires, blogs</li>
+            <li>Web profond (Deep Web) et web obscur (Dark Web)</li>
+        </ul>
+
+        <h3>Google Hacking (Recherche avancée)</h3>
+        <p>Le Google Hacking consiste à utiliser des opérateurs de recherche (aussi appelés <strong>Google Dorks</strong>) pour formuler des requêtes complexes permettant de découvrir des informations sensibles accessibles publiquement.</p>
+
+        <h4>Principaux opérateurs de Google Dorks</h4>
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>Opérateur</th>
+                    <th>Définition</th>
+                    <th>Exemple</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>site:</code></td><td>Restreint les résultats à un domaine spécifique</td><td><code>site:example.com</code></td></tr>
+                <tr><td><code>inurl:</code></td><td>Recherche dans les URL</td><td><code>inurl:login</code></td></tr>
+                <tr><td><code>intitle:</code></td><td>Recherche dans les titres des pages</td><td><code>intitle:"index of"</code></td></tr>
+                <tr><td><code>filetype:</code></td><td>Recherche des fichiers d’un type spécifique</td><td><code>filetype:xls</code></td></tr>
+                <tr><td><code>intext:</code></td><td>Recherche dans le contenu textuel</td><td><code>intext:"mot de passe"</code></td></tr>
+                <tr><td><code>cache:</code></td><td>Accès à une version en cache</td><td><code>cache:example.com</code></td></tr>
+                <tr><td><code>-</code></td><td>Exclut un mot-clé</td><td><code>mot-clé -github</code></td></tr>
+                <tr><td><code>*</code></td><td>Joker qui remplace n’importe quel mot</td><td><code>"Google * ma vie"</code></td></tr>
+                <tr><td><code>OR / |</code></td><td>OU logique</td><td><code>PDF OR DOCX</code></td></tr>
+                <tr><td><code>()</code></td><td>Regroupe les expressions</td><td><code>(admin OR login) site:example.com</code></td></tr>
+            </tbody>
+        </table>
+
+        <p><strong>Exemple de recherche de mots de passe :</strong></p>
+        <code>intext:"please change your" password filetype:pdf | doc | txt -github</code>
+
+        <p>💡 Pour faciliter les recherches complexes, utilisez :</p>
+        <ul>
+            <li><a href="https://www.google.com/advanced_search" target="_blank">Google Advanced Search</a></li>
+            <li><a href="https://www.google.com/advanced_image_search" target="_blank">Google Advanced Image Search</a></li>
+        </ul>
+
+        <h4>Outils de Google Hacking</h4>
+        <ul>
+            <li><strong><a href="http://ghh.sourceforge.net" target="_blank">Google Hack Honeypot</a></strong> : détecte les requêtes malveillantes envoyées à votre site</li>
+            <li><strong><a href="https://www.exploit-db.com/google-hacking-database" target="_blank">Google Hacking Database (GHDB)</a></strong> : liste de requêtes utiles pour trouver des informations sensibles</li>
+        </ul>
+
+        <h3>Metagoofil</h3>
+        <p><strong>Metagoofil</strong> est un outil open source qui extrait les métadonnées des documents publics disponibles en ligne (PDF, DOC, PPT…). Il fonctionne ainsi :</p>
+        <ol>
+            <li>Recherche des documents à l’aide des Dorks</li>
+            <li>Télécharge les fichiers</li>
+            <li>Analyse les métadonnées (noms d’utilisateurs, logiciels utilisés…)</li>
+        </ol>
+
+        <h3>Services d'analyse en ligne</h3>
+        <ul>
+            <li><strong><a href="https://www.aignes.com/" target="_blank">Website Watcher</a></strong> : alerte en cas de modification d’une page web</li>
+            <li><strong>Recherche d’image inversée</strong> : Google Images, <a href="https://tineye.com" target="_blank">TinEye</a></li>
+            <li><strong>Moteurs vidéo</strong> : YouTube, Google Vidéos, outils comme YouTube DataViewer, EZGif</li>
+            <li><strong>Métamoteurs</strong> : Startpage, MetaGer (recherche confidentielle)</li>
+            <li><strong>Moteurs FTP</strong> : Napalm FTP Indexer, Global FTP Search (souvent utilisé pour trouver des documents non protégés)</li>
+        </ul>
+
+        <h3>Recherche dans l’IoT</h3>
+        <p>Ces moteurs de recherche permettent de trouver des appareils connectés à Internet (webcams, routeurs, serveurs…).</p>
+        <ul>
+            <li><strong><a href="https://shodan.io" target="_blank">Shodan</a></strong> : moteur le plus connu</li>
+            <li><strong><a href="https://censys.io" target="_blank">Censys</a></strong> : identifie les ressources Internet accessibles</li>
+            <li><strong>Thingful</strong> : autre moteur de l’IoT</li>
+        </ul>
+
+        <h3>Outils supplémentaires</h3>
+        <ul>
+            <li><strong><a href="https://searchdns.netcraft.com" target="_blank">Netcraft</a></strong> : fournit des informations sur les technologies utilisées par un site</li>
+            <li><strong><a href="http://www.crimeflare.org:82/cfs.html" target="_blank">CrimeFlare</a></strong> : révèle les adresses IP réelles derrière Cloudflare</li>
+        </ul>
+
+        <p><strong>💬 Conseil :</strong> Toutes ces données doivent être croisées avec d’autres méthodes de collecte pour améliorer la précision. Les données récupérées via les moteurs peuvent être obsolètes ou inexactes.</p>
+    </section>
+
+
+    <section id="website-footprinting">
+        <h1>5. Empreinte numérique d'un site web (Website Footprinting)</h1>
+        <p>
+            Le <strong>footprinting</strong> d'un site web est une technique utilisée pour recueillir discrètement des informations sur un site cible. Elle permet de dresser une carte complète de la structure et des technologies d’un site sans alerter le propriétaire. Ces données sont souvent utilisées lors des phases de reconnaissance dans un test d’intrusion ou par des cybercriminels pour préparer une attaque.
+        </p>
+
+        <h2>Informations obtenues</h2>
+        <ul>
+            <li>Technologies utilisées (logiciels, CMS, serveurs)</li>
+            <li>Système d'exploitation côté serveur</li>
+            <li>Répertoires et sous-répertoires accessibles</li>
+            <li>Informations de contact</li>
+            <li>Langages de programmation utilisés</li>
+            <li>Détails sur les requêtes et les scripts</li>
+        </ul>
+
+        <h2>1. Robots explorateurs (Web Spiders)</h2>
+        <p>
+            Les <strong>web spiders</strong> ou crawlers sont des programmes qui parcourent un site web de manière automatique pour extraire des informations. Ils sont souvent utilisés à des fins de référencement, mais peuvent aussi servir à collecter des données utiles à des attaques par ingénierie sociale.
+        </p>
+
+        <h2>2. Analyse des cookies</h2>
+        <p>
+            Les cookies peuvent révéler des informations sur les technologies utilisées par le serveur. Par exemple, un cookie nommé <code>PHPSESSID</code> indique l'utilisation de PHP. L'analyse des cookies permet aussi de comprendre le comportement de l'application web.
+        </p>
+
+        <h2>3. Analyse des en-têtes HTTP</h2>
+        <p>
+            Les <strong>en-têtes HTTP</strong> d’un site fournissent de précieuses informations :
+        </p>
+        <ul>
+            <li><code>Content-Type</code> : Type de contenu (HTML, JSON, XML...)</li>
+            <li><code>Accept-Ranges</code> : Support de la récupération partielle de fichiers</li>
+            <li><code>Last-Modified</code> : Date de la dernière modification</li>
+            <li><code>X-Powered-By</code> : Technologies utilisées (ex : ASP.NET, PHP, ZendServer...)</li>
+            <li><code>Server</code> : Logiciel serveur et OS (ex : Apache sur CentOS)</li>
+        </ul>
+        <p>
+            Pour inspecter ces en-têtes, vous pouvez utiliser les outils développeur du navigateur (F12 ou Ctrl+Shift+C), puis consulter l’onglet <strong>Réseau (Network)</strong>.
+        </p>
+
+        <h2>4. Analyse du code source</h2>
+
+        <h3>Commentaires HTML/JS</h3>
+        <p>
+            Le code source d’une page peut contenir des commentaires laissés par les développeurs. Ces commentaires, bien que non interprétés par le navigateur, peuvent révéler des chemins internes, des technologies utilisées ou même des failles connues.
+        </p>
+
+        <h3>Balises de liens et d'images</h3>
+        <p>
+            L’analyse des balises <code>&lt;a href&gt;</code> ou <code>&lt;img src&gt;</code> permet d’identifier la structure du site, les chemins vers les ressources, ou l'utilisation éventuelle de serveurs tiers (CDN, cache...).
+        </p>
+
+        <h2>5. Clonage de site (Website Mirroring)</h2>
+        <p>
+            Le clonage d’un site permet de le sauvegarder pour une analyse hors ligne, détecter des vulnérabilités, ou même créer un faux site (phishing). Cela peut être détecté par les systèmes de sécurité si trop rapide ou répétitif.
+        </p>
+
+        <h3>Outils utilisés</h3>
+        <ul>
+            <li><strong>HTTrack</strong> : <code>httrack https://sitecible.com</code></li>
+            <li><strong>wget</strong> : <code>wget -m https://sitecible.com</code></li>
+            <li>Copie manuelle du code source HTML + CSS</li>
+        </ul>
+
+        <h3>Conseils de sécurité pour les utilisateurs</h3>
+        <ul>
+            <li>Vérifiez l’URL : attention aux fautes d’orthographe</li>
+            <li>Assurez-vous que le site utilise le protocole <strong>HTTPS</strong></li>
+            <li>Contrôlez les certificats SSL et leur validité</li>
+            <li>Méfiez-vous si le certificat change soudainement</li>
+        </ul>
+
+        <h2>6. Extraction de métadonnées</h2>
+        <p>
+            Les fichiers présents sur un site (PDF, images, documents...) contiennent souvent des <strong>métadonnées</strong> utiles :
+        </p>
+        <ul>
+            <li>Auteur du fichier</li>
+            <li>Logiciel utilisé pour le créer</li>
+            <li>Coordonnées GPS (images prises avec smartphone)</li>
+        </ul>
+
+        <h3>Outils d’extraction</h3>
+        <ul>
+            <li><strong>ExifTool</strong> : <code>exiftool fichier.jpg</code></li>
+            <li><strong>Hexdump</strong> : Pour l'analyse binaire basique (<code>hexdump -C fichier</code>)</li>
+            <li><strong>Metagoofil</strong> : Utilise Google pour rechercher des fichiers indexés et en extraire les métadonnées</li>
+        </ul>
+
+        <h2>💡 À savoir</h2>
+        <ul>
+            <li>Linux se base sur le type MIME réel du fichier, et non sur son extension</li>
+            <li>Les commentaires dans le code peuvent révéler plus que vous ne l’imaginez</li>
+            <li>Un site mal configuré peut exposer des répertoires sensibles (comme <code>/admin</code>, <code>/backup</code>, etc.)</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>
+            Le footprinting est une étape critique pour comprendre l’architecture, la surface d’attaque, et les technologies d’un site web cible. Utilisé à bon escient, il permet d’anticiper les vulnérabilités et de renforcer la sécurité. Il est toutefois essentiel de respecter l’éthique et la légalité lors de la collecte de ces informations.
+        </p>
+    </section>
+
+
+    <section id="whois-geoiplocation-and-dns-interrogation">
+        <h1>6. Reconnaissance : WHOIS, Géolocalisation IP et Interrogation DNS</h1>
+        <p class="mb-4">
+            Dans le cadre de la phase de reconnaissance passive d'une cible, l'analyse des informations publiques peut fournir de précieuses données, sans alerter la victime. WHOIS, la géolocalisation IP et l'interrogation DNS sont des outils essentiels à cette étape.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">WHOIS : Recherche d’informations sur les domaines</h3>
+        <p class="mb-2">
+            WHOIS est un protocole (port 43) qui permet d’interroger les bases de données des noms de domaine. Les informations retournées sont publiques, leur consultation est légale.
+        </p>
+        <ul class="list-disc list-inside mb-4">
+            <li>Nom de domaine, date de création, expiration, dernière mise à jour</li>
+            <li>Détails sur le propriétaire (souvent protégés par un <strong>WHOIS guard</strong>)</li>
+            <li>Fournisseur d’enregistrement (ex : Gandi, NameCheap)</li>
+            <li>Serveurs DNS utilisés</li>
+            <li>Plage d’adresses IP associée</li>
+        </ul>
+        <p class="mb-4">
+            Exemple de commande : <code class="bg-gray-200 p-1 rounded">whois exemple.com</code> ou via des sites comme <a href="https://www.whois.net" class="text-blue-600 underline" target="_blank">whois.net</a>.
+        </p>
+
+        <h4 class="text-lg font-medium mt-4 mb-2">Modèles de WHOIS</h4>
+        <ul class="list-disc list-inside mb-4">
+            <li><strong>Thick WHOIS</strong> : les données sont centralisées, toutes les informations sont accessibles à partir d'une seule source.</li>
+            <li><strong>Thin WHOIS</strong> : seules les données minimales sont disponibles, avec redirection vers d'autres serveurs pour plus d'informations.</li>
+        </ul>
+
+        <h4 class="text-lg font-medium mb-2">Organismes régionaux (RIRs)</h4>
+        <p class="mb-4">Les bases WHOIS sont gérées par des registres régionaux :</p>
+        <ul class="list-disc list-inside mb-4">
+            <li><strong>AFRINIC</strong> : Afrique</li>
+            <li><strong>ARIN</strong> : Amérique du Nord</li>
+            <li><strong>RIPE NCC</strong> : Europe, Moyen-Orient</li>
+            <li><strong>APNIC</strong> : Asie-Pacifique</li>
+            <li><strong>LACNIC</strong> : Amérique latine et Caraïbes</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Géolocalisation IP</h3>
+        <p class="mb-2">
+            Grâce à des outils de géolocalisation, il est possible d’estimer l’emplacement géographique d’une adresse IP (pays, ville, FAI...).
+        </p>
+        <p class="mb-4">
+            Bien que les données de ville soient parfois approximatives, cela peut suffire à orienter une attaque d’ingénierie sociale. Exemple d’outil : <a href="https://geoiptool.com" class="text-blue-600 underline" target="_blank">GeoIPTool.com</a>.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Interrogation DNS (Domain Name System)</h3>
+        <p class="mb-2">
+            Les requêtes DNS permettent d’obtenir des informations sur les noms de domaine, les adresses IP associées et les services liés (comme les e-mails).
+        </p>
+
+        <h4 class="text-lg font-medium mt-4 mb-2">Commandes utiles</h4>
+        <ul class="list-disc list-inside mb-4">
+            <li><code class="bg-gray-200 p-1 rounded">host -t a exemple.com</code> : récupère les enregistrements A (adresses IP)</li>
+            <li><code class="bg-gray-200 p-1 rounded">host 192.168.0.1</code> : recherche DNS inverse (reverse DNS)</li>
+            <li><code class="bg-gray-200 p-1 rounded">host -t mx exemple.com</code> : identifie les serveurs de messagerie (MX)</li>
+        </ul>
+
+        <h4 class="text-lg font-medium mb-2">Types d’enregistrements DNS</h4>
+        <ul class="list-disc list-inside mb-4">
+            <li><strong>A</strong> : adresse IPv4 du domaine</li>
+            <li><strong>AAAA</strong> : adresse IPv6</li>
+            <li><strong>MX</strong> : serveurs de messagerie</li>
+            <li><strong>CNAME</strong> : alias d’un domaine</li>
+            <li><strong>NS</strong> : serveurs de noms</li>
+            <li><strong>TXT</strong> : informations diverses (ex : SPF, vérification Google, etc.)</li>
+        </ul>
+
+        <h4 class="text-lg font-medium mb-2">Utilité pour un attaquant</h4>
+        <ul class="list-disc list-inside mb-4">
+            <li>Identifier les fournisseurs de services (hébergement, messagerie...)</li>
+            <li>Repérer des points faibles (anciens serveurs, configurations mal sécurisées...)</li>
+            <li>Préparer des campagnes d’hameçonnage ciblé (phishing)</li>
+            <li>Observer les changements DNS (en lien avec un rachat, une migration, etc.)</li>
+        </ul>
+
+        <h4 class="text-lg font-medium mb-2">Bonnes pratiques de défense</h4>
+        <ul class="list-disc list-inside mb-4">
+            <li>Utiliser un service WHOIS Guard pour masquer les données personnelles</li>
+            <li>Surveiller les enregistrements DNS avec des outils d’alerte</li>
+            <li>Limiter les données sensibles dans les enregistrements TXT</li>
+            <li>Mettre à jour régulièrement ses enregistrements DNS</li>
+        </ul>
+
+        <p class="italic text-sm text-gray-600">
+            Remarque : ces techniques sont aussi utilisées par les professionnels de la sécurité pour réaliser des audits ou tester la surface d’exposition publique d’une entreprise.
+        </p>
+    </section>
+
+
+</div>
+
+{% endblock %}

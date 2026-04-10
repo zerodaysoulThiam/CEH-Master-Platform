@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module Social Engineering{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Cours - Module 9: Social Engineering</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#se-concepts">1. Concepts d'ingénierie sociale</a></td>
+                <td>Fondamentaux et principes psychologiques</td>
+            </tr>
+            <tr>
+                <td><a href="#se-techniques">2. Techniques d'ingénierie sociale</a></td>
+                <td>Méthodes d'attaque et exemples concrets</td>
+            </tr>
+            <tr>
+                <td><a href="#insider-threats">3. Menaces internes</a></td>
+                <td>Risques venant de l'intérieur de l'organisation</td>
+            </tr>
+            <tr>
+                <td><a href="#social-impersonation">4. Usurpation sur les réseaux sociaux</a></td>
+                <td>Techniques d'infiltration et de manipulation</td>
+            </tr>
+            <tr>
+                <td><a href="#identity-theft">5. Vol d'identité</a></td>
+                <td>Mécanismes et conséquences</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">6. Contre-mesures</a></td>
+                <td>Protections contre l'ingénierie sociale</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="se-concepts">
+        <h1>1. Concepts d'ingénierie sociale</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Qu'est-ce que l'ingénierie sociale?</h3>
+                <p>L'ingénierie sociale est une technique de manipulation psychologique visant à amener les personnes à divulguer des informations sensibles ou à effectuer des actions compromettant la sécurité.</p>
+                
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Pourquoi ça fonctionne?</h5>
+                    <ul>
+                        <li>Les humains sont le maillon faible de la sécurité</li>
+                        <li>Confiance naturelle envers les autres</li>
+                        <li>Pression sociale et autorité</li>
+                        <li>Urgence et rareté</li>
+                    </ul>
+                </div>
+                
+                <h3>Principes psychologiques</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Principe</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Réciprocité</td>
+                        <td>Tendance à rendre la pareille</td>
+                    </tr>
+                    <tr>
+                        <td>Engagement</td>
+                        <td>Persévérer dans une décision prise</td>
+                    </tr>
+                    <tr>
+                        <td>Preuve sociale</td>
+                        <td>Suivre le comportement du groupe</td>
+                    </tr>
+                    <tr>
+                        <td>Autorité</td>
+                        <td>Obéir aux figures d'autorité</td>
+                    </tr>
+                    <tr>
+                        <td>Sympathie</td>
+                        <td>Accorder des faveurs aux personnes aimables</td>
+                    </tr>
+                    <tr>
+                        <td>Urgence</td>
+                        <td>Agir sous pression temporelle</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Impact de l'ingénierie sociale</h4>
+                        <ul>
+                            <li>93% des cyberattaques commencent par de l'ingénierie sociale</li>
+                            <li>Coût moyen d'une attaque par ingénierie sociale: $1.6 million</li>
+                            <li>Augmentation de 300% des attaques de phishing pendant la pandémie</li>
+                            <li>75% des organisations ont été victimes d'une attaque par phishing</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Cycle d'attaque typique</h4>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Recherche d'informations</li>
+                            <li>Développement d'une relation</li>
+                            <li>Exploitation de la confiance</li>
+                            <li>Exécution de l'attaque</li>
+                            <li>Dissimulation des traces</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <img src="https://www.imperva.com/learn/wp-content/uploads/sites/13/2019/01/social-engineering-attack.jpg" alt="Cycle d'attaque d'ingénierie sociale" class="img-fluid rounded mt-3">
+            </div>
+        </div>
+    </section>
+    
+    <section id="se-techniques" class="mt-5">
+        <h1>2. Techniques d'ingénierie sociale</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Techniques de base</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Technique</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Phishing</td>
+                        <td>Emails frauduleux imitant des sources légitimes</td>
+                    </tr>
+                    <tr>
+                        <td>Vishing</td>
+                        <td>Appels téléphoniques pour soutirer des informations</td>
+                    </tr>
+                    <tr>
+                        <td>Smishing</td>
+                        <td>Messages SMS frauduleux</td>
+                    </tr>
+                    <tr>
+                        <td>Pretexting</td>
+                        <td>Création d'un faux scénario pour obtenir des informations</td>
+                    </tr>
+                    <tr>
+                        <td>Baiting</td>
+                        <td>Appât laissant traîné (clé USB infectée)</td>
+                    </tr>
+                    <tr>
+                        <td>Tailgating</td>
+                        <td>Accès physique en suivant quelqu'un</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Exemple: Attaque par phishing</h4>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('static', filename='img/phis.png') }}" alt="Exemple de phishing">
+
+                        <p class="mt-2">Email imitant Microsoft demandant une réinitialisation de mot de passe</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Techniques avancées</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Watering Hole</strong>: Compromission de sites fréquentés par les cibles</li>
+                        <li><strong>Quid Pro Quo</strong>: Offrir un service en échange d'informations</li>
+                        <li><strong>Honey Trap</strong>: Utilisation d'une relation sentimentale</li>
+                        <li><strong>Reverse Social Engineering</strong>: Faire en sorte que la victime contacte l'attaquant</li>
+                        <li><strong>Spear Phishing</strong>: Phishing hautement ciblé</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: Spear Phishing</h4>
+                        <ol>
+                            <li>Rechercher la cible sur LinkedIn</li>
+                            <li>Identifier ses collègues et supérieurs</li>
+                            <li>Créer un email semblant venir du PDG</li>
+                            <li>Demander un virement urgent</li>
+                            <li>Utiliser un domaine similaire (ex: companyy.com)</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Outils d'ingénierie sociale</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>SET (Social Engineering Toolkit)</strong>: Framework complet</li>
+                            <li><strong>Gophish</strong>: Plateforme de phishing open source</li>
+                            <li><strong>King Phisher</strong>: Campagnes de phishing</li>
+                            <li><strong>Maltego</strong>: Collecte d'informations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="insider-threats" class="mt-5">
+        <h1>3. Menaces internes</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Types de menaces internes</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Employé négligent</td>
+                        <td>Erreurs involontaires compromettant la sécurité</td>
+                    </tr>
+                    <tr>
+                        <td>Employé compromis</td>
+                        <td>Accès utilisé par des attaquants externes</td>
+                    </tr>
+                    <tr>
+                        <td>Employé malveillant</td>
+                        <td>Actions délibérées pour nuire à l'organisation</td>
+                    </tr>
+                </table>
+                
+                <h3>Motivations</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Ressentiment envers l'employeur</li>
+                        <li>Problèmes financiers personnels</li>
+                        <li>Chantage ou pression externe</li>
+                        <li>Espionnage industriel</li>
+                        <li>Idéologie politique</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Cas célèbres</h4>
+                        <ul>
+                            <li><strong>Edward Snowden</strong>: Divulgation de documents classifiés de la NSA</li>
+                            <li><strong>Chelsea Manning</strong>: Fuite de documents militaires à WikiLeaks</li>
+                            <li><strong>UBS 2008</strong>: Employé causant $2.3 milliards de pertes</li>
+                            <li><strong>Suntrust Bank</strong>: Employé volant 1.5 million de données clients</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Indicateurs de menace interne</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Accès en dehors des heures normales</li>
+                            <li>Tentatives d'accès à des données non nécessaires</li>
+                            <li>Utilisation excessive des privilèges</li>
+                            <li>Comportement inhabituel ou stressé</li>
+                            <li>Plaintes fréquentes sur le lieu de travail</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Stratégies de prévention</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Principe du moindre privilège</h5>
+                            <p>Limiter les accès au strict nécessaire</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Séparation des tâches</h5>
+                            <p>Aucun employé ne contrôle un processus complet</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Surveillance des accès</h5>
+                            <p>Journalisation et analyse des activités</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="social-impersonation" class="mt-5">
+        <h1>4. Usurpation sur les réseaux sociaux</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Techniques d'usurpation</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Technique</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Création de faux profils</td>
+                        <td>Profils imitant une personne ou une organisation</td>
+                    </tr>
+                    <tr>
+                        <td>Hameçonnage ciblé</td>
+                        <td>Messages personnalisés basés sur les données du profil</td>
+                    </tr>
+                    <tr>
+                        <td>Ingénierie sociale inversée</td>
+                        <td>Faire en sorte que la victime contacte l'attaquant</td>
+                    </tr>
+                    <tr>
+                        <td>Compromission de compte</td>
+                        <td>Accès non autorisé à un compte légitime</td>
+                    </tr>
+                </table>
+                
+                <h3>Étapes d'une attaque</h3>
+                <ol>
+                    <li>Collecte d'informations (OSINT)</li>
+                    <li>Création d'un profil crédible</li>
+                    <li>Établissement d'une relation</li>
+                    <li>Exploitation de la confiance</li>
+                    <li>Exécution de l'attaque</li>
+                </ol>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light p-3">
+                    <h4>Collecte d'informations (OSINT)</h4>
+                    <ul>
+                        <li>Analyse des profils LinkedIn</li>
+                        <li>Recherche des publications sur Twitter/Facebook</li>
+                        <li>Consultation des photos sur Instagram</li>
+                        <li>Recherche des documents partagés</li>
+                        <li>Analyse des connexions et relations</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Exemple: Attaque sur LinkedIn</h4>
+                        <ol>
+                            <li>Créer un profil de recruteur crédible</li>
+                            <li>Contacter des employés d'une entreprise cible</li>
+                            <li>Proposer une "opportunité professionnelle"</li>
+                            <li>Demander d'évaluer un "test technique" (malware)</li>
+                            <li>Collecter des informations sensibles lors des entretiens</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Outils d'OSINT</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Maltego</h5>
+                            <p>Analyse des relations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>theHarvester</h5>
+                            <p>Collecte d'emails et domaines</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Sherlock</h5>
+                            <p>Recherche de noms d'utilisateur</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SocialScan</h5>
+                            <p>Vérification d'adresses email</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="identity-theft" class="mt-5">
+        <h1>5. Vol d'identité</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Méthodes de vol d'identité</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>Méthode</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Phishing</td>
+                        <td>Collecte d'informations via de faux sites</td>
+                    </tr>
+                    <tr>
+                        <td>Skimming</td>
+                        <td>Copie des données de cartes bancaires</td>
+                    </tr>
+                    <tr>
+                        <td>Vol de portefeuille</td>
+                        <td>Accès physique aux documents</td>
+                    </tr>
+                    <tr>
+                        <td>Piratage de bases de données</td>
+                        <td>Vol massif d'identités</td>
+                    </tr>
+                    <tr>
+                        <td>Dumpster diving</td>
+                        <td>Fouille des poubelles pour documents</td>
+                    </tr>
+                </table>
+                
+                <h3>Conséquences</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Fraudes financières</li>
+                        <li>Crédits contractés au nom de la victime</li>
+                        <li>Usurpation médicale</li>
+                        <li>Crimes commis sous fausse identité</li>
+                        <li>Réputation endommagée</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Statistiques alarmantes</h4>
+                        <ul>
+                            <li>1 personne sur 4 victime de vol d'identité</li>
+                            <li>Perte moyenne: $1,300 par victime</li>
+                            <li>15 millions de victimes aux États-Unis chaque année</li>
+                            <li>500,000 enfants victimes chaque année</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Protection contre le vol d'identité</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Geler son crédit</li>
+                            <li>Utiliser des services de surveillance</li>
+                            <li>Activer l'authentification à deux facteurs</li>
+                            <li>Détruire les documents sensibles</li>
+                            <li>Vérifier régulièrement ses relevés</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-danger text-white mt-3">
+                    <div class="card-body">
+                        <h4>Que faire en cas de vol d'identité?</h4>
+                        <ol>
+                            <li>Signaler aux autorités (plainte)</li>
+                            <li>Alerter les bureaux de crédit</li>
+                            <li>Contacter les institutions financières</li>
+                            <li>Changer tous les mots de passe</li>
+                            <li>Documenter toutes les actions</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>6. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Protections organisationnelles</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Formation régulière</strong>: Sensibilisation aux risques</li>
+                        <li><strong>Politiques claires</strong>: Procédures pour les informations sensibles</li>
+                        <li><strong>Contrôles d'accès</strong>: Principe du moindre privilège</li>
+                        <li><strong>Vérification d'identité</strong>: Protocoles pour les demandes sensibles</li>
+                        <li><strong>Exercices de simulation</strong>: Tests de phishing internes</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protections techniques</h3>
+                <ul>
+                    <li>Filtrage anti-spam et anti-phishing</li>
+                    <li>Authentification multi-facteurs (MFA)</li>
+                    <li>Chiffrement des données sensibles</li>
+                    <li>Systèmes de détection d'intrusion (IDS)</li>
+                    <li>Contrôle d'accès physique</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Bonnes pratiques personnelles</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li>Vérifier l'expéditeur des emails</li>
+                        <li>Ne jamais divulguer d'informations sensibles par téléphone</li>
+                        <li>Utiliser des mots de passe complexes et uniques</li>
+                        <li>Limiter les informations partagées sur les réseaux sociaux</li>
+                        <li>Vérifier les paramètres de confidentialité</li>
+                        <li>Être sceptique face aux offres trop alléchantes</li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Vérification des emails suspects</h4>
+                        <ul>
+                            <li>Inspecter l'adresse email complète</li>
+                            <li>Survoler les liens sans cliquer</li>
+                            <li>Rechercher les fautes d'orthographe</li>
+                            <li>Vérifier les entêtes email</li>
+                            <li>Contacter l'expéditeur par un autre canal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-primary text-white mt-4">
+            <div class="card-body">
+                <h4>Programme de sensibilisation efficace</h4>
+                <ol>
+                    <li>Formations initiales et rappels réguliers</li>
+                    <li>Simulations d'attaques réalistes</li>
+                    <li>Récompenses pour les signalements</li>
+                    <li>Communication ouverte sur les incidents</li>
+                    <li>Évaluation continue des risques</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

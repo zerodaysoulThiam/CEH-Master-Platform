@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Section d’accueil -->
+    <div class="hero-section text-center shadow p-5 bg-primary text-white rounded">
+        <h1 class="display-5 fw-bold">Modules de Cours</h1>
+        <p class="lead">Explore les modules clés pour te préparer au CEH.</p>
+    </div>
+
+<div class="row text-center mt-4">
+
+    <!-- Module 1 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=1) }}" class="text-decoration-none">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 1</h3>
+                    <p class="card-text text-sm text-gray-800">Introduction to Ethical Hacking</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=2) }}" class="text-decoration-none">
+            <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 2</h3>
+                    <p class="card-text text-sm text-gray-800">Footprinting and Reconnaissance</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=3) }}" class="text-decoration-none">
+            <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 3</h3>
+                    <p class="card-text text-sm text-gray-800">Scanning Networks</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 4 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=4) }}" class="text-decoration-none">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 4</h3>
+                    <p class="card-text text-sm text-gray-800">Enumeration</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 5 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=5) }}" class="text-decoration-none">
+            <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 5</h3>
+                    <p class="card-text text-sm text-gray-800">Vulnerability Analysis</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 6 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=6) }}" class="text-decoration-none">
+            <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 6</h3>
+                    <p class="card-text text-sm text-gray-800">System Hacking</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 7 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=7) }}" class="text-decoration-none">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 7</h3>
+                    <p class="card-text text-sm text-gray-800">Malware Threats</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 8 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=8) }}" class="text-decoration-none">
+            <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 8</h3>
+                    <p class="card-text text-sm text-gray-800">Sniffing</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 9 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=9) }}" class="text-decoration-none">
+            <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 9</h3>
+                    <p class="card-text text-sm text-gray-800">Social Engineering</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Module 10 -->
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('cours_detail', module=10) }}" class="text-decoration-none">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 10</h3>
+                    <p class="card-text text-sm text-gray-800">Denial of Service</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+
+
+<!-- Module 11 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=11) }}" class="text-decoration-none">
+        <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 11</h3>
+                <p class="card-text text-sm text-gray-800">Session Hijacking</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 12 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=12) }}" class="text-decoration-none">
+        <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 12</h3>
+                <p class="card-text text-sm text-gray-800">Evading IDS, Firewalls and Honeypots</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 13 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=13) }}" class="text-decoration-none">
+        <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 13</h3>
+                <p class="card-text text-sm text-gray-800">Hacking Web Servers</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 14 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=14) }}" class="text-decoration-none">
+        <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 14</h3>
+                <p class="card-text text-sm text-gray-800">Hacking Web Applications</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 15 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=15) }}" class="text-decoration-none">
+        <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 15</h3>
+                <p class="card-text text-sm text-gray-800">SQL Injection</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 16 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=16) }}" class="text-decoration-none">
+        <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 16</h3>
+                <p class="card-text text-sm text-gray-800">Hacking Wireless Networks</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 17 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=17) }}" class="text-decoration-none">
+        <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 17</h3>
+                <p class="card-text text-sm text-gray-800">Hacking Mobile Platforms</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 18 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=18) }}" class="text-decoration-none">
+        <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 18</h3>
+                <p class="card-text text-sm text-gray-800">IoT Hacking & OT Hacking</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 19 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=19) }}" class="text-decoration-none">
+        <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 19</h3>
+                <p class="card-text text-sm text-gray-800">Cloud Computing</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Module 20 -->
+<div class="col-md-4 mb-4">
+    <a href="{{ url_for('cours_detail', module=20) }}" class="text-decoration-none">
+        <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📖 Module 20</h3>
+                <p class="card-text text-sm text-gray-800">Cryptography</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+</div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5 text-muted">
+        <p>© {{ year }} - CEH Prep. Tous droits réservés.</p>
+    </footer>
+
+</div>
+
+<!-- Importation des scripts Bootstrap -->
+<script src="/static/scripts/jquery-1.10.2.js"></script>
+<script src="/static/scripts/bootstrap.js"></script>
+<script src="/static/scripts/respond.js"></script>
+
+{% endblock %}

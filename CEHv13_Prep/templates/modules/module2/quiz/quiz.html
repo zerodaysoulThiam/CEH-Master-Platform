@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 2 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 2 : Footprinting and Reconnaissance</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+            fr: {
+                facile: [
+                    "Qu'est-ce que le footprinting?;Collecte d'informations sur une cible;Analyse de malware;Attaque par déni de service;Chiffrement de données;a",
+                    "Quel outil permet de récupérer des informations WHOIS?;Nmap;Whois;Metasploit;Wireshark;b",
+                    "Quelle technique utilise Google pour trouver des informations sensibles?;Google Dorking;Google Bashing;Google Hacking;Google Mining;c",
+                    "Quelle est la première étape du processus de hacking éthique?;Footprinting;Scanning;Gaining Access;Reporting;a",
+                    "Quel type de reconnaissance est totalement légal et non détectable?;Reconnaissance active;Reconnaissance semi-active;Reconnaissance passive;Reconnaissance agressive;c",
+                    "Que permet de découvrir la commande 'traceroute'?;Les ports ouverts;Le chemin des paquets réseau;Les vulnérabilités;Les mots de passe;b",
+                    "Quelle information peut-on obtenir via un lookup DNS?;Adresse MAC;Adresse IP associée à un domaine;Version du système d'exploitation;Historique de navigation;b",
+                    "Quelle technique utilise les réseaux sociaux pour le footprinting?;Social Engineering;Phishing;Vishing;SQL Injection;a",
+                    "Que signifie 'OSINT'?;Open Source Intelligence;Operating System Integration;Online Security Interface;Open System Interaction;a",
+                    "Quelle plateforme est spécialisée dans la recherche d'appareils connectés?;Shodan;Facebook;LinkedIn;VirusTotal;a"
+                ],
+                moyen: [
+                    "Quelle technique permet de trouver des sous-domaines?;DNS Zone Transfer;Port Scanning;Packet Sniffing;ARP Spoofing;a",
+                    "Quelle commande permet d'effectuer une recherche DNS inversée?;nslookup;dig -x;tracert;netstat;b",
+                    "Quel type d'information peut-on obtenir via Job Postings?;Technologies utilisées;Adresses IP;Mots de passe;Historique DNS;a",
+                    "Quel outil est utilisé pour le Google Hacking?;Google Dorks;Google Exploits;Google Queries;Google Finders;a",
+                    "Quelle technique permet d'identifier les relations entre différentes entités?;Business Relationship Analysis;Port Scanning;Vulnerability Assessment;Penetration Testing;a",
+                    "Comment trouver des adresses email associées à un domaine?;Harvester;Nmap;Wireshark;John the Ripper;a",
+                    "Quelle méthode permet de détecter des systèmes sans interaction directe?;Passive Reconnaissance;Active Scanning;Port Knocking;Brute Force;a",
+                    "Quelle information est cruciale pour une attaque par ingénierie sociale?;Noms des employés;Adresse MAC;Version du BIOS;Clé de chiffrement;a",
+                    "Que peut révéler l'analyse des métadonnées?;Auteur d'un document;Ports ouverts;Adresses IP;Mots de passe;a",
+                    "Quelle technique permet de mapper l'infrastructure réseau?;Network Mapping;Password Cracking;SQL Injection;Cross-site Scripting;a"
+                ],
+                difficile: [
+                    "Comment contourner les limitations de recherche Google?;Utiliser des opérateurs avancés;Utiliser un VPN;Changer de navigateur;Désactiver JavaScript;a",
+                    "Quelle technique permet d'identifier des serveurs cachés?;DNS Interrogation;ARP Spoofing;MAC Flooding;DHCP Starvation;a",
+                    "Comment trouver des informations sur les technologies utilisées par un site web?;Analyse des en-têtes HTTP;Scan de ports;ARP Ping;ICMP Echo;b",
+                    "Quelle méthode permet de découvrir des adresses IP non listées?;Reverse IP Lookup;Port Scanning;MAC Spoofing;DNS Poisoning;a",
+                    "Comment obtenir des informations via les archives internet?;Wayback Machine;Google Cache;Archive.org;Toutes ces réponses;d",
+                    "Quelle technique utilise les moteurs de recherche spécialisés?;Shodan/Hunter.io;Google/Bing;Yahoo/DuckDuckGo;AOL/Ask;a",
+                    "Comment trouver des informations sur la hiérarchie d'une entreprise?;Analyse LinkedIn;Scan de ports;Déni de service;Injection SQL;a",
+                    "Quelle approche permet de découvrir des APIs cachées?;Fuzzing des endpoints;Scan de ports;ARP Spoofing;DNS Hijacking;a",
+                    "Comment identifier des fuites de données dans les référentiels publics?;GitHub Dorking;Port Scanning;MAC Flooding;DHCP Starvation;a",
+                    "Quelle technique permet de mapper les relations entre domaines?;DNS Record Analysis;Port Knocking;ARP Ping;ICMP Sweep;a"
+                ],
+                tresdifficile: [
+                    "Comment utiliser les certificats SSL pour le footprinting?;Analyse des champs Subject Alternative Name;Déchiffrement SSL;Interception TLS;Renégociation SSL;a",
+                    "Quelle technique permet d'identifier des services derrière un CDN?;Subdomain Enumeration;DNS Rebinding;ARP Cache Poisoning;TCP Sequence Prediction;a",
+                    "Comment détecter des serveurs cloud mal configurés?;Recherche de buckets S3 ouverts;Scan de ports UDP;ARP Flooding;MAC Spoofing;a",
+                    "Quelle méthode utilise les empreintes DNS pour la reconnaissance?;Passive DNS Replication;DNSSEC Validation;DNS over HTTPS;DNS Cache Snooping;a",
+                    "Comment trouver des informations via les services de géolocalisation?;Analyse des métadonnées EXIF;Scan de ports;Déni de service;Injection XSS;a",
+                    "Quelle technique permet de découvrir des réseaux via BGP?;BGP Looking Glass;DNS Query;ARP Request;ICMP Redirect;a",
+                    "Comment identifier des fuites dans les configurations Docker/Kubernetes?;Scan des registres publics;Scan de ports TCP;MAC Flooding;DNS Amplification;a",
+                    "Quelle approche utilise les empreintes SSH pour l'identification?;Analyse des bannières SSH;Déchiffrement SSH;Interception SSH;Renégociation SSH;a",
+                    "Comment découvrir des informations via les services de télémétrie?;Analyse des endpoints publics;Scan des ports UDP;ARP Spoofing;DNS Hijacking;a",
+                    "Quelle technique permet d'identifier des infrastructures via les empreintes SSL?;JA3/JA3S Fingerprinting;SSL Stripping;Heartbleed Exploit;POODLE Attack;a"
+                ]
+            },
+            en: {
+                facile: [
+                    "What is footprinting?;Malware analysis;Information gathering about a target;Denial of service attack;Data encryption;b",
+                    "Which tool retrieves WHOIS information?;Nmap;Whois;Metasploit;Wireshark;b",
+                    "What technique uses Google to find sensitive information?;Google Dorking;Google Bashing;Google Hacking;Google Mining;c",
+                    "What is the first step in ethical hacking?;Footprinting;Scanning;Gaining Access;Reporting;a",
+                    "Which reconnaissance type is completely legal and undetectable?;Active reconnaissance;Semi-active reconnaissance;Passive reconnaissance;Aggressive reconnaissance;c",
+                    "What does 'traceroute' discover?;Open ports;Network packet path;Vulnerabilities;Passwords;b",
+                    "What information can DNS lookup provide?;MAC address;IP address associated with a domain;OS version;Browsing history;b",
+                    "Which technique uses social media for footprinting?;Social Engineering;Phishing;Vishing;SQL Injection;a",
+                    "What does 'OSINT' stand for?;Open Source Intelligence;Operating System Integration;Online Security Interface;Open System Interaction;a",
+                    "Which platform specializes in searching connected devices?;Shodan;Facebook;LinkedIn;VirusTotal;a"
+                ],
+                moyen: [
+                    "Which technique finds subdomains?;DNS Zone Transfer;Port Scanning;Packet Sniffing;ARP Spoofing;a",
+                    "Which command performs reverse DNS lookup?;nslookup;dig -x;tracert;netstat;b",
+                    "What information can Job Postings reveal?;Technologies used;IP addresses;Passwords;DNS history;a",
+                    "Which tool is used for Google Hacking?;Google Dorks;Google Exploits;Google Queries;Google Finders;a",
+                    "Which technique identifies relationships between entities?;Business Relationship Analysis;Port Scanning;Vulnerability Assessment;Penetration Testing;a",
+                    "How to find email addresses associated with a domain?;Harvester;Nmap;Wireshark;John the Ripper;a",
+                    "Which method detects systems without direct interaction?;Passive Reconnaissance;Active Scanning;Port Knocking;Brute Force;a",
+                    "What information is crucial for social engineering attacks?;Employee names;MAC address;BIOS version;Encryption key;a",
+                    "What can metadata analysis reveal?;Document author;Open ports;IP addresses;Passwords;a",
+                    "Which technique maps network infrastructure?;Network Mapping;Password Cracking;SQL Injection;Cross-site Scripting;a"
+                ],
+                difficile: [
+                    "How to bypass Google search limitations?;Use advanced operators;Use a VPN;Change browser;Disable JavaScript;a",
+                    "Which technique identifies hidden servers?;DNS Interrogation;ARP Spoofing;MAC Flooding;DHCP Starvation;a",
+                    "How to find technologies used by a website?;HTTP header analysis;Port scanning;ARP Ping;ICMP Echo;b",
+                    "Which method discovers unlisted IP addresses?;Reverse IP Lookup;Port Scanning;MAC Spoofing;DNS Poisoning;a",
+                    "How to obtain information from internet archives?;Wayback Machine;Google Cache;Archive.org;All of the above;d",
+                    "Which technique uses specialized search engines?;Shodan/Hunter.io;Google/Bing;Yahoo/DuckDuckGo;AOL/Ask;a",
+                    "How to find company hierarchy information?;LinkedIn analysis;Port scanning;Denial of service;SQL injection;a",
+                    "Which approach discovers hidden APIs?;Endpoint fuzzing;Port scanning;ARP Spoofing;DNS Hijacking;a",
+                    "How to identify data leaks in public repositories?;GitHub Dorking;Port scanning;MAC Flooding;DHCP Starvation;a",
+                    "Which technique maps domain relationships?;DNS Record Analysis;Port Knocking;ARP Ping;ICMP Sweep;a"
+                ],
+                tresdifficile: [
+                    "How to use SSL certificates for footprinting?;SAN field analysis;SSL decryption;TLS interception;SSL renegotiation;a",
+                    "Which technique identifies services behind CDNs?;Subdomain Enumeration;DNS Rebinding;ARP Cache Poisoning;TCP Sequence Prediction;a",
+                    "How to detect misconfigured cloud servers?;Search for open S3 buckets;UDP port scanning;ARP Flooding;MAC Spoofing;a",
+                    "Which method uses DNS fingerprints for reconnaissance?;Passive DNS Replication;DNSSEC Validation;DNS over HTTPS;DNS Cache Snooping;a",
+                    "How to find information via geolocation services?;EXIF metadata analysis;Port scanning;Denial of service;XSS injection;a",
+                    "Which technique discovers networks via BGP?;BGP Looking Glass;DNS Query;ARP Request;ICMP Redirect;a",
+                    "How to identify leaks in Docker/Kubernetes configurations?;Public registry scanning;TCP port scanning;MAC Flooding;DNS Amplification;a",
+                    "Which approach uses SSH fingerprints for identification?;SSH banner analysis;SSH decryption;SSH interception;SSH renegotiation;a",
+                    "How to discover information via telemetry services?;Public endpoint analysis;UDP port scanning;ARP Spoofing;DNS Hijacking;a",
+                    "Which technique identifies infrastructures via SSL fingerprints?;JA3/JA3S Fingerprinting;SSL Stripping;Heartbleed Exploit;POODLE Attack;a"
+                ]
+            }
+        };
+
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                mettreAJourCouleurTimer(tempsRestant, dureeChoisie);
+
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function mettreAJourCouleurTimer(tempsRestant, dureeTotale) {
+            const ratio = tempsRestant / dureeTotale;
+
+            if (ratio > 0.5) {
+                timerDiv.style.color = '#28a745'; // vert
+            } else if (ratio > 0.2) {
+                timerDiv.style.color = '#ffc107'; // jaune
+            } else {
+                timerDiv.style.color = '#dc3545'; // rouge
+            }
+        }
+
+
+
+    </script>
+
+
+</div>
+
+{% endblock %}

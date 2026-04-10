@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 12 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 1 : IOT Hacking & OT Hacking</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+  "fr": {
+    "facile": [
+      "Quelle est la principale différence entre l'IT et l'OT?;L'OT contrôle des processus physiques;L'IT utilise des protocoles industriels;L'OT a des cycles de mise à jour fréquents;L'IT privilégie la disponibilité sur la confidentialité;a;L'OT (Technologie Opérationnelle) interagit directement avec le monde physique via des capteurs et automates, tandis que l'IT gère des données numériques.",
+      "Quel malware célèbre a ciblé des systèmes industriels nucléaires?;Stuxnet;Mirai;WannaCry;BlueBorne;a;Stuxnet a été conçu spécifiquement pour saboter des centrifugeuses nucléaires iraniennes en ciblant les systèmes SCADA.",
+      "Quel outil est utilisé pour extraire et analyser le firmware IoT?;Binwalk;Nmap;Metasploit;Wireshark;a;Binwalk permet d'analyser et extraire les fichiers systèmes des firmwares IoT pour y chercher des vulnérabilités.",
+      "Quel protocole industriel est vulnérable aux injections de commandes?;Modbus TCP;HTTPS;SSH;IPSec;a;Modbus TCP, largement utilisé dans les systèmes OT, manque de chiffrement et d'authentification, permettant des injections malveillantes.",
+      "Quelle attaque a créé un botnet à partir de caméras IP?;Mirai;Stuxnet;BlueBorne;VPNFilter;a;Le botnet Mirai a infecté des millions d'appareils IoT en exploitant des identifiants par défaut pour lancer des attaques DDoS massives."
+    ],
+    "moyen": [
+      "Comment sécuriser les mises à jour OTA dans l'IoT?;Signature numérique du firmware;Désactivation des interfaces debug;Utilisation de Modbus;Augmentation de la puissance du signal;a;La signature numérique garantit l'intégrité et l'authenticité du firmware lors des mises à jour OTA.",
+      "Quelle technique permet d'accéder physiquement au firmware d'un dispositif IoT?;Utilisation d'interfaces JTAG/UART;Scan de ports réseau;Injection SQL;Attaque par dictionnaire;a;Les interfaces JTAG/UART permettent d'accéder aux broches de debug pour extraire ou modifier le firmware.",
+      "Pourquoi segmente-t-on les réseaux OT et IT?;Pour limiter la propagation des menaces;Pour augmenter le débit des protocoles industriels;Pour faciliter les mises à jour firmware;Pour réduire le coût des équipements;a;La segmentation via VLANs ou DMZ industrielles isole les systèmes critiques OT des réseaux IT plus exposés.",
+      "Quelle caractéristique rend BlueBorne dangereux pour l'IoT?;Exploitation sans appairage Bluetooth;Utilisation de mots de passe faibles;Injection Modbus TCP;Attaques par déni de service;a;BlueBorne permet l'exécution de code à distance sans appairage ni interaction utilisateur, affectant des milliards d'appareils.",
+      "Quel standard de sécurité s'applique aux environnements OT?;IEC 62443;ISO 9001;PCI DSS;GDPR;a;La norme IEC 62443 spécifie les exigences de cybersécurité pour les systèmes de contrôle industriels et OT."
+    ],
+    "difficile": [
+      "Comment Stuxnet parvenait-il à saboter des centrifugeuses?;En modifiant les vitesses de rotation via les PLC;Par attaque DDoS sur le réseau IT;Via l'exploitation de failles Bluetooth;En interceptant des communications Wi-Fi;a;Stuxnet altérait les vitesses des centrifugeuses en reprogrammant furtivement les automates PLC Siemens.",
+      "Quelle méthode détecte les anomalies dans les protocoles industriels?;IDS spécifiques OT (ex: Nozomi);Scan de vulnérabilités IT traditionnel;Brute-force des mots de passe;Désactivation d'UPnP;a;Les systèmes IDS comme Nozomi comprennent les protocoles OT (Modbus, DNP3) pour détecter des commandes anormales.",
+      "Quel risque présente un PLC non patché dans une usine?;Sabotage des processus industriels;Interception d'e-mails;Vol de données clients;Chiffrement de fichiers;a;Les PLC vulnérables permettent d'altérer des paramètres physiques critiques (température, pression), risquant d'endommager l'infrastructure.",
+      "Pourquoi les systèmes OT sont-ils difficiles à mettre à jour?;Risque d'interruption des processus critiques;Compatibilité avec les nouveaux protocoles;Coût des équipements;Manque de personnel qualifié;a;Les mises à jour peuvent interrompre des processus industriels continus 24/7, potentiellement coûteux ou dangereux.",
+      "Comment sécuriser les communications dans les systèmes SCADA?;Utiliser TLS/DTLS pour les protocoles industriels;Désactiver tous les services réseau;Remplacer Modbus par HTTP;Limiter la portée physique des capteurs;a;Le chiffrement via TLS/DTLS protège l'intégrité des commandes SCADA contre les interceptions malveillantes."
+    ]
+  },
+  "en": {
+    "facile": [
+      "What is the main difference between IT and OT?;OT controls physical processes;IT uses industrial protocols;OT has frequent update cycles;IT prioritizes availability over confidentiality;a;OT (Operational Technology) directly interacts with the physical world via sensors and controllers, while IT manages digital data.",
+      "Which famous malware targeted nuclear industrial systems?;Stuxnet;Mirai;WannaCry;BlueBorne;a;Stuxnet was specifically designed to sabotage Iranian nuclear centrifuges by targeting SCADA systems.",
+      "Which tool is used to extract and analyze IoT firmware?;Binwalk;Nmap;Metasploit;Wireshark;a;Binwalk analyzes and extracts filesystems from IoT firmware to search for vulnerabilities.",
+      "Which industrial protocol is vulnerable to command injection?;Modbus TCP;HTTPS;SSH;IPSec;a;Modbus TCP, widely used in OT systems, lacks encryption and authentication, allowing malicious injections.",
+      "Which attack created a botnet from IP cameras?;Mirai;Stuxnet;BlueBorne;VPNFilter;a;The Mirai botnet infected millions of IoT devices by exploiting default credentials to launch massive DDoS attacks."
+    ],
+    "moyen": [
+      "How to secure OTA updates in IoT?;Digital firmware signing;Disabling debug interfaces;Using Modbus;Increasing signal power;a;Digital signatures guarantee firmware integrity and authenticity during OTA updates.",
+      "Which technique provides physical access to IoT device firmware?;Using JTAG/UART interfaces;Network port scanning;SQL injection;Dictionary attacks;a;JTAG/UART interfaces allow access to debug pins for firmware extraction or modification.",
+      "Why segment OT and IT networks?;To limit threat propagation;To increase industrial protocol throughput;To facilitate firmware updates;To reduce equipment costs;a;Segmentation via VLANs or industrial DMZs isolates critical OT systems from more exposed IT networks.",
+      "What makes BlueBorne dangerous for IoT?;Exploitation without Bluetooth pairing;Using weak passwords;Modbus TCP injection;Denial of service attacks;a;BlueBorne enables remote code execution without pairing or user interaction, affecting billions of devices.",
+      "Which security standard applies to OT environments?;IEC 62443;ISO 9001;PCI DSS;GDPR;a;The IEC 62443 standard specifies cybersecurity requirements for industrial control and OT systems."
+    ],
+    "difficile": [
+      "How did Stuxnet sabotage centrifuges?;By altering rotation speeds via PLCs;Through IT network DDoS attacks;By exploiting Bluetooth flaws;By intercepting Wi-Fi communications;a;Stuxnet covertly altered centrifuge speeds by reprogramming Siemens PLCs.",
+      "Which method detects anomalies in industrial protocols?;OT-specific IDS (e.g., Nozomi);Traditional IT vulnerability scans;Password brute-forcing;Disabling UPnP;a;Systems like Nozomi understand OT protocols (Modbus, DNP3) to detect abnormal commands.",
+      "What risk does an unpatched PLC pose in a factory?;Sabotage of industrial processes;Email interception;Customer data theft;File encryption;a;Vulnerable PLCs allow alteration of critical physical parameters (temperature, pressure), risking infrastructure damage.",
+      "Why are OT systems hard to update?;Risk of disrupting critical processes;Compatibility with new protocols;Equipment costs;Lack of skilled staff;a;Updates may interrupt 24/7 continuous industrial processes, potentially costly or hazardous.",
+      "How to secure communications in SCADA systems?;Using TLS/DTLS for industrial protocols;Disabling all network services;Replacing Modbus with HTTP;Limiting physical sensor range;a;Encryption via TLS/DTLS protects SCADA command integrity against malicious interception."
+    ]
+  }
+}
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

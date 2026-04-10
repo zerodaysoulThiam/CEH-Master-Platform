@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="body-content">
+    <h2>Lancer le quiz - Module {{ module }}</h2>
+    <form method="POST">
+        <label for="question_count">Nombre de questions :</label>
+        <select name="question_count" id="question_count" class="form-select" required>
+            {% for n in range(5, total+1, 5) %}
+            <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-success">Démarrer le test</button>
+    </form>
+</div>
+{% endblock %}

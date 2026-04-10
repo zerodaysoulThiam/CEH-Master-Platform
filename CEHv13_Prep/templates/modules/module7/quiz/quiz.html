@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 7{% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        cursor: pointer;
+    }
+    .option-label input[type="radio"] {
+        margin-right: 8px;
+    }
+
+    .correct {
+        background-color: #d4edda;
+        border-left: 5px solid #28a745;
+        padding-left: 10px;
+    }
+
+    .incorrect {
+        background-color: #f8d7da;
+        border-left: 5px solid #dc3545;
+        padding-left: 10px;
+    }
+
+    .timerCard {
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        width: fit-content;
+    }
+</style>
+
+<div class="body-content container mt-4">
+    <h1 id="quizTitle">Quiz  7: Malware threats</h1>
+
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked> Français
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en"> English
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn" disabled>Commencer le quiz / Start quiz</button>
+    </div>
+
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm"></form>
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+        <div id="resultat"></div>
+    </div>
+
+    <script>
+    const malwareThreats = {
+        fr: {
+            facile: [
+                "Que signifie le terme 'malware' ?;Un logiciel malveillant;Un logiciel de gestion;Un pare-feu;Un antivirus;a",
+                "Quel type de malware chiffre les fichiers et demande une rançon ?;Spyware;Trojan;Ransomware;Worm;c",
+                "Quel malware peut capturer vos données à votre insu ?;Ransomware;Spyware;Rootkit;Worm;b",
+                "Les vers informatiques peuvent :;Modifier des mots de passe;Se propager sans hôte;Protéger le réseau;Analyser un fichier;b",
+                "Quel outil est souvent utilisé pour créer un cheval de Troie ?;Wireshark;Metasploit;Photoshop;PuTTY;b"
+            ],
+            moyen: [
+                "Quel malware est conçu pour être invisible et résider uniquement en mémoire ?;Virus;Fileless Malware;RAT;Backdoor;b",
+                "Quel type de malware utilise des outils légitimes comme PowerShell ?;Worm;Trojan;Fileless Malware;Spyware;c",
+                "Que fait un RAT ?;Envoie des e-mails;Télécharge des vidéos;Permet le contrôle distant d'une machine;Efface les logs;c",
+                "Le malware Emotet est connu pour être :;Un antivirus;Un spyware bancaire;Un logiciel éducatif;Un moteur de recherche;b",
+                "Quel protocole est souvent utilisé pour le C2 d’un cheval de Troie ?;HTTP/HTTPS;DHCP;DNSSEC;POP3;a"
+            ]
+        },
+        en: {
+            facile: [
+                "What does 'malware' stand for?;Malicious software;Management software;Firewall;Antivirus;a",
+                "Which malware encrypts files and asks for ransom?;Spyware;Trojan;Ransomware;Worm;c",
+                "Which malware captures data without the user's knowledge?;Ransomware;Spyware;Rootkit;Worm;b",
+                "Computer worms can:;Change passwords;Spread without a host;Protect systems;Analyze files;b",
+                "Which tool is often used to generate Trojans?;Wireshark;Metasploit;Photoshop;PuTTY;b"
+            ],
+            moyen: [
+                "Which malware is designed to stay in memory only?;Virus;Fileless Malware;RAT;Backdoor;b",
+                "Which malware abuses legitimate tools like PowerShell?;Worm;Trojan;Fileless Malware;Spyware;c",
+                "What is the main purpose of a RAT?;Send emails;Download videos;Remote control of a system;Delete logs;c",
+                "Emotet is known as a:;Antivirus;Banking spyware;Educational app;Search engine;b",
+                "Which protocol is often used for C2 communication in Trojans?;HTTP/HTTPS;DHCP;DNSSEC;POP3;a"
+            ]
+        }
+    };
+
+    const quizData = malwareThreats;
+    const langueRadios = document.getElementsByName('langue');
+    const durationSelect = document.getElementById('durationSelect');
+    const difficultySelect = document.getElementById('difficultySelect');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const quizContainer = document.getElementById('quizContainer');
+    const quizForm = document.getElementById('quizForm');
+    const resultatDiv = document.getElementById('resultat');
+    const timerDiv = document.getElementById('timer');
+    const validerBtn = document.getElementById('validerBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let countdownInterval;
+    let tempsRestant;
+    let quizEnCours = false;
+    let langueChoisie = 'fr';
+    let dureeChoisie = 1800;
+
+    durationSelect.addEventListener('change', () => {
+        difficultySelect.disabled = !durationSelect.value;
+        verifierBoutonStart();
+    });
+
+    difficultySelect.addEventListener('change', verifierBoutonStart);
+
+    langueRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+        });
+    });
+
+    function verifierBoutonStart() {
+        startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+    }
+
+    startQuizBtn.addEventListener('click', () => {
+        if (!difficultySelect.value || !durationSelect.value) return;
+
+        langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+        dureeChoisie = parseInt(durationSelect.value, 10);
+        const diff = difficultySelect.value;
+
+        if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+            alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+            return;
+        }
+
+        afficherQuestions(quizData[langueChoisie][diff]);
+        quizContainer.style.display = "block";
+        resultatDiv.innerHTML = "";
+        document.getElementById("timerCard").style.display = "block";
+        tempsRestant = dureeChoisie;
+        afficherTimer();
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            tempsRestant--;
+            afficherTimer();
+            updateTimerStyle(tempsRestant, dureeChoisie);
+            if (tempsRestant <= 0) {
+                clearInterval(countdownInterval);
+                alert(langueChoisie === 'fr' ? "Le temps est écoulé." : "Time's up.");
+                corriger();
+            }
+        }, 1000);
+
+        quizEnCours = true;
+        difficultySelect.disabled = true;
+        durationSelect.disabled = true;
+        langueRadios.forEach(r => r.disabled = true);
+        startQuizBtn.disabled = true;
+        validerBtn.style.display = "inline-block";
+        restartBtn.style.display = "none";
+    });
+
+    function afficherTimer() {
+        const minutes = Math.floor(tempsRestant / 60);
+        const secondes = tempsRestant % 60;
+        const label = langueChoisie === 'fr' ? 'Temps restant' : 'Time left';
+        timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimerStyle(remaining, total) {
+        const ratio = remaining / total;
+        if (ratio > 0.5) timerDiv.style.backgroundColor = '#28a745';
+        else if (ratio > 0.2) {
+            timerDiv.style.backgroundColor = '#ffc107';
+            timerDiv.style.color = '#000';
+        } else {
+            timerDiv.style.backgroundColor = '#dc3545';
+            timerDiv.style.color = '#fff';
+        }
+    }
+
+    function afficherQuestions(questions) {
+        quizForm.innerHTML = "";
+        questions.forEach((ligne, index) => {
+            const parts = ligne.split(';');
+            const [question, a, b, c, d, bonne] = parts;
+            const qid = `q${index + 1}`;
+            const optionsHTML = ['a', 'b', 'c', 'd'].map((val, i) => `
+                <label class="option-label">
+                    <input type="radio" name="${qid}" value="${val}" />
+                    ${parts[i + 1]}
+                </label>`).join('');
+            const questionHTML = `
+                <div class="question" id="question${index}" data-bonne-reponse="${bonne}">
+                    <p><strong>${index + 1}. ${question}</strong></p>
+                    <div class="options-container">${optionsHTML}</div>
+                    <div class="correction-text" id="correction${index}" style="display:none;"></div>
+                </div>`;
+            quizForm.insertAdjacentHTML('beforeend', questionHTML);
+        });
+    }
+
+    function corriger() {
+        if (!quizEnCours) return;
+        clearInterval(countdownInterval);
+
+        let score = 0;
+        const total = quizForm.querySelectorAll('.question').length;
+
+        quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+            const bonne = divQuestion.dataset.bonneReponse;
+            const radios = divQuestion.querySelectorAll(`input[name="q${index + 1}"]`);
+            let reponse = null;
+            radios.forEach(radio => {
+                radio.disabled = true;
+                if (radio.checked) reponse = radio.value;
+            });
+
+            radios.forEach(radio => {
+                radio.parentElement.classList.remove('correct', 'incorrect');
+                if (radio.value === bonne) radio.parentElement.classList.add('correct');
+                if (radio.checked && radio.value !== bonne) radio.parentElement.classList.add('incorrect');
+            });
+
+            if (reponse === bonne) score++;
+        });
+
+        const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+        resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+        validerBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
+        quizEnCours = false;
+    }
+
+    function recommencer() {
+        location.reload();
+    }
+    </script>
+</div>
+
+{% endblock %}

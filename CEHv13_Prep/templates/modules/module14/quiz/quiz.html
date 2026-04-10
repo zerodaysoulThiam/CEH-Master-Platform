@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 14 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 14 : Hacking WEB Application</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+  "fr": {
+    "facile": [
+      "Quelle est la vulnérabilité la plus fréquente selon OWASP 2023?;Injection;XSS;Broken Authentication;Configuration faible;a;L'injection (94%) arrive en tête du Top 10 OWASP, devant l'authentification défaillante (88%) et l'exposition de données sensibles (85%).",
+      "Quel outil est essentiel pour les attaques par injection SQL?;sqlmap;Nmap;Metasploit;Wireshark;a;Sqlmap est spécialisé dans la détection et l'exploitation des failles SQL Injection, permettant même d'obtenir un shell système.",
+      "Que permet le contournement des contrôles client?;Déjouer les validations JavaScript;Augmenter la vitesse de chargement;Améliorer l'UX;Contourner le chiffrement SSL;a;Les contrôles côté client (comme les validations JS) sont facilement contournés en modifiant les requêtes HTTP avec Burp Suite ou les DevTools.",
+      "Quelle technique utilise '$ne' dans les attaques NoSQL?;Contournement d'authentification;Chiffrement de données;Évasion de conteneur;Fragmentation IP;a;Dans MongoDB, {password: {$ne: ''}} permet de contourner l'authentification en exploitant des opérateurs de requête.",
+      "Quel header HTTP renforce la sécurité des cookies?;HttpOnly;Content-Type;Cache-Control;Accept-Encoding;a;Le flag HttpOnly empêche l'accès aux cookies via JavaScript, limitant les risques de vol de session par XSS."
+    ],
+    "moyen": [
+      "Comment détecter les IDOR?;Modifier les paramètres d'URL;Analyser les cookies;Scanner les ports;Dumper la mémoire;a;Les IDOR (Insecure Direct Object References) se détectent en changeant les IDs dans les URLs (ex: user_id=124) pour accéder à des ressources non autorisées.",
+      "Quelle méthode contourne les CAPTCHAs côté client?;Envoi de valeur statique;Brute force;Désactivation SSL;Fragmentation TCP;a;Les CAPTCHAs peuvent être contournés en réutilisant des tokens valides ou en envoyant une valeur fixe dans la requête HTTP.",
+      "Qu'attaque exploite {{{{7*7}}}}?;Template Injection;XSS;CSRF;XXE;a;Les injections de templates (SSTI) exploitent les moteurs de rendu pour exécuter du code via des expressions comme {{{{7*7}}}}.",
+      "Quel risque menace les environnements Docker mutualisés?;Évasion de conteneur;Injection SQL;Clickjacking;XXE;a;L'évasion de conteneur permet d'accéder à l'hôte via des montages sensibles ou le socket Docker exposé.",
+      "Que vérifie jwt.io pour les attaques JWT?;Modification des claims;Signature HMAC;Chiffrement AES;Hachage MD5;a;Les tokens JWT peuvent être compromis en modifiant les claims (ex: rôle) et en utilisant l'algorithme 'none'."
+    ],
+    "difficile": [
+      "Comment exploiter GraphQL?;Introspection + requêtes profondes;Scan de ports;Fuzzing HTTP;Déni de service UDP;a;L'introspection révèle le schéma GraphQL, permettant des requêtes malveillantes profondes et des injections dans les arguments.",
+      "Quelle technique utilise les webhooks pour le SSRF?;Modification de l'URL callback;Injection XML;Pollution de paramètres;Session splicing;a;Les webhooks peuvent être détournés en modifiant l'URL de callback pour déclencher des requêtes serveur (SSRF).",
+      "Quel outil détecte les failles logiques métier?;Burp Repeater;Sqlmap;Nmap;Shodan;a;Burp Repeater permet de rejouer/modifier des requêtes pour tester les incohérences métier (ex: modification de prix dans un panier).",
+      "Que permet {password:{$ne:''}} en NoSQL?;Contourner l'authentification;Corrompre la base;Dumper les tables;Lancer des commandes;a;Ce payload exploite les opérateurs de requête NoSQL pour retourner des documents sans vérifier le mot de passe.",
+      "Comment sécuriser les API REST?;Validation des entrées + OAuth2;Chiffrement AES;Pare-feu réseau;Désactivation CORS;a;La validation stricte des inputs et OAuth2 protègent contre les injections et l'accès non autorisé aux API."
+    ]
+  },
+  "en": {
+    "facile": [
+      "What is the most common vulnerability in OWASP 2023?;Injection;XSS;Broken Authentication;Weak Configuration;a;Injection (94%) tops the OWASP Top 10, ahead of broken authentication (88%) and sensitive data exposure (85%).",
+      "Which tool is essential for SQL injection attacks?;sqlmap;Nmap;Metasploit;Wireshark;a;Sqlmap specializes in detecting and exploiting SQL Injection flaws, even allowing system shell access.",
+      "What does bypassing client-side controls allow?;Bypass JavaScript validations;Increase loading speed;Improve UX;Bypass SSL encryption;a;Client-side controls (like JS validations) are easily bypassed by modifying HTTP requests with Burp Suite or DevTools.",
+      "Which technique uses '$ne' in NoSQL attacks?;Authentication bypass;Data encryption;Container escape;IP fragmentation;a;In MongoDB, {password: {$ne: ''}} exploits query operators to bypass authentication.",
+      "Which HTTP header enhances cookie security?;HttpOnly;Content-Type;Cache-Control;Accept-Encoding;a;The HttpOnly flag prevents JavaScript cookie access, reducing XSS session theft risks."
+    ],
+    "moyen": [
+      "How to detect IDOR?;Modify URL parameters;Analyze cookies;Port scanning;Memory dumping;a;IDOR (Insecure Direct Object References) are detected by changing IDs in URLs (e.g., user_id=124) to access unauthorized resources.",
+      "Which method bypasses client-side CAPTCHAs?;Sending static values;Brute force;Disabling SSL;TCP fragmentation;a;CAPTCHAs can be bypassed by reusing valid tokens or sending fixed values in HTTP requests.",
+      "Which attack exploits {{{{7*7}}}}?;Template Injection;XSS;CSRF;XXE;a;Template injections (SSTI) exploit rendering engines to execute code via expressions like {{{{7*7}}}}.",
+      "Which risk threatens shared Docker environments?;Container escape;SQL Injection;Clickjacking;XXE;a;Container escapes access the host through sensitive mounts or exposed Docker sockets.",
+      "What does jwt.io check for JWT attacks?;Claim modification;HMAC signature;AES encryption;MD5 hashing;a;JWT tokens can be compromised by modifying claims (e.g., role) and using the 'none' algorithm."
+    ],
+    "difficile": [
+      "How to exploit GraphQL?;Introspection + deep queries;Port scanning;HTTP fuzzing;UDP DoS;a;Introspection reveals GraphQL schemas, enabling malicious deep queries and argument injections.",
+      "Which technique uses webhooks for SSRF?;Callback URL modification;XML injection;Parameter pollution;Session splicing;a;Webhooks can be hijacked by modifying callback URLs to trigger server-side requests (SSRF).",
+      "Which tool detects business logic flaws?;Burp Repeater;Sqlmap;Nmap;Shodan;a;Burp Repeater replays/modifies requests to test business inconsistencies (e.g., price tampering in carts).",
+      "What does {password:{$ne:''}} enable in NoSQL?;Authentication bypass;Database corruption;Table dumping;Command execution;a;This payload exploits NoSQL query operators to return documents without password verification.",
+      "How to secure REST APIs?;Input validation + OAuth2;AES encryption;Network firewall;CORS disabling;a;Strict input validation and OAuth2 protect against injections and unauthorized API access."
+    ]
+  }
+}
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

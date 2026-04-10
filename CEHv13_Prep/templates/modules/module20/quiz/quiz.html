@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 20 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 20 : Cryptography</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+  "fr": {
+    "facile": [
+      "Quel algorithme symétrique moderne est recommandé par la NSA?;AES;DES;RC4;Blowfish;a;AES (Advanced Encryption Standard) offre des tailles de clés de 128 à 256 bits et est approuvé pour les données sensibles.",
+      "Quel composant PKI émet les certificats numériques?;Autorité de Certification (CA);Autorité d'Enregistrement (RA);CRL;OCSP;a;La CA est l'entité de confiance qui signe et valide les certificats dans l'infrastructure à clé publique.",
+      "Quelle technique protège les mots de passe contre les rainbow tables?;Salage (salt);Chiffrement AES;Hachage MD5;Clé publique;a;Le salage ajoute une valeur aléatoire avant hachage, rendant chaque empreinte unique même pour des mots de passe identiques.",
+      "Quel outil permet d'inspecter un certificat SSL/TLS?;OpenSSL;VeraCrypt;Hashcat;GnuPG;a;La commande 'openssl s_client -connect example.com:443' affiche les détails du certificat.",
+      "Quel protocole remplace Telnet pour les accès distants sécurisés?;SSH;FTP;HTTP;PPTP;a;SSH chiffre toutes les communications et permet l'exécution de commandes à distance."
+    ],
+    "moyen": [
+      "Quelle vulnérabilité TLS exploitait l'extension 'heartbeat'?;Heartbleed;POODLE;CRIME;BEAST;a;Heartbleed permettait de voler des données sensibles depuis la mémoire du serveur via des requêtes malformées.",
+      "Quel système sous Linux gère le chiffrement LUKS?;cryptsetup;BitLocker;FileVault;TrueCrypt;a;cryptsetup configure les volumes chiffrés avec LUKS via des commandes comme 'luksFormat' et 'luksOpen'.",
+      "Quelle méthode assure la confidentialité persistante dans TLS?;Forward Secrecy;Hashing;Chiffrement RSA;PKI;a;Le Forward Secrecy utilise des clés éphémères pour empêcher le déchiffrement rétroactif si une clé est compromise.",
+      "Quel algorithme de hachage est résistant aux collisions?;SHA-256;MD5;SHA-1;RIPEMD;a;SHA-256 produit des empreintes de 256 bits et fait partie de la famille SHA-2 robuste.",
+      "Quel mode IPSec chiffre l'ensemble du paquet IP?;Tunnel;Transport;Liaison;Flux;a;Le mode tunnel encapsule et chiffre le paquet entier, idéal pour les VPN site-à-site."
+    ],
+    "difficile": [
+      "Comment prévient-on les attaques par canal auxiliaire?;Code constant-time;Rotation de clés;Salage;Hashing;a;Le code constant-time élimine les variations temporelles exploitables pour déduire des informations sensibles.",
+      "Quel mécanisme PKI valide les certificats en temps réel?;OCSP;CRL;RA;X.509;a;OCSP (Online Certificate Status Protocol) répond instantanément sans nécessiter de listes de révocation complètes.",
+      "Quelle attaque cible la réutilisation de clés en chiffrement par flux?;Known-Plaintext;Brute force;Rainbow tables;Side-channel;a;Si une clé est réutilisée, l'opération XOR rend le texte clair vulnérable à la cryptanalyse.",
+      "Comment ECC optimise-t-il la sécurité sur appareils mobiles?;Clés plus petites;Vitesse réduite;Hachage renforcé;PKI centralisée;a;ECC offre une sécurité équivalente à RSA avec des clés plus courtes (ex: 256 bits vs 3072 bits).",
+      "Quel protocole utilise le 'Web of Trust' pour les emails?;PGP;S/MIME;PEM;TLS;a;PGP/GnuPG valide les identités via un réseau de confiance décentralisé plutôt qu'une autorité centrale."
+    ]
+  },
+  "en": {
+    "facile": [
+      "Which symmetric algorithm is approved by the NSA?;AES;DES;RC4;Blowfish;a;AES supports 128 to 256-bit keys and is recommended for sensitive data encryption.",
+      "Which PKI component issues digital certificates?;Certificate Authority (CA);Registration Authority (RA);CRL;OCSP;a;The CA is the trusted entity that signs and validates certificates in public key infrastructure.",
+      "What technique protects passwords against rainbow tables?;Salting;AES encryption;MD5 hashing;Public key;a;Salting adds random data before hashing, making each digest unique even for identical passwords.",
+      "Which tool inspects SSL/TLS certificates?;OpenSSL;VeraCrypt;Hashcat;GnuPG;a;The 'openssl s_client -connect example.com:443' command displays certificate details.",
+      "Which protocol securely replaces Telnet?;SSH;FTP;HTTP;PPTP;a;SSH encrypts all communications and enables secure remote command execution."
+    ],
+    "moyen": [
+      "Which TLS vulnerability exploited the 'heartbeat' extension?;Heartbleed;POODLE;CRIME;BEAST;a;Heartbleed allowed stealing sensitive data from server memory via malformed requests.",
+      "Which Linux system manages LUKS encryption?;cryptsetup;BitLocker;FileVault;TrueCrypt;a;cryptsetup configures LUKS-encrypted volumes using commands like 'luksFormat' and 'luksOpen'.",
+      "What method provides forward secrecy in TLS?;Ephemeral keys;Hashing;RSA encryption;PKI;a;Forward secrecy uses temporary keys to prevent retroactive decryption if a key is compromised.",
+      "Which hashing algorithm is collision-resistant?;SHA-256;MD5;SHA-1;RIPEMD;a;SHA-256 produces 256-bit digests and is part of the robust SHA-2 family.",
+      "Which IPSec mode encrypts the entire IP packet?;Tunnel;Transport;Link;Stream;a;Tunnel mode encapsulates and encrypts the full packet, ideal for site-to-site VPNs."
+    ],
+    "difficile": [
+      "How to prevent side-channel attacks?;Constant-time code;Key rotation;Salting;Hashing;a;Constant-time code eliminates timing variations that could leak sensitive information.",
+      "Which PKI mechanism provides real-time certificate validation?;OCSP;CRL;RA;X.509;a;OCSP (Online Certificate Status Protocol) gives instant responses without full revocation lists.",
+      "What attack exploits key reuse in stream ciphers?;Known-Plaintext;Brute force;Rainbow tables;Side-channel;a;Key reuse in XOR-based encryption makes plaintext vulnerable to cryptanalysis.",
+      "How does ECC enhance security on mobile devices?;Shorter keys;Reduced speed;Stronger hashing;Centralized PKI;a;ECC provides RSA-equivalent security with shorter keys (e.g., 256-bit vs 3072-bit).",
+      "Which protocol uses 'Web of Trust' for email?;PGP;S/MIME;PEM;TLS;a;PGP/GnuPG validates identities through a decentralized trust network instead of a central authority."
+    ]
+  }
+}
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function updateTimerStyle(secondsRemaining, totalTime) {
+            const ratio = secondsRemaining / totalTime;
+
+            if (ratio > 0.5) {
+                // Vert
+                timerDiv.style.backgroundColor = '#28a745';
+            } else if (ratio > 0.2) {
+                // Jaune
+                timerDiv.style.backgroundColor = '#ffc107';
+                timerDiv.style.color = '#000';
+            } else {
+                // Rouge
+                timerDiv.style.backgroundColor = '#dc3545';
+                timerDiv.style.color = '#fff';
+            }
+        }
+
+    </script>
+
+
+</div>
+
+{% endblock %}

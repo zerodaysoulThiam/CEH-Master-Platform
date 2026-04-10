@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Statistiques de progression</h1>
+    <p class="lead">Visualisez votre progression dans les différents modules et examens.</p>
+
+    <div class="row mt-5">
+        <!-- Graphique de progression globale -->
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Progression globale</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="globalProgressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé des performances -->
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Résumé</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="progress-circle mx-auto mb-4" data-value="75">
+                            <span class="progress-left">
+                                <span class="progress-bar border-primary"></span>
+                            </span>
+                            <span class="progress-right">
+                                <span class="progress-bar border-primary"></span>
+                            </span>
+                            <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                <div class="h2 font-weight-bold">75%</div>
+                            </div>
+                        </div>
+                        <h4 class="small font-weight-bold">Score moyen</h4>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                            <div class="small">Modules terminés</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">85%</div>
+                            <div class="small">Taux de réussite</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques de détail -->
+    <div class="row">
+        <!-- Progression par module -->
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Progression par module</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="moduleProgressChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Terminé
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> En cours
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Non commencé
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scores aux examens -->
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Performances aux examens</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="examScoresChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Détail par module -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Détail par module</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Progression</th>
+                            <th>Dernier quiz</th>
+                            <th>Score moyen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Introduction to Ethical Hacking</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 85%">85%</div>
+                                </div>
+                            </td>
+                            <td>90%</td>
+                            <td>87%</td>
+                        </tr>
+                        <tr>
+                            <td>Footprinting and Reconnaissance</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 70%">70%</div>
+                                </div>
+                            </td>
+                            <td>75%</td>
+                            <td>72%</td>
+                        </tr>
+                        <!-- Ajoutez d'autres modules ici -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclure Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Graphique de progression globale
+    const globalCtx = document.getElementById('globalProgressChart').getContext('2d');
+    const globalChart = new Chart(globalCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+            datasets: [{
+                label: 'Progression',
+                data: [20, 35, 45, 55, 65, 75],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Graphique de progression par module
+    const moduleCtx = document.getElementById('moduleProgressChart').getContext('2d');
+    const moduleChart = new Chart(moduleCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Terminé', 'En cours', 'Non commencé'],
+            datasets: [{
+                data: [12, 5, 3],
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Graphique des scores aux examens
+    const examCtx = document.getElementById('examScoresChart').getContext('2d');
+    const examChart = new Chart(examCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Examen 1', 'Examen 2', 'Examen 3', 'Examen final'],
+            datasets: [{
+                label: 'Score',
+                data: [68, 75, 80, 85],
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Animation des cercles de progression
+    $(document).ready(function() {
+        $('.progress-circle').each(function() {
+            const value = $(this).data('value');
+            const left = $(this).find('.progress-left .progress-bar');
+            const right = $(this).find('.progress-right .progress-bar');
+            
+            if (value > 0) {
+                if (value <= 50) {
+                    right.css('transform', `rotate(${percentageToDegrees(value)}deg)`)
+                } else {
+                    right.css('transform', 'rotate(180deg)')
+                    left.css('transform', `rotate(${percentageToDegrees(value - 50)}deg)`)
+                }
+            }
+        });
+        
+        function percentageToDegrees(percentage) {
+            return percentage / 100 * 360;
+        }
+    });
+</script>
+
+<style>
+    .progress-circle {
+        position: relative;
+        height: 150px;
+        width: 150px;
+    }
+    .progress-circle .progress-bar {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        border-width: 12px;
+        border-style: solid;
+        border-radius: 50%;
+    }
+    .progress-circle .progress-left {
+        transform: rotate(0deg);
+        z-index: 1;
+    }
+    .progress-circle .progress-right {
+        transform: rotate(180deg);
+        z-index: 2;
+    }
+    .progress-circle .progress-value {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+{% endblock %}

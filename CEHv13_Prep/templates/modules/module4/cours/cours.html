@@ -1,0 +1,238 @@
+
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 3{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+	<h1> Cours - Module 4:  Enumeration </h1>
+	<table class="table table-bordered table-of-contents">
+    <tr>
+        <td><a href="#dns-enumeration">dns-enumeration</a></td>
+        <td>Techniques utilisées pour collecter des informations sur les enregistrements DNS d’un domaine, comme les sous-domaines, les adresses IP ou les serveurs de messagerie.</td>
+    </tr>
+    <tr>
+        <td><a href="#enumeration-overview">enumeration-overview</a></td>
+        <td>Vue d’ensemble des méthodes d’énumération utilisées pour identifier les ressources, utilisateurs, services et partages disponibles sur une cible.</td>
+    </tr>
+	</table>
+	
+	<section id="dns-enumeration" class="course-section">
+  <h1>1. Énumération DNS</h1>
+
+  <h3>Qu'est-ce que le DNS ?</h3>
+  <p>Le <strong>Domain Name System (DNS)</strong> est un système hiérarchique et décentralisé permettant de traduire les noms de domaine (comme google.com) en adresses IP (comme 142.250.179.206). Il facilite la navigation sur Internet en permettant aux utilisateurs d’utiliser des noms faciles à retenir plutôt que des adresses numériques.</p>
+  <ul>
+    <li>Utilise les ports <strong>UDP 53</strong> (requêtes) et <strong>TCP 53</strong> (transferts de zones).</li>
+    <li>Chaque domaine est géré par un ou plusieurs serveurs DNS contenant des fichiers de zone avec les enregistrements DNS.</li>
+  </ul>
+
+  <h3>Types d'enregistrements DNS</h3>
+  <p>Les enregistrements DNS sont des entrées dans les fichiers de zone qui permettent d’associer des noms de domaine à diverses ressources.</p>
+  <ul>
+    <li><strong>A</strong> : associe un domaine à une adresse IPv4.</li>
+    <li><strong>AAAA</strong> : associe un domaine à une adresse IPv6.</li>
+    <li><strong>MX</strong> : enregistrements de messagerie (Mail eXchange) pour diriger les emails.</li>
+    <li><strong>NS</strong> : désigne les serveurs de noms pour un domaine.</li>
+    <li><strong>SOA</strong> : fournit des informations sur la zone, comme le numéro de série, le TTL, l’adresse e-mail du responsable, etc.</li>
+    <li><strong>CNAME</strong> : alias vers un autre nom de domaine.</li>
+    <li><strong>PTR</strong> : résolution inverse (IP → nom de domaine), souvent utilisée pour la vérification anti-spam.</li>
+    <li><strong>HINFO</strong> : donne des informations sur le système (CPU et OS).</li>
+    <li><strong>SRV</strong> : enregistrements de services (comme Kerberos, LDAP).</li>
+  </ul>
+
+  <h3>Techniques d'énumération DNS</h3>
+  <p>L’énumération DNS est une étape clé du renseignement (reconnaissance passive/active). Elle permet d'obtenir des informations sensibles sur une organisation via son infrastructure DNS.</p>
+  <ul>
+    <li>Récupération des enregistrements <strong>NS</strong> pour détecter les serveurs autoritaires.</li>
+    <li><strong>Transferts de zone</strong> (zone transfers) pour aspirer la totalité d’une zone DNS (si mal configurée).</li>
+    <li>Bruteforce de sous-domaines à l’aide de dictionnaires (avec des outils comme <code>dnsrecon</code> ou <code>dnscan</code>).</li>
+    <li>Énumération des enregistrements <strong>SRV</strong> pour repérer les services réseau actifs.</li>
+    <li>Résolution inversée <strong>PTR</strong> sur des plages IP (CIDR).</li>
+    <li><strong>Snooping du cache DNS</strong> pour vérifier quels noms de domaine ont été résolus récemment.</li>
+  </ul>
+
+  <h4>Snooping du cache DNS</h4>
+  <p>Cette technique consiste à effectuer des requêtes DNS non récursives afin de savoir si un serveur DNS a déjà résolu un domaine. Cela peut révéler des sites fréquemment consultés par une organisation.</p>
+  <ul>
+    <li>Utilise l’option <code>+norecurse</code> avec <code>dig</code>, ou <code>-norecurse</code> avec <code>nslookup</code>.</li>
+    <li>Permet d’identifier si un domaine est présent dans le cache DNS cible.</li>
+  </ul>
+
+  <h3>Transferts de zone DNS</h3>
+  <p>Un <strong>transfert de zone DNS</strong> consiste à copier les enregistrements d’un serveur DNS vers un autre. Utilisé normalement entre serveurs maîtres et esclaves, il peut être abusé si mal sécurisé.</p>
+  <ul>
+    <li>Utilise le protocole <strong>AXFR</strong> (transfert complet) ou <strong>IXFR</strong> (incrémental).</li>
+    <li>Un attaquant peut simuler un serveur esclave et demander un transfert de zone.</li>
+    <li>Ce type d’attaque révèle souvent des sous-domaines, des adresses internes ou des services actifs.</li>
+  </ul>
+
+  <h4>Exemple d’attaque par transfert de zone</h4>
+  <ol>
+    <li>Obtenir les enregistrements <strong>NS</strong> :
+      <pre><code>dig ns example.com</code></pre>
+    </li>
+    <li>Essayer un transfert de zone :
+      <pre><code>dig axfr @ns1.example.com example.com</code></pre>
+    </li>
+  </ol>
+
+  <h4>Contre-mesures</h4>
+  <ul>
+    <li>Restreindre les transferts de zone aux IP autorisées uniquement.</li>
+    <li>Utiliser un DNS <strong>split-horizon</strong> (ou split DNS) :
+      <ul>
+        <li>Fournir des réponses différentes selon l’origine de la requête (interne/externe).</li>
+        <li>Masque les ressources internes à Internet.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Outils d'énumération DNS</h3>
+  <ul>
+    <li><strong>dnsrecon</strong> : outil Python open-source, très complet pour récupérer des enregistrements, tester les transferts de zone, faire du brute-force...
+      <pre><code>dnsrecon -d example.com</code></pre>
+    </li>
+    <li><strong>dig</strong> : outil UNIX pour requêtes DNS.
+      <pre><code>dig example.com any</code>
+<code>dig axfr @ns1.example.com example.com</code></pre>
+    </li>
+    <li><strong>nslookup</strong> : permet des requêtes DNS interactives ou en ligne de commande. Moins flexible que dig.
+      <pre><code>nslookup
+> server ns1.example.com
+> set type=any
+> example.com</code></pre>
+    </li>
+    <li><strong>host</strong> : outil Unix simple et rapide.
+      <pre><code>host -t ns example.com
+host -l example.com</code></pre>
+    </li>
+  </ul>
+
+  <h3>Remarques finales</h3>
+  <p>Les informations obtenues par l’énumération DNS peuvent être cruciales pour une phase de reconnaissance dans un test d’intrusion. Bien configurés, les serveurs DNS doivent limiter ces possibilités, car même de simples erreurs de configuration peuvent exposer toute l’infrastructure réseau.</p>
+</section>
+
+
+	<section id="enumeration-overview">
+  <h1>2. Vue d'ensemble de l'énumération</h1>
+  <p>
+    L’énumération est une phase cruciale du pentest : elle consiste à extraire des informations sensibles sur le système cible. On peut récupérer :
+    <ul>
+      <li>Tables de routage</li>
+      <li>Listes d'utilisateurs et groupes</li>
+      <li>Ressources réseau (partages, imprimantes...)</li>
+      <li>Informations de service ou de version</li>
+    </ul>
+    Elle s’appuie souvent sur les services détectés lors de la phase de scan (ex : SMB, NetBIOS, SNMP…).
+  </p>
+
+  <h2>📌 Ports utilisés couramment pour l’énumération</h2>
+  <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr><th>Port</th><th>Protocole</th><th>Service</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>25</td><td>TCP</td><td>SMTP</td></tr>
+      <tr><td>53</td><td>TCP/UDP</td><td>DNS</td></tr>
+      <tr><td>135</td><td>TCP/UDP</td><td>Microsoft RPC</td></tr>
+      <tr><td>137</td><td>UDP</td><td>NetBIOS</td></tr>
+      <tr><td>139</td><td>TCP</td><td>SMB</td></tr>
+      <tr><td>161</td><td>UDP</td><td>SNMP</td></tr>
+      <tr><td>162</td><td>TCP/UDP</td><td>SNMP Trap</td></tr>
+      <tr><td>389</td><td>TCP/UDP</td><td>LDAP</td></tr>
+      <tr><td>445</td><td>TCP</td><td>SMB</td></tr>
+      <tr><td>465</td><td>TCP</td><td>SMTP sécurisé (TLS)</td></tr>
+      <tr><td>500</td><td>UDP</td><td>ISAKMP / IKE</td></tr>
+      <tr><td>514</td><td>UDP</td><td>Syslog</td></tr>
+      <tr><td>587</td><td>TCP</td><td>SMTP STARTTLS</td></tr>
+      <tr><td>1433</td><td>TCP/UDP</td><td>Microsoft SQL Server</td></tr>
+      <tr><td>3268</td><td>TCP/UDP</td><td>Global Catalog</td></tr>
+      <tr><td>5060/5061</td><td>TCP/UDP</td><td>SIP</td></tr>
+    </tbody>
+  </table>
+
+  <h2>🧠 Astuces et techniques de base</h2>
+  <ul>
+    <li>Créer un nom d'utilisateur à partir d'une adresse email : <code>prenom.nom@exemple.com → prenom.nom</code></li>
+    <li>Essayer les mots de passe par défaut (admin:admin, root:root...)</li>
+    <li>Faire de l'énumération DNS (sous-domaines, enregistrements MX, etc.)</li>
+  </ul>
+
+  <h2>🪟 Énumération Windows</h2>
+  <ul>
+    <li><code>net share</code> : affiche les partages locaux</li>
+    <li><code>net config</code> : montre les infos réseau du système</li>
+    <li><code>net view \\machine</code> : affiche les partages d’une machine distante</li>
+    <li><code>net use \\machine\ipc$ "" /user:""</code> : crée une session nulle</li>
+    <li>Utiliser des outils comme <strong>Hyena</strong> et <strong>DumpSec</strong> pour voir tous les comptes</li>
+  </ul>
+
+  <h3>🆔 SID (Security Identifier)</h3>
+  <p>
+    Windows attribue un identifiant unique à chaque compte :  
+    <code>S-1-5-21-1852694824-1489621752-332472329-500</code><br>
+    Le dernier chiffre est appelé RID :
+    <ul>
+      <li>500 → Administrateur</li>
+      <li>501 → Guest</li>
+    </ul>
+  </p>
+
+  <h3>🛠️ Outils pour SID et utilisateurs</h3>
+  <ul>
+    <li><code>user2sid</code> / <code>sid2user</code></li>
+    <li><a href="https://vidstromlabs.com/freetools/dumpusers/">Dumpusers</a></li>
+    <li><a href="https://packetstormsecurity.com/files/download/25056/getacct003.zip">GetAcct</a></li>
+    <li><a href="https://www.systemtools.com/somarsoft/">DumpSec</a></li>
+    <li><a href="https://www.systemtools.com/hyena/">Hyena</a></li>
+    <li><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psgetsid">PsGetSid</a></li>
+  </ul>
+
+  <h2>📡 Énumération NetBIOS / SMB</h2>
+  <ul>
+    <li><code>nbtstat -a IP</code> : affiche les noms NetBIOS d'une cible</li>
+    <li><code>net view \\IP</code> : liste les partages sur la cible</li>
+    <li><code>nat -o result.txt -u users.txt -p pass.txt 192.168.1.10</code> : test via SMB</li>
+    <li>Outil graphique : <a href="https://github.com/kkuehl/winfingerprint">WinFingerprint</a></li>
+  </ul>
+
+  <p>⚠️ Les failles SMB sont très critiques (ex : WannaCry exploitait SMBv1).</p>
+
+  <h2>📊 Énumération SNMP</h2>
+  <p>
+    SNMP permet de gérer à distance des équipements réseau. Il repose sur :
+    <ul>
+      <li>OID : identifiants d’objet (ex. sysName.0)</li>
+      <li>MIB : structure de données décrivant les OID</li>
+    </ul>
+    Versions :
+    <ul>
+      <li>v1 & v2 : pas sécurisées (transfert clair)</li>
+      <li>v3 : chiffrée et authentifiée</li>
+    </ul>
+  </p>
+
+  <h3>🛠️ Outils SNMP</h3>
+  <ul>
+    <li><code>snmpwalk -c public -v1 192.168.1.10</code> : énumère tout</li>
+    <li><code>snmp-check 192.168.1.10 -v1</code> : infos utiles (OS, uptime, interfaces…)</li>
+    <li><code>snmpget -c public -v1 IP .1.3.6.1.2.1.1.5.0</code> : récupère sysName (nom système)</li>
+    <li><a href="https://ezfive.com/snmpsoft-tools/snmp-walk/">SNMP Walk (outil GUI Windows)</a></li>
+  </ul>
+
+  <h2>📚 Compléments et bonnes pratiques</h2>
+  <ul>
+    <li>Renseigne-toi sur les chaînes communautaires SNMP les plus fréquentes : <code>public</code>, <code>private</code></li>
+    <li>Utilise des outils de brute-force ciblés : <code>enum4linux</code>, <code>smbclient</code>, <code>ldapsearch</code></li>
+    <li>Pratique l'énumération "passive" avec Wireshark ou tcpdump quand tu n’as pas d'accès direct</li>
+  </ul>
+</section>
+
+	
+</div>
+
+{% endblock %}

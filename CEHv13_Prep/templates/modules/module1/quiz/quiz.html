@@ -1,0 +1,598 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 1 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 1 : Introduction to Ethical Hacking</h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // Données bilingues : les questions en fr et en en
+        const quizData = {
+            fr: {
+                facile: [
+                    "Que signifie la confidentialité en sécurité informatique ?;Assurer que les données sont accessibles uniquement aux utilisateurs autorisés;Assurer la disponibilité des données;Assurer l'intégrité des données;Assurer la sauvegarde des données;a",
+                    "Quel est le rôle principal d’un pare-feu ?;Bloquer les accès non autorisés;Chiffrer les données;Sauvegarder les fichiers;Détecter les virus;a",
+                    "Qu'est-ce que le phishing ?;Une attaque par ingénierie sociale utilisant des emails;Un type de pare-feu;Un algorithme de chiffrement;Une méthode de sauvegarde;a",
+                    "Qu’est-ce que l’authentification ?;Vérifier l’identité d’un utilisateur;Chiffrer des données;Sauvegarder les données;Autoriser un accès;a",
+                    "Quelle est la fonction d’un antivirus ?;Détecter et supprimer les malwares;Chiffrer les fichiers;Gérer les comptes utilisateurs;Sauvegarder les données;a",
+                    "Qu’est-ce qu’un malware ?;Un logiciel malveillant;Un pare-feu;Un VPN;Un protocole réseau;a",
+                    "Qu’est-ce qu’un VPN ?;Un outil qui chiffre le trafic internet;Un logiciel antivirus;Un système de sauvegarde;Un type de malware;a",
+                    "Quel est le but d’une sauvegarde ?;Créer des copies de données pour éviter la perte;Bloquer l’accès non autorisé;Chiffrer les données;Analyser les virus;a",
+                    "Qu’est-ce qu’une politique de mot de passe ?;Des règles pour créer et gérer les mots de passe;Un réglage de pare-feu;Une norme de chiffrement;Un calendrier de sauvegarde;a",
+                    "Quelle attaque vise à rendre un service indisponible ?;Déni de service (DoS);Phishing;Rançongiciel;Cheval de Troie;a",
+                    "Que signifie l’intégrité des données ?;Les données sont exactes et non modifiées;Les données sont confidentielles;Les données sont disponibles;Les données sont sauvegardées;a",
+                    "Qu’est-ce qu’un contrôle d’accès basé sur les rôles (RBAC) ?;Une gestion des droits selon le rôle utilisateur;Une politique de sauvegarde;Un logiciel antivirus;Un type de chiffrement;a",
+                    "Qu’est-ce qu’une attaque par ingénierie sociale ?;Manipuler les personnes pour obtenir un accès non autorisé;Écrire un logiciel;Chiffrer des fichiers;Sauvegarder des données;a",
+                    "Qu’est-ce que l’authentification multifactorielle ?;Utiliser plusieurs méthodes pour vérifier l’identité;Utiliser un seul mot de passe;Chiffrer les données;Scanner les virus;a",
+                    "Quel est le rôle d’un système de détection d’intrusion (IDS) ?;Générer des alertes sur le trafic suspect;Bloquer le trafic;Filtrer les paquets;Sauvegarder les logs;a",
+                    "Qu’est-ce qu’un contrôle de sécurité technique ?;Un pare-feu;Une politique de sécurité;Un badge d’accès;Une formation utilisateur;a",
+                    "Quel est l’objectif principal d’un test d’intrusion ?;Trouver et exploiter les vulnérabilités;Installer des virus;Gérer les mots de passe;Mettre à jour les systèmes;a",
+                    "Qu’est-ce qu’un « patch » en sécurité ?;Une mise à jour pour corriger une vulnérabilité;Un type de malware;Une règle de pare-feu;Une politique de sécurité;a",
+                    "Pourquoi stocker les logs à distance ?;Pour éviter que les attaquants les suppriment localement;Parce que les systèmes locaux ne peuvent pas les gérer;Pour accélérer le réseau;Pour sauvegarder les données;a",
+                    "Quel est un exemple de sécurité physique ?;Les badges d’accès;Le chiffrement;Le pare-feu;Le mot de passe;a",
+                    "Quelle est la fonction d’un système de gestion des informations et événements de sécurité (SIEM) ?;Agrégation et recherche des données de logs;Gestion des projets de sécurité;Escalade des incidents;Stockage du renseignement open source;a",
+                    "Qu’est-ce qu’une faille de sécurité (vulnérabilité) ?;Une faiblesse dans un système;Un type d’attaque;Un acteur malveillant;Un contrôle de sécurité;a",
+                    "Qu’est-ce que le principe de moindre privilège ?;Donner aux utilisateurs uniquement les accès nécessaires;Donner un accès complet;Désactiver les comptes inactifs;Chiffrer les données sensibles;a",
+                    "Quelle est la fonction d’un pare-feu à état (stateful) ?;Suivre l’état des connexions réseau;Chiffrer les données;Bloquer uniquement les virus;Sauvegarder les logs;a"
+                ],
+                moyen: [
+                    "Quel équipement permet de bloquer les malwares avant qu’ils n’atteignent un endpoint ?;Filtre de paquets;Passerelle applicative;Appliance de gestion unifiée des menaces;Pare-feu à état;c",
+                    "Quelle règle de sécurité violez-vous si vous laissez un disque dur externe avec des données sensibles chez vous ?;Confidentialité;Intégrité;Non-répudiation;Disponibilité;a",
+                    "Comment calcule-t-on le risque ?;Probabilité * valeur de perte;Probabilité * facteur de mitigation;(Valeur de perte + facteur de mitigation) * (valeur de perte / probabilité);Probabilité * facteur de mitigation;a",
+                    "Quel élément est un facteur clé de la défense en profondeur ?;Commutateurs;Utiliser Linux sur le poste;Câbles optiques;Listes de contrôle d’accès sur les routeurs;d",
+                    "Comment assurer la confidentialité dans une organisation ?;Processus watchdog;Chiffrement;Fonctions de hachage cryptographique;Serveurs web;b",
+                    "Que fait un système de détection d’intrusion (IDS) ?;Bloquer le trafic;Filtrer le trafic par entêtes;Générer des alertes sur le trafic;Enregistrer les messages système;c",
+                    "Qu’est-ce qu’une perte d’intégrité ?;Un utilisateur modifiant un fichier et le sauvegardant;Des blocs défectueux sur un disque;Des numéros de carte bancaire envoyés en clair;Des erreurs mémoire affectant les pilotes de disque;c",
+                    "À quoi sert un gestionnaire d’informations et événements de sécurité (SIEM) ?;Agréger et rechercher les données de logs;Gérer les projets de sécurité;Escalader les incidents;Stocker du renseignement open source;a",
+                    "Pourquoi stocker les logs sur un serveur distant ?;Les attaquants peuvent supprimer les logs locaux;Les systèmes locaux ne peuvent pas gérer les logs;La bande passante est plus rapide;Cela protège contre les attaques;c",
+                    "Quelle condition doit être remplie pour qu’un pare-feu à état considère une connexion TCP établie ?;Message final d’accusé de réception;Trois étapes du handshake complètes;Numéros de séquence alignés;Message SYN reçu;b",
+                    "Quel est le but d’une politique de sécurité ?;Fournir des directives générales sur la sécurité;Donner des instructions précises aux agents de sécurité;Augmenter les bénéfices de l’entreprise;Harmoniser les normes et pratiques;a",
+                    "Quels ajouts la Parkerian Hexad apporte-t-elle au modèle CIA ?;Confidentialité, sensibilisation, authenticité;Utilité, sensibilisation, possession;Utilité, possession, authenticité;Possession, contrôle, authenticité;c",
+                    "Quel événement important peut être détecté par l’audit de sécurité ?;Arrêt système;Démarrage d’un service;Installation d’un paquet;Connexion utilisateur;d",
+                    "Que peut faire un système de prévention d’intrusion (IPS) qu’un IDS ne peut pas ?;Générer des alertes;Bloquer ou rejeter du trafic réseau;Compléter un handshake TCP faux;Enregistrer les paquets;b",
+                    "Quel est un exemple de passerelle applicative ?;Pare-feu applicatif web;Protection d’application en runtime;Applet Java;Système de prévention d’intrusion;a",
+                    "Quelle information un filtre de paquets utilise-t-il pour décider du trafic à laisser entrer ?;Message HTTP REQUEST;Type Ethernet;Port source UDP;OID SNMP;b",
+                    "Quel produit est un système de détection d’intrusion ?;Elastic Stack;Prewikka;Snort;Snorby;c",
+                    "Quelle attaque ne compromet pas l’intégrité ?;Dépassement de tampon;Man-in-the-middle;Heap spraying;Watering hole;d",
+                    "Quelle attaque compromet la disponibilité ?;Watering hole;Déni de service (DoS);Phishing;Dépassement de tampon;b",
+                    "Quelle fonctionnalité un EDR peut-il offrir ?;Isolation de l’hôte;Détection de malware;Collecte de données à distance;Toutes les réponses ci-dessus;d",
+                    "Quel type de contrôle est un pare-feu ?;Administratif;Physique;Technique;Correctif;c",
+                    "Quelle approche de gestion de risque correspond au fait de ne rien faire face à un risque ?;Transfert;Évitement;Atténuation;Acceptation;d",
+                    "Quel type de contrôle de sécurité est une norme supportant une politique ?;Administratif;Correctif;Logique;Fonctionnel;a",
+                    "Quel contrôle technique pourrait atténuer la menace interne ?;Politique de sécurité;Gestion des identités et accès;Normes de sécurité;Pare-feu basé sur l’hôte;b",
+                    "Dans le cadre MITRE ATT&CK, que représente l’enregistrement d’un nom de domaine pour des mails de phishing ?;Accès initial;Mouvement latéral;Accès aux identifiants;Développement de ressources;d"
+                ],
+                difficile: [
+                    "Quel est l'objectif principal du hacking éthique ?;Gagner de l'argent en exploitant les failles;Voler des données confidentielles;Identifier les vulnérabilités pour les corriger;Endommager les systèmes cibles;c",
+                    "Quelle organisation a défini le code d'éthique pour les hackers éthiques ?;OWASP;EC-Council;ISACA;IEEE;b",
+                    "Quel est le terme désignant les hackers autorisés à tester la sécurité d’un système ?;Black Hat;White Hat;Grey Hat;Red Hat;b",
+                    "Lequel des éléments suivants est un **but légitime** du test d'intrusion ?;Espionner un concurrent;Analyser la robustesse d’un système;Installer un logiciel espion;Détruire les preuves d’intrusion;b",
+                    "Quel protocole est souvent utilisé pour capturer des mots de passe en clair ?;HTTPS;SSH;Telnet;SFTP;c",
+                    "Quel est l'acronyme d'une méthode de test d’intrusion souvent utilisée ?;PTES;NMAP;MITM;ARP;a",
+                    "Dans le contexte de la sécurité informatique, que signifie 'CIA' ?;Central Intelligence Agency;Confidentiality, Integrity, Availability;Cyber Intrusion Alert;Computer Information Access;b",
+                    "Quelle est la première étape d’une attaque de type ethical hacking ?;Exploitation;Reconnaissance;Maintien d'accès;Effacement des traces;b",
+                    "Parmi les outils suivants, lequel est principalement utilisé pour l'analyse de paquets ?;Metasploit;Nmap;Wireshark;Burp Suite;c",
+                    "Quel est l'objectif principal du footprinting ?;Supprimer des logs;Identifier les vulnérabilités;Collecter des informations sur la cible;Élever les privilèges;c",
+                    "Quel type de test d’intrusion simule une attaque sans information préalable ?;White-box;Black-box;Grey-box;Sandbox;b",
+                    "Quelle est la fonction du chiffrement dans la sécurité de l'information ?;Rendre les données illisibles sans autorisation;Supprimer les données;Créer des virus;Augmenter la vitesse réseau;a",
+                    "Quelle entité définit les normes internationales comme ISO/IEC 27001 ?;EC-Council;ISACA;NIST;ISO;d",
+                    "Parmi les menaces suivantes, laquelle est généralement classée comme attaque interne ?;Malware;Phishing;Employee sabotage;Ransomware;c",
+                    "Quelle option décrit le mieux l'ingénierie sociale ?;Attaque brute-force;Manipulation psychologique pour obtenir des infos;Utilisation de virus;Cryptographie faible;b",
+                    "Quel outil est utilisé pour détecter les ports ouverts ?;John the Ripper;Nmap;Wireshark;Nessus;b",
+                    "Quelle technologie est utilisée pour masquer l'adresse IP réelle d'un utilisateur ?;VPN;HTTP;SMTP;SSL;a",
+                    "Parmi les types de hackers suivants, lequel agit à des fins malveillantes ?;White Hat;Black Hat;Blue Hat;Green Hat;b",
+                    "Quel est le rôle principal d’un pare-feu ?;Stocker des données;Filtrer le trafic réseau;Crypter les données;Scanner les ports;b",
+                    "Quelle est la principale différence entre un virus et un ver ?;Le ver nécessite un hôte;Le ver est autonome;Le virus est autonome;Le ver est inoffensif;b",
+                    "Quelle phase du hacking implique la collecte d’informations sans interagir avec la cible ?;Footprinting actif;Footprinting passif;Scanning;Exploitation;b",
+                    "Dans un modèle de test de sécurité, que signifie l’approche 'white box' ?;L'attaquant ne connaît rien de la cible;L'attaquant a une connaissance limitée;L'attaquant a une connaissance complète;L'attaquant utilise uniquement des scripts automatisés;c",
+                    "Quel outil permet de simuler des attaques pour tester la sécurité ?;Notepad++;Metasploit;Excel;Paint;b",
+                    "Quel terme désigne une faille qui n’a pas encore été corrigée par le fournisseur ?;Bug connu;Zero-day;Patch;Rootkit;b",
+                    "Quel est l'objectif de l'élévation de privilège ?;Réduire les autorisations;Accéder à des privilèges plus élevés;Désactiver l'antivirus;Créer des mots de passe faibles;b"
+                ],
+                tresdifficile: [
+                    "Quel standard du NIST guide la gestion des risques en cybersécurité ?;NIST SP 800-30;NIST SP 800-53;NIST SP 800-88;NIST SP 800-61;a",
+                    "Quel est l'objectif principal du test d'intrusion 'red teaming' ?;Automatiser la sécurité;Évaluer la réaction des équipes de sécurité;Scanner les ports;Configurer un pare-feu;b",
+                    "Quel cadre décrit les catégories de fonctions en cybersécurité : Identifier, Protéger, Détecter, Répondre, Récupérer ?;NIST Cybersecurity Framework;OWASP Top 10;ISO 27001;COBIT 5;a",
+                    "Quelle est la différence entre un test de pénétration et une évaluation de vulnérabilité ?;Aucune différence;Le test est passif, l’évaluation est active;Le test exploite les failles; l’évaluation les identifie;L’un est légal, l’autre ne l’est pas;c",
+                    "Quelle méthode de reconnaissance implique l’utilisation de moteurs de recherche pour obtenir des informations ?;Footprinting passif;Footprinting actif;Scanning;Sniffing;a",
+                    "Que signifie le terme TTP dans le contexte d’un attaquant ?;Time To Patch;Tools, Techniques, and Procedures;Threat, Target, Protection;Timing, Tracking, Payload;b",
+                    "Dans une attaque MITM, quel protocole est souvent compromis ?;HTTPS;ARP;DNSSEC;IMAP;b",
+                    "Quelle norme ISO spécifie les contrôles de sécurité de l'information ?;ISO 9001;ISO 31000;ISO 27002;ISO 22301;c",
+                    "Quel terme désigne une méthode de test en boîte noire, boîte grise et boîte blanche ?;Méthode du miroir;Méthode boîte multiple;Méthodologie d’audit multi-niveaux;Approche de test basée sur la connaissance;d",
+                    "Que signifie le terme 'bug bounty' ?;Un virus destructeur;Un type de malware;Un programme de récompense pour la découverte de failles;Une technique de hacking;c",
+                    "Dans la matrice MITRE ATT&CK, que désigne la tactique 'Initial Access' ?;Maintenir l’accès;Collecter des données;Gagner un premier accès à la cible;Effacer les traces;c",
+                    "Quel outil est souvent utilisé pour les attaques par injection SQL ?;Wireshark;Hydra;SQLmap;Aircrack-ng;c",
+                    "Quelle est la finalité d’une analyse de logs dans le contexte du hacking éthique ?;Améliorer la vitesse du réseau;Détecter les anomalies et tentatives d’intrusion;Réparer les disques durs;Bloquer les emails;b",
+                    "Quel est l'avantage principal du chiffrement asymétrique par rapport au symétrique ?;Il est plus rapide;Il utilise une clé unique;Il permet le chiffrement sans partager la clé privée;Il ne nécessite pas de chiffrement;c",
+                    "Lequel des éléments suivants est un indicateur de compromission (IOC) ?;Adresse IP inconnue dans les logs;Mot de passe fort;Mise à jour récente;Connexion autorisée;a",
+                    "Dans une architecture Zero Trust, quel principe est fondamental ?;Confiance par défaut;Accès basé sur le rôle;Toujours vérifier, ne jamais faire confiance;Accès sans authentification;c",
+                    "Quelle est la principale caractéristique d’un rootkit ?;Il protège l'OS;Il permet une persistance furtive;Il scanne les ports;Il crypte les fichiers utilisateurs;b",
+                    "Quelle stratégie est utilisée pour la segmentation du réseau afin de limiter les mouvements latéraux ?;Virtualisation;Tokenisation;Zoning;Firewalling;c",
+                    "Qu'est-ce qu'une CVE ?;Un exploit actif;Une vulnérabilité référencée publiquement;Un outil de test;Une norme de sécurité;b",
+                    "Quel rôle joue le fichier robots.txt dans la reconnaissance ?;Il empêche les scanners de ports;Il indique aux moteurs ce qu’ils ne doivent pas indexer;Il bloque le firewall;Il crypte le site web;b",
+                    "Dans un contexte de test de pénétration, que signifie l’énumération ?;Identifier des hôtes en ligne;Exploiter une faille;Collecter des informations spécifiques comme noms d’utilisateurs;Écouter le trafic;c",
+                    "Quelle est la principale différence entre un worm et un trojan ?;Le trojan se réplique;Le worm est visible;Le trojan semble légitime;Le worm nécessite un hôte;c",
+                    "Quel composant de sécurité repose sur l’analyse comportementale ?;Antivirus classique;EDR;Pare-feu matériel;Proxy web;b",
+                    "Quel outil permet une interaction post-exploitation avancée ?;sqlmap;msfconsole;wireshark;nmap;b",
+                    "Que permet l’outil theHarvester ?;Analyser des paquets réseau;Extraire des adresses e-mail et des noms de domaine;Tester les mots de passe;Crypter les fichiers;b"
+                ]
+            },
+            en: {
+                facile: [
+                    "What does confidentiality mean in information security?;Ensuring data backups;Ensuring information is accessible only to authorized users;Ensuring data availability;Ensuring data accuracy;b",
+                    "What is the main purpose of a firewall?;Encrypt data;Detect malware;Prevent unauthorized access;Backup data;c",
+                    "Which of the following is a type of malware?;VPN;Ransomware;Firewall;Phishing;b",
+                    "What does authentication verify?;Physical access;User identity;Data backup;Data encryption;b",
+                    "Which principle is represented by 'A' in the CIA triad?;Authentication;Availability;Audit;Authorization;b",
+                    "What is a vulnerability?;A security control;A type of attack;A threat actor;A weakness in a system;d",
+                    "Which method ensures data integrity?;Backup;Hashing;Encryption;Authentication;b",
+                    "What does data integrity mean?;Data is encrypted;Data is accurate and unaltered;Data is available;Data is confidential;b",
+                    "Which security control is based on user roles?;RBAC;LAC;MAC;DAC;a",
+                    "What is the main goal of penetration testing?;Find and exploit vulnerabilities;Create viruses;Manage passwords;Install security patches;a",
+                    "What is a threat?;A backup copy;A potential cause of harm to a system;A software patch;A security control;b",
+                    "What is the role of antivirus software?;Detect and remove malware;Encrypt data;Manage user accounts;Backup files;a",
+                    "Which of the following is an example of physical security?;Password;Encryption;Security badges;Firewall;c",
+                    "What does a VPN do?;Encrypts internet traffic;Backs up data;Scans for viruses;Blocks malware;a",
+                    "What is phishing?;A backup method;A social engineering attack using emails;An encryption algorithm;A type of firewall;b",
+                    "What is multi-factor authentication?;Using a single password;Encrypting data;Using two or more methods to verify identity;Scanning for malware;c",
+                    "Which of the following best describes a password policy?;Rules for creating and managing passwords;Backup schedules;Encryption standards;Firewall settings;a",
+                    "What does the term ‘patch’ mean?;A firewall rule;A type of malware;A security policy;A software update to fix vulnerabilities;d",
+                    "What is the purpose of encryption?;Delete data;Protect data confidentiality;Backup data;Scan for viruses;b",
+                    "Which of the following is a strong password example?;123456;abcdef;P@ssw0rd123!;password;c",
+                    "What is social engineering?;Manipulating people to gain unauthorized access;Encrypting files;Writing software;Backing up data;a",
+                    "What is the function of a backup?;Detect malware;Create copies of data to prevent loss;Encrypt data;Block unauthorized access;b",
+                    "Which of these is an example of an insider threat?;Malware infection;Phishing email;Employee stealing data;Firewall misconfiguration;c",
+                    "What is the purpose of a security audit?;Write software;Create backups;Evaluate security controls and policies;Scan for viruses;c",
+                    "What is a denial-of-service attack?;Encrypting files;Stealing passwords;Overwhelming a system to make it unavailable;Phishing users;c"
+                ],
+                moyen: [
+                    "What is the main goal of ethical hacking?;To steal data;To identify vulnerabilities before attackers;To cause system damage;To create malware;b",
+                    "Which phase of hacking involves gathering information about the target?;Exploitation;Scanning;Reporting;Reconnaissance;d",
+                    "What is the purpose of vulnerability scanning?;To detect known security weaknesses;To hack systems;To encrypt data;To backup files;a",
+                    "Which hacking framework includes phases like Reconnaissance, Scanning, Gaining Access, Maintaining Access, and Covering Tracks?;NIST Framework;The Penetration Testing Execution Standard (PTES);ISO 27001;OWASP Top 10;b",
+                    "What does ‘white hat’ hacker mean?;A malicious hacker;A firewall rule;An ethical hacker authorized to test systems;A security tool;c",
+                    "What is a zero-day exploit?;An attack using an unknown vulnerability;A security control;An outdated patch;A known malware;a",
+                    "Which law regulates data protection and privacy in the EU?;HIPAA;PCI-DSS;GDPR;SOX;c",
+                    "Which of the following is NOT a principle of information security?;Encryption;Confidentiality;Integrity;Availability;a",
+                    "What is the difference between a threat and a vulnerability?;A threat is software; a vulnerability is hardware;They mean the same thing;A vulnerability is a potential danger;A threat is a potential danger; a vulnerability is a weakness;d",
+                    "What is social engineering in hacking?;Manipulating people to gain unauthorized access;Cracking passwords;Using malware to hack;Scanning networks;a",
+                    "What does penetration testing primarily aim to achieve?;Backup systems;Encrypt data;Repair software bugs;Simulate attacks to find security weaknesses;d",
+                    "Which security control prevents unauthorized physical access?;Encryption;Antivirus software;Firewalls;Locks and badges;d",
+                    "What is the main function of a security policy?;Define rules and procedures for security;Encrypt data;Backup files;Scan for viruses;a",
+                    "Which of the following is an example of technical security control?;Security guards;Security policies;Firewall;Security awareness training;c",
+                    "What is the primary purpose of the CIA triad?;To create software;To guide information security objectives;To design hardware;To manage users;b",
+                    "What is ethical hacking?;Authorized testing of systems to improve security;Illegal hacking;Data theft;Software installation;a",
+                    "Which of the following best describes a threat actor?;A type of software;A security control;An individual or group causing harm;An encryption method;c",
+                    "What is the role of a security framework like NIST?;To create malware;To provide guidelines for managing cybersecurity;To encrypt data;To manage backups;b",
+                    "Which of these is an example of administrative security control?;Firewall;Security training;Encryption;Antivirus;b",
+                    "Which law applies primarily to healthcare information in the US?;GDPR;PCI-DSS;SOX;HIPAA;d",
+                    "What does ‘defense in depth’ mean?;Multiple layers of security controls;Using one strong firewall;One-time password;Single security tool;a",
+                    "What is the purpose of security awareness training?;To encrypt data;To educate employees on security best practices;To scan for malware;To backup files;b",
+                    "What is the difference between black hat and white hat hackers?;They are the same;Black hats work for companies; white hats don’t;Black hats are malicious; white hats are authorized testers;White hats are malicious;c",
+                    "Which standard is commonly used for information security management systems?;ISO 27001;PCI-DSS;HIPAA;GDPR;a",
+                    "What is the primary legal risk of unethical hacking?;Data encryption failure;Network slowdown;Criminal prosecution;System backup failure;c"
+                ],
+                difficile: [
+                    "In the context of ethical hacking, what is the main difference between active and passive reconnaissance?;Active uses malware; passive uses social engineering;Active is legal; passive is illegal;Active involves interacting with the target system; passive does not;Active only scans networks; passive only scans hosts;c",
+                    "Which phase of the PTES framework focuses on establishing a foothold in the target system?;Reporting;Reconnaissance;Exploitation;Scanning;c",
+                    "Which of the following best describes the function of a pivot in a penetration test?;Backing up data;Encrypting communication;Running a vulnerability scan;Using a compromised system to attack other systems;d",
+                    "In the context of hacking methodologies, what is meant by 'covering tracks'?;Encrypting data;Backing up files;Removing evidence of the attack to avoid detection;Scanning for malware;c",
+                    "Which type of vulnerability allows an attacker to inject code that the system executes?;Denial of Service;Code injection;Buffer overflow;Man-in-the-middle;b",
+                    "What is the primary difference between discretionary access control (DAC) and mandatory access control (MAC)?;DAC applies only to files; MAC applies only to network;DAC is faster; MAC is slower;DAC allows owners to set access; MAC is set by system policies;DAC uses encryption; MAC does not;c",
+                    "Which cryptographic attack exploits weaknesses in the reuse of the same key stream?;Known plaintext attack;Replay attack;Man-in-the-middle;Birthday attack;a",
+                    "Which of the following is a weakness of WEP (Wired Equivalent Privacy) encryption?;Is unbreakable;Uses weak initialization vectors;Uses strong keys;Does not support authentication;b",
+                    "What is the main purpose of a penetration testing report?;To patch systems;To exploit more vulnerabilities;To provide findings and remediation recommendations;To backup data;c",
+                    "Which legal framework mandates breach notification within 72 hours in the EU?;HIPAA;PCI-DSS;GDPR;SOX;c",
+                    "What is the primary role of an Intrusion Detection System (IDS)?;Encrypt data;Backup files;Block malware;Monitor and alert on suspicious activity;d",
+                    "Which of the following is true about the 'principle of least privilege'?;Users get only access necessary for tasks;Access is granted randomly;Users can access all resources;Access is based on seniority;a",
+                    "What is the main difference between vulnerability scanning and penetration testing?;Scanning identifies vulnerabilities; testing attempts exploitation;Scanning is illegal; testing is legal;Scanning encrypts data; testing decrypts data;Scanning is manual; testing is automated;a",
+                    "Which of the following best describes a polymorphic malware?;Malware that encrypts files;Malware that changes its code to evade detection;Malware that crashes systems;Malware that self-replicates;b",
+                    "Which of the following is NOT a component of the CIA triad?;Integrity;Authentication;Availability;Confidentiality;b",
+                    "In penetration testing, what is the purpose of a pivot attack?;Backup data;Scan ports;Use a compromised machine to attack others within the network;Encrypt traffic;c",
+                    "What is the difference between a threat and an exploit?;A threat is legal; an exploit is illegal;A threat is malware; an exploit is a firewall;A threat is a patch; an exploit is a backup;A threat is a potential danger; an exploit is the method of attack;d",
+                    "What does the term 'defense in depth' imply in security architecture?;Single firewall protection;Multiple security layers to protect assets;One strong password policy;Encrypting only sensitive data;b",
+                    "Which type of ethical hacking test simulates a real-world attack without prior knowledge of the system?;Black box testing;Red team testing;Gray box testing;White box testing;a",
+                    "Which security standard is specifically focused on payment card industry data security?;ISO 27001;PCI-DSS;HIPAA;NIST;b",
+                    "Which attack exploits weaknesses in a network’s domain name system (DNS)?;Phishing;DNS spoofing;Cross-site scripting;SQL injection;b",
+                    "What is the primary purpose of the NIST Cybersecurity Framework?;Encrypt communication;Provide voluntary guidelines to manage cybersecurity risks;Backup data;Enforce laws;b",
+                    "Which of the following best describes a ‘logic bomb’?;Malicious code triggered by specific conditions;An encryption algorithm;A security policy;A type of firewall;a",
+                    "Which regulation requires US publicly traded companies to improve internal controls over financial reporting?;PCI-DSS;HIPAA;GDPR;SOX;d",
+                    "Which of the following best describes a ‘man-in-the-middle’ attack?;Intercepting and potentially altering communications between two parties;Injecting malware into a website;Phishing users;Brute forcing passwords;a",
+                    "Which is the strongest form of multifactor authentication?;Only a fingerprint;Something you know, have, and are;Only a password;Only a security token;b",
+                    "Which of the following is a best practice for securing wireless networks?;Broadcast SSID publicly;Use WPA3 encryption;Disable encryption;Use WEP encryption;b",
+                    "Which legal principle supports the requirement for informed consent before data collection?;Integrity;Data Privacy;Non-repudiation;Availability;b",
+                    "What is the role of an ethical hacker when discovering a vulnerability?;Exploit it for personal gain;Publish it publicly;Report it responsibly to the organization;Ignore it;c",
+                    "Which of the following frameworks is used for managing risks in information security?;HTML;DNS;TCP/IP;ISO 31000;d",
+                    "What is the main purpose of penetration testing rules of engagement?;Backup systems;Encrypt data;Define scope, limitations, and legal permissions;Scan for vulnerabilities;c",
+                    "Which security control is aimed at preventing unauthorized data disclosure?;Firewall;Backup;Antivirus;Data loss prevention (DLP);d",
+                    "Which type of attack involves flooding a target system with excessive traffic?;Cross-site scripting;Denial of Service (DoS);SQL injection;Phishing;b",
+                    "Which of the following is NOT a valid form of malware?;Encryption;Trojan;Worm;Ransomware;a",
+                    "Which legal act governs the protection of electronic health records in the United States?;PCI-DSS;GDPR;HIPAA;SOX;c",
+                    "What is the difference between a vulnerability assessment and penetration test?;Assessment patches systems; test scans networks;Assessment identifies weaknesses; test exploits them;Assessment encrypts data; test backs up data;Assessment is illegal; test is legal;b",
+                    "Which type of access control is based on roles assigned to users?;Discretionary Access Control (DAC);Role-Based Access Control (RBAC);Mandatory Access Control (MAC);Rule-Based Access Control (RAC);b",
+                    "What is the purpose of a digital signature?;Backup files;Scan for viruses;Encrypt data;Verify the authenticity and integrity of a message;d",
+                    "Which of the following is a limitation of symmetric key cryptography?;Not secure;Too slow;Key distribution problem;Uses two keys;c",
+                    "Which of the following best describes the principle of separation of duties?;Users share passwords;Users can approve their own requests;No one person should have control over all critical functions;All users have full access;c",
+                    "Which type of test evaluates the security of an application by analyzing source code?;Penetration Test;Static Application Security Testing (SAST);Dynamic Application Security Testing (DAST);Vulnerability Scan;b",
+                    "What is the main difference between gray box and white box testing?;Gray box uses exploits; white box uses scans;Gray box testers have partial knowledge; white box testers have full knowledge;Gray box is illegal; white box is legal;Gray box is manual; white box is automated;b",
+                    "Which of the following is an example of a preventative control?;Incident response;Firewall;Audit;Monitoring;b",
+                    "What is the purpose of non-repudiation in information security?;Encrypt data;Backup files;Prevent data loss;Ensure that a party cannot deny a transaction or communication;d",
+                    "Which of the following best describes the concept of ‘security through obscurity’?;Encrypting all data;Using multiple firewalls;Backing up files;Relying on secrecy of design or implementation to provide security;d",
+                    "Which of the following best defines a threat model?;A backup strategy;A firewall rule;A type of encryption;A systematic approach to identify and prioritize potential threats;d",
+                    "Which of the following best describes the General Data Protection Regulation (GDPR)?;An encryption protocol;A payment card standard;A US healthcare regulation;A comprehensive data privacy law for the European Union;d",
+                    "Which of the following is a key benefit of implementing the ISO 27001 standard?;Data backup automation;Improved information security management;Faster network speeds;Malware detection;b",
+                    "Which of the following is NOT considered personally identifiable information (PII)?;Social Security Number;Email address;Company's public website;Passport Number;c",
+                    "Which type of attack is specifically aimed at exploiting weaknesses in input validation?;SQL Injection;Phishing;DoS;ARP Spoofing;a",
+                    "What is a common symptom of a successful ARP spoofing attack?;Backup failure;Data encryption;Increased bandwidth;Man-in-the-middle interception;d",
+                    "What is the purpose of a red team exercise?;Install security software;Patch systems;Backup data;Simulate real-world attack scenarios to test defenses;d",
+                    "Which of the following best describes the role of a Certificate Authority (CA)?;Issue and manage digital certificates;Monitor network traffic;Backup data;Scan for viruses;a"
+                ],
+
+                tresdifficile: [
+                    "Which of the following techniques can most effectively bypass traditional signature-based Intrusion Detection Systems during a penetration test?;Static payloads;Known malware signatures;Simple port scanning;Polymorphic shellcode;d",
+                    "In the context of ethical hacking, what is the primary risk of conducting a penetration test without a well-defined Rules of Engagement (RoE)?;Faster test completion;Legal liability and unintentional damage;Lower cost;Better detection of vulnerabilities;b",
+                    "When performing a timing attack, what information is primarily exploited to infer sensitive data?;Payload size;Encryption keys;Network bandwidth;Variations in response time;d",
+                    "Which type of control is a Security Information and Event Management (SIEM) system considered to be?;Preventive control;Detective control;Corrective control;Deterrent control;b",
+                    "Which advanced exploitation technique manipulates memory allocation to bypass modern mitigations like ASLR and DEP?;Cross-site scripting;SQL Injection;Return-Oriented Programming (ROP);Buffer overflow;c",
+                    "Which concept in ethical hacking describes the process of escalating privileges using discovered vulnerabilities?;Pivoting;Privilege escalation;Reconnaissance;Enumeration;b",
+                    "Which cybersecurity framework incorporates risk management as a core element and is widely used by US federal agencies?;ISO 27001;PCI-DSS;GDPR;NIST SP 800-53;d",
+                    "In penetration testing, what is the major difference between a red team and a purple team engagement?;Purple team integrates red and blue team collaboration;Red team only defends;Purple team only attacks;Red team automates tasks;a",
+                    "Which legislation enforces strict penalties for unauthorized access to computer systems in the United States?;SOX;HIPAA;GDPR;Computer Fraud and Abuse Act (CFAA);d",
+                    "What is the most common method to detect a man-in-the-middle attack on a corporate network?;Certificate pinning and monitoring TLS certificates;Reviewing logs;Checking email headers;Scanning ports;a",
+                    "Which advanced persistent threat (APT) group is known for using zero-day exploits combined with social engineering?;Script Kiddies;Lazarus Group;Anonymous;APT29 (Cozy Bear);d",
+                    "Which method is the most effective for secure key exchange over an untrusted network?;Symmetric key exchange;Diffie-Hellman key exchange;Plain text exchange;MD5 hashing;b",
+                    "In the context of defense in depth, what role do honeypots serve?;User training;Decoy systems to detect and analyze attacks;Network segmentation;Encryption of data;b",
+                    "Which of the following best explains the concept of 'chain of custody' in digital forensics and ethical hacking reports?;Encrypting evidence;Backing up logs;Maintaining a documented record of evidence handling;Performing vulnerability scans;c",
+                    "Which attack technique abuses a weakness in OAuth implementations to gain unauthorized access?;Denial of service;OAuth token manipulation;Cross-site scripting;SQL injection;b",
+                    "What is the main limitation of ISO/IEC 27002 compared to ISO/IEC 27001?;27002 is only for hardware;27002 provides guidelines; 27001 is a certifiable standard;27002 is obsolete;b",
+                    "Which protocol provides cryptographic protections for routing updates in BGP?;OSPF;ICMP;RIP;BGPsec;d",
+                    "Which of the following best describes the function of a Security Operations Center (SOC)?;Backup data;Real-time monitoring, detection, and response to security incidents;Manage hardware;Develop software;b",
+                    "How does the 'Need to Know' principle complement the 'Least Privilege' principle in information security?;It mandates password complexity;It gives all employees full access;It eliminates firewalls;It restricts access only to information necessary for the job;d",
+                    "Which type of ethical hacking test involves the tester having partial knowledge of the target environment?;White box testing;Black box testing;Gray box testing;Red team testing;c",
+                    "Which of the following laws impacts multinational companies with data subjects in the European Union regardless of where the company is located?;FISMA;HIPAA;GDPR;SOX;c",
+                    "Which advanced hacking technique involves exploiting microarchitectural CPU vulnerabilities to leak data?;Phishing;ARP Spoofing;SQL Injection;Spectre and Meltdown;d",
+                    "In a penetration test, which tool is best suited for identifying and exploiting SQL injection vulnerabilities?;Metasploit;Wireshark;Nmap;sqlmap;d",
+                    "Which of the following best defines the concept of 'defense in breadth'?;Allowing all traffic;Relying on security by obscurity;Using a single security solution;Multiple overlapping security controls to protect assets;d",
+                    "Which security control framework emphasizes continuous monitoring and measurement of cybersecurity posture?;HIPAA;COBIT;NIST Cybersecurity Framework (CSF);ISO 27001;c"
+
+                ]
+            }
+        };
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                mettreAJourCouleurTimer(tempsRestant, dureeChoisie);
+
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function mettreAJourCouleurTimer(tempsRestant, dureeTotale) {
+            const ratio = tempsRestant / dureeTotale;
+
+            if (ratio > 0.5) {
+                timerDiv.style.color = '#28a745'; // vert
+            } else if (ratio > 0.2) {
+                timerDiv.style.color = '#ffc107'; // jaune
+            } else {
+                timerDiv.style.color = '#dc3545'; // rouge
+            }
+        }
+
+
+
+    </script>
+
+
+</div>
+
+{% endblock %}

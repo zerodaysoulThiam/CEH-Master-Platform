@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Section d’accueil -->
+    <div class="hero-section d-flex align-items-center shadow p-5 rounded bg-primary text-white">
+        <img src="/static/img/bleu.ico" alt="Logo CEH" class="hero-logo me-4" />
+        <div class="hero-text">
+            <h1 class="display-5 fw-bold mb-3">Bienvenue sur ta plateforme CEHv13</h1>
+            <p class="lead mb-0">Prépare-toi efficacement au CEH avec des cours, quiz et outils complets.</p>
+        </div>
+    </div>
+
+    <!-- Barre de progression -->
+    <div class="mt-4">
+        <p class="fw-bold">Progression générale :</p>
+        <div class="progress" style="height: 25px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                 role="progressbar
+                 aria-valuenow="{{ progress_percent | default(0) }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                {{ progress_percent | default(0) }}%
+            </div>
+        </div>
+    </div>
+
+    <!-- Sections principales -->
+    <div class="row text-center mt-5">
+        <!-- Cours -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📘 Cours</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        La section Cours te propose des modules sur le CEH, avec des leçons structurées. Chaque leçon inclut des explications et des exemples pour te préparer efficacement à la certification.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>⏱️ 4 Semaines</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('cours') }}" class="btn btn-primary mt-3">Voir les cours</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📝 Quiz</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        Teste tes connaissances avec des quiz interactifs sur les modules du CEH. Chaque quiz est conçu pour renforcer ta compréhension et t'aider à cibler les points à améliorer avant l'examen final.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>⏱️ 2 Semaines</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('quiz_page', module=1) }}" class="btn btn-primary mt-3">Commencer un quiz</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Glossaire -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📚 Glossaire</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        Retrouve ici les définitions essentielles pour le CEH, regroupant les termes clés que tu dois maîtriser. Ce glossaire est un outil indispensable pour ta préparation et ta réussite à l'examen.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>📖 Accès Illimité</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('glossaire') }}" class="btn btn-primary mt-3">Consulter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nouvelles sections -->
+    <div class="row text-center mt-4">
+        <!-- Statistiques -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-pink-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">📊 Statistiques</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        Accède à des statistiques sur ta progression dans les modules. Cela te permet d'identifier tes forces et tes faiblesses pour améliorer ton apprentissage et ta préparation.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>⏱️ Accès Illimité</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('statistiques') }}" class="btn btn-primary mt-3">Voir les statistiques</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examen blanc -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-pink-200 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">🧪 Examen blanc</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        Simule l’examen CEH avec des tests complets afin de te préparer efficacement. Évalue tes connaissances avant le jour J et assure-toi d'être prêt à réussir l'examen final sans stress.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>⏱️ 1 Semaine</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('examens_blancs') }}" class="btn btn-primary mt-3">Lancer un examen blanc</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examen final -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-blue-100 rounded-2xl shadow-md mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-xl font-bold text-blue-900 mb-4">🎯 Examen final</h3>
+                    <p class="card-text text-sm text-gray-800 mb-6">
+                        Teste ta préparation finale à l'examen CEH avec des questions variées et complètes. Cet examen te permet de valider ta maîtrise des modules et de renforcer ta confiance avant le vrai examen.
+                    </p>
+                    <div class="d-flex justify-content-between text-sm text-gray-700">
+                        <span>⏱️ 1 Semaine</span>
+                        <span>🌐 Basique</span>
+                        <span>💸 Gratuit</span>
+                    </div>
+                    <br><br>
+                    <a href="{{ url_for('examen_final') }}" class="btn btn-primary mt-3">Passer l’examen final</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scripts Bootstrap et jQuery -->
+<script src="/static/scripts/jquery-1.10.2.js"></script>
+<script src="/static/scripts/bootstrap.js"></script>
+<script src="/static/scripts/respond.js"></script>
+
+{% endblock %}

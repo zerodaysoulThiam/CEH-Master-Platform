@@ -1,0 +1,77 @@
+id,question,option_a,option_b,option_c,option_d,option_e,correct_answer
+1,What is the focus of a security audit or vulnerability assessment?,Locating vulnerabilities,Locating threats,Enacting threats,Exploiting vulnerabilities,,A
+2,What kind of physical access device restricts access to a single individual at any one time?,Checkpoint,Perimeter security,Security zones,Mantrap,,D
+3,Which of the following is a mechanism for managing digital certificates through a system of trust?,PKI,PKCS,ISA,SSL,,A
+4,Which protocol is used to create a secure environment in a wireless network?,WAP,WPA,WTLS,WML,,B
+5,What type of exercise is conducted with full knowledge of the target environment?,White box,Gray box,Black box,Glass box,,A
+6,You want to establish a network connection between two LANs using the Internet. Which technology would best accomplish that for you?,IPSec,L2TP,PPP,SLIP,,A
+7,Which design concept limits access to systems from outside users while protecting users and systems inside the LAN?,DMZ,VLAN,I&A,Router,,A
+8,In the key recovery process, which key must be recoverable?,Rollover key,Secret key,Previous key,Escrow key,,D
+9,Which kind of attack is designed to overload a system or resource, taking it temporarily or permanently offline?,Spoofing,Trojan,Man in the middle,SYN flood,,D
+10,Which component of an NIDS collects data?,Data source,Sensor,Event,Analyzer,,B
+11,What is the process of making an operating system secure from attack called?,Hardening,Tuning,Sealing,Locking down,,A
+12,The integrity component provides which feature of the CIA triad?,Verification that information is accurate,Verification that ethics are properly maintained,Establishment of clear access control of data,Verification that data is kept private and secure,,A
+13,Which mechanism is used by PKI to allow immediate verification of a certificate’s validity?,CRL,MD5,SSHA,OCSP,,D
+14,Which of the following is used to create a VLAN from a physical security perspective?,Hub,Switch,Router,Firewall,,B
+15,A user has just reported that he downloaded a file from a prospective client using IM. What might have happened?,Your user inadvertently downloaded a macro virus using IM.,Your user may have downloaded a rootkit.,Your user may have accidentally changed a setting on the system.,The system is unstable due to the use of IM.,,A
+16,Which mechanism or process is used to enable or disable access to a network resource based on attacks that have been detected?,NIDS,NIPS,NITS,NADS,,B
+17,Which of the following would provide additional security to an Internet web server?,Changing the default port for traffic to 80,Changing the default port for traffic to 1019,Changing the default port for traffic to 443,Changing the default port for traffic to 161,,C
+18,What type of program exists primarily to propagate and spread itself to other systems and can do so without interaction from users?,Virus,Trojan horse,Logic bomb,Worm,,D
+19,An individual presents herself at your office claiming to be a service technician...,Social engineering,Access control,Perimeter screening,Behavioral engineering,,A
+20,Which of the following is a major security problem with FTP?,Password files are stored in an unsecure area on disk.,Memory traces can corrupt file access.,User IDs and passwords are unencrypted.,FTP sites are unregistered.,,C
+21,Which system would you install to provide detective capabilities within a network?,NIDS,HIDS,NIPS,HIPS,,A
+22,The process of maintaining the integrity of evidence and ensuring no gaps in possession occur is known as what?,Security investigation,Chain of custody,Three As of investigation,Security policy,,B
+23,What encryption process uses one piece of information as a carrier for another?,Steganography,Hashing,MDA,Cryptointelligence,,A
+24,Which policy dictates how assets can be used by employees of a company?,Security policy,User policy,Use policy,Enforcement policy,Acceptable use policy,E
+25,Which algorithm is an asymmetric encryption protocol?,RSA,AES,DES,3DES,,A
+26,Which of the following is an example of a hashing algorithm?,ECC,PKI,SHA,MD,,C
+27,Which of the following creates a fixed-length output from a variable-length input?,MD5,MD7,SHA12,SHA8,,A
+28,Granting access to a system based on a factor such as an individual’s retina during a scan is an example of what type of authentication method?,Smart card,I&A,Biometrics,CHAP,,C
+29,What item is also referred to as a physical address to a computer system?,MAC,DAC,RBAC,STAC,,A
+30,What is the process of investigating a computer system for information relating to a security incident?,Computer forensics,Virus scanning,Security policy,Evidence gathering,,A
+31,Which of the following is seen as a replacement for protocols such as Telnet and FTP?,SSL,SCP,Telnet2,SSH,,D
+32,Which of the following is commonly used to create thumbprints for digital certificates?,MD5,MD7,SHA12,SHA8,,A
+33,Granting access to a system based on a factor such as a password is an example of what?,Something you have,Something you know,Something you are,Something you smell,,B
+34,What item is also referred to as a logical address to a computer system?,IP address,IPX address,MAC address,SMAC address,,A
+35,How many bits are in an IPv6 address?,32,64,128,256,,C
+36,If you have been contracted to perform an attack against a target system, you are what type of hacker?,White hat,Gray hat,Black hat,Red hat,A
+37,Which of the following describes an attacker who goes after a target to draw attention to a cause?,Terrorist,Criminal,Hacktivist,Script kiddie,C
+38,What level of knowledge about hacking does a script kiddie have?,Low,Average,High,Advanced,A
+39,Which of the following does an ethical hacker require to start evaluating a system?,Training,Permission,Planning,Nothing,B
+40,A white-box test means the tester has which of the following?,No knowledge,Some knowledge,Complete knowledge,Permission,C
+41,Which of the following describes a hacker who attacks without regard for being caught or punished?,Hacktivist,Terrorist,Criminal,Suicide hacker,D
+42,What is a code of ethics?,A law for expected behavior,A description of expected behavior,A corporate policy,A standard for civil conduct,B
+43,The group Anonymous is an example of what?,Terrorists,Script kiddies,Hacktivists,Grayware,C
+44,Companies may require a penetration test for which of the following reasons?,Legal reasons,Regulatory reasons,To perform an audit,To monitor network performance,B
+45,What should a pentester do prior to initiating a new penetration test?,Plan,Study the environment,Get permission,Study the code of ethics,C
+46,Which of the following best describes what a hacktivist does?,Defaces websites,Performs social engineering,Hacks for political reasons,Hacks with basic skills,C
+47,Which of the following best describes what a suicide hacker does?,Hacks with permission,Hacks without stealth,Hacks without permission,Hacks with stealth,B
+48,Which type of hacker may use their skills for both benign and malicious goals at different times?,White hat,Gray hat,Black hat,Suicide hacker,B
+49,What separates a suicide hacker from other attackers?,A disregard for the law,A desire to be helpful,The intent to reform,A lack of fear of being caught,D
+50,Which of the following would most likely engage in the pursuit of vulnerability research?,White hat,Gray hat,Black hat,Suicide hacker,A
+51,Vulnerability research deals with which of the following?,Actively uncovering vulnerabilities,Passively uncovering vulnerabilities,Testing theories,Applying security guidance,A
+52,How is black-box testing performed?,With no knowledge,With full knowledge,With partial knowledge,By a black hat,A
+53,A contract is important because it does what?,Gives permission,Gives test parameters,Gives proof,Gives a mission,A
+54,What does TOE stand for?,Target of evaluation,Time of evaluation,Type of evaluation,Term of evaluation,A
+55,Which of the following best describes a vulnerability?,A worm,A virus,A weakness,A rootkit,C
+56,At which layer of the OSI model does a proxy operate?,Physical,Network,Data Link,Application,D
+57,If a device is using node MAC addresses to funnel traffic, what layer of the OSI model is this device working in?,Layer 1,Layer 2,Layer 3,Layer 4,B
+58,Which OS holds 90 percent of the desktop market and is one of our largest attack surfaces?,Windows,Linux,Mac OS,iOS,A
+59,Which port uses SSL to secure web traffic?,443,25,23,80,A
+60,What kind of domain resides on a single switchport?,Windows domain,Broadcast domain,Secure domain,Collision domain,D
+61,Which network topology uses a token-based access methodology?,Ethernet,Star,Bus,Ring,D
+62,Hubs operate at what layer of the OSI model?,Layer 1,Layer 2,Layer 3,Layer 4,A
+63,What is the proper sequence of the TCP three-way-handshake?,SYN-ACK, ACK, ACK,SYN, SYN-ACK, ACK,SYN-SYN, SYN-ACK, SYN,ACK, SYN-ACK, SYN,B
+64,Which of these protocols is a connection-oriented protocol?,FTP,UDP,POP3,TCP,D
+65,A scan of a network client shows that port 23 is open; what protocol is this aligned with?,Telnet,NetBIOS,DNS,SMTP,A
+66,What port range is an obscure third-party application most likely to use?,1 to 1024,1025 to 32767,32768 to 49151,49152 to 65535,D
+67,Which category of firewall filters is based on packet header data only?,Stateful,Application,Packet,Proxy,C
+68,An administrator has just been notified of irregular network activity; what appliance functions in this manner?,IPS,Stateful packet filtering,IDS,Firewall,C
+69,Which topology has built-in redundancy because of its many client connections?,Token ring,Bus,Hybrid,Mesh,D
+70,When scanning a network via a hardline connection to a wired-switch NIC in promiscuous mode, what would be the extent of network traffic you would expect to see?,Entire network,VLAN you are attached to,All nodes attached to the same port,None,B
+71,What device acts as an intermediary between an internal client and a web resource?,Router,Proxy,Firewall,Switch,,B
+72,Which technology allows the use of a single public address to support many internal clients while also preventing exposure of internal IP addresses to the outside world?,VPN,Tunneling,NTP,NAT,D
+73,What network appliance senses irregularities and plays an active role in stopping that irregular activity from continuing?,System administrator,Firewall,IPS,IDP,C
+74,You have selected the option in your IDS to notify you via email if it senses any network irregularities. Checking the logs, you notice a few incidents but you didn’t receive any alerts. What protocol needs to be configured on the IDS?,NTP,SNMP,POP3,SMTP,D
+75,Choosing a protective network appliance, you want a device that will inspect packets at the most granular level possible while providing improved traffic efficiency. What appliance would satisfy these requirements?,Layer 3 switch,NAT-enabled router,Proxy firewall,Application firewall,D
+

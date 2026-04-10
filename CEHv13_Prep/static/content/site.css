@@ -1,0 +1,379 @@
+/* Global Styles */
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fbfc;
+    color: #2c3e50;
+    line-height: 1.7;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Menu styles */
+/* Navbar améliorée */
+.navbar {
+    background: linear-gradient(90deg, #005f73 0%, #0a9396 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    animation: fadeInDown 0.6s ease-in-out;
+}
+
+/* Animation d'apparition */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+    .navbar-brand img {
+        max-height: 40px;
+        margin-right: 10px;
+    }
+
+.navbar-nav {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .navbar-nav a {
+        padding: 15px 25px;
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.5rem;
+        transition: text-decoration 0.3s, color 0.3s, transform 0.2s ease;
+        display: inline-block; /* nécessaire pour que transform fonctionne bien */
+    }
+
+        .navbar-nav a:hover {
+            text-decoration: underline;
+            color: #ffdd00;
+            transform: translateY(-4px); /* petit saut vers le haut */
+        }
+        
+    
+
+/* Container content */
+.body-content {
+    padding: 0 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Segoe UI', sans-serif;
+    color: #04364A;
+    margin-bottom: 0.8rem;
+}
+
+h1 {
+    font-size: 2.2rem;
+    border-bottom: 4px solid #3ab795;
+}
+
+h2 {
+    border-left: 6px solid #3ab795;
+    padding-left: 10px;
+}
+
+h3 {
+    border-bottom: 2px dashed #3ab795;
+}
+
+h4 {
+    border-left: 4px solid #3ab795;
+    padding-left: 8px;
+}
+
+h5 {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #3c4858;
+}
+
+h6 {
+    font-size: 1.1rem;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+/* Tables */
+.table-of-contents, .table-cours {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: 1.05rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+    .table-of-contents:hover, .table-cours:hover {
+        transform: scale(1.015);
+    }
+
+    .table-of-contents th, .table-cours th {
+        background-color: #046582;
+        color: #ffffff;
+        padding: 1rem 1.2rem;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .table-of-contents td, .table-cours td {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table-of-contents tr:nth-child(even), .table-cours tr:nth-child(even) {
+        background-color: #f6f8fa;
+    }
+
+    .table-of-contents tr:hover, .table-cours tr:hover {
+        background-color: #eaf6f6;
+        cursor: pointer;
+    }
+
+/* Scroll to Top Button */
+#scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    background-color: #3ab795;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    padding: 15px 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+    #scrollToTopBtn:hover {
+        background-color: #fcbf49;
+        color: #000;
+        transform: scale(1.1);
+    }
+
+/* Form Elements */
+select {
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: 2px solid #3ab795;
+    border-radius: 10px;
+    background-color: #fff;
+    color: #2c3e50;
+    transition: border-color 0.3s ease;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+    select:hover, select:focus {
+        border-color: #fcbf49;
+    }
+
+/* Radio Buttons */
+input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #3ab795;
+    border-radius: 50%;
+    background-color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-right: 8px;
+    position: relative;
+}
+
+    input[type="radio"]:checked {
+        background-color: #fcbf49;
+        border-color: #fcbf49;
+    }
+
+    input[type="radio"]::after {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #046582;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        transform: scale(0);
+        transition: transform 0.3s ease;
+    }
+
+    input[type="radio"]:checked::after {
+        transform: scale(1);
+    }
+
+/* Timer Card */
+#timerCard {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #3ab795;
+    color: white;
+    font-weight: bold;
+    padding: 12px 18px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    z-index: 1000;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    transition: background-color 0.3s ease;
+}
+
+    #timerCard:hover {
+        background-color: #fcbf49;
+        color: #000;
+    }
+
+/* Quiz Buttons */
+#startQuizBtn, #validerBtn, #restartBtn {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #046582;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    #startQuizBtn:hover, #validerBtn:hover, #restartBtn:hover {
+        background-color: #fcbf49;
+        color: #000;
+        transform: translateY(-2px);
+    }
+
+    #startQuizBtn:active, #validerBtn:active, #restartBtn:active {
+        transform: scale(0.98);
+    }
+
+/* Feedback Labels */
+.option-label.correct {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.option-label.incorrect {
+    color: #e74c3c;
+    text-decoration: line-through;
+}
+
+
+.hero-section {
+    background: linear-gradient(90deg, #005f73 0%, #0a9396 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: background 0.3s ease;
+}
+
+    .hero-section:hover {
+        background: linear-gradient(90deg, #0a9396 0%, #94d2bd 100%);
+    }
+
+.hero-logo {
+    max-height: 50px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.hero-text h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+}
+
+.hero-text p {
+    font-size: 1.25rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+/* Styles pour la page de liste des quiz */
+.card {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.btn-outline-primary {
+    transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #3ab795;
+    color: white;
+}
+
+/* Bouton retour en haut */
+.scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: #3ab795 ;
+    color: white;
+    cursor: pointer;
+    padding: 12px 18px;
+    border-radius: 50%;
+    font-size: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+
+.scrollToTopBtn:hover {
+    background-color: #3ab795;
+    transform: scale(1.1);
+}

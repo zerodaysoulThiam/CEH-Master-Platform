@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Hacking Web Servers{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Module 13: Hacking Web Servers</h1>
+    
+    <!-- Table des matières -->
+    <table class="table table-bordered table-of-contents">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#web-concepts">1. Concepts des serveurs web</a></td>
+                <td>Fondamentaux des serveurs web</td>
+            </tr>
+            <tr>
+                <td><a href="#server-attacks">2. Attaques de serveurs web</a></td>
+                <td>Techniques d'attaque courantes</td>
+            </tr>
+            <tr>
+                <td><a href="#attack-methodology">3. Méthodologie d'attaque</a></td>
+                <td>Processus systématique d'attaque</td>
+            </tr>
+            <tr>
+                <td><a href="#countermeasures">4. Contre-mesures</a></td>
+                <td>Protection des serveurs web</td>
+            </tr>
+            <tr>
+                <td><a href="#patch-management">5. Gestion des correctifs</a></td>
+                <td>Stratégies de mise à jour</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Sections de contenu -->
+    
+    <section id="web-concepts">
+        <h1>1. Concepts des serveurs web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Architecture web fondamentale</h3>
+                <div class="card bg-light p-3 mb-3">
+                    <ol>
+                        <li><strong>Client</strong>: Navigateur web (Chrome, Firefox)</li>
+                        <li><strong>Serveur Web</strong>: Apache, Nginx, IIS</li>
+                        <li><strong>Serveur d'Application</strong>: Node.js, Tomcat, Django</li>
+                        <li><strong>Base de Données</strong>: MySQL, PostgreSQL, MongoDB</li>
+                    </ol>
+                </div>
+                
+                <h3>Serveurs web populaires</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Serveur</th>
+                        <th>Part de marché</th>
+                        <th>Plateforme</th>
+                    </tr>
+                    <tr>
+                        <td>Apache</td>
+                        <td>31.4%</td>
+                        <td>Multiplateforme</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx</td>
+                        <td>33.6%</td>
+                        <td>Multiplateforme</td>
+                    </tr>
+                    <tr>
+                        <td>IIS</td>
+                        <td>19.7%</td>
+                        <td>Windows</td>
+                    </tr>
+                    <tr>
+                        <td>LiteSpeed</td>
+                        <td>8.2%</td>
+                        <td>Multiplateforme</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-header">
+                        <h4>Composants vulnérables</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Modules/extensions</li>
+                            <li>Services (FTP, SSH)</li>
+                            <li>Fichiers de configuration</li>
+                            <li>Journaux d'accès</li>
+                            <li>Scripts CGI</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Statistiques de sécurité</h4>
+                        <ul>
+                            <li>70% des serveurs web ont au moins une vulnérabilité</li>
+                            <li>Apache représente 48% des serveurs compromis</li>
+                            <li>Les attaques web ont augmenté de 56% en 2023</li>
+                            <li>Coût moyen d'une violation: $4.35 millions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Flux de requête HTTP</h4>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://www.oreilly.com/library/view/http-the-definitive/1565925092/httpatomoreillycomsourceoreillyimages96838.png" alt="Flux HTTP" class="img-fluid rounded">
+                        <p class="mt-2">1. Requête client → 2. Serveur web → 3. Traitement → 4. Réponse</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Protocoles associés</h4>
+                        <ul>
+                            <li>HTTP/HTTPS</li>
+                            <li>FTP/SFTP</li>
+                            <li>SSH</li>
+                            <li>WebSocket</li>
+                            <li>REST/SOAP</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h3>Fichiers de configuration critiques</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-warning">Apache</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>httpd.conf</li>
+                                    <li>apache2.conf</li>
+                                    <li>.htaccess</li>
+                                    <li>sites-available/</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-success">Nginx</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>nginx.conf</li>
+                                    <li>sites-enabled/</li>
+                                    <li>conf.d/</li>
+                                    <li>mime.types</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-danger">IIS</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>ApplicationHost.config</li>
+                                    <li>Web.config</li>
+                                    <li>Administration.config</li>
+                                    <li>Redirection.config</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="server-attacks" class="mt-5">
+        <h1>2. Attaques de serveurs web</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Attaques courantes</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Attaque</th>
+                        <th>Description</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td>Injection SQL</td>
+                        <td>Exécution de commandes SQL non autorisées</td>
+                        <td>Élevé</td>
+                    </tr>
+                    <tr>
+                        <td>Cross-Site Scripting (XSS)</td>
+                        <td>Exécution de scripts malveillants côté client</td>
+                        <td>Moyen</td>
+                    </tr>
+                    <tr>
+                        <td>Directory Traversal</td>
+                        <td>Accès à des fichiers en dehors du répertoire web</td>
+                        <td>Élevé</td>
+                    </tr>
+                    <tr>
+                        <td>Server-Side Request Forgery (SSRF)</td>
+                        <td>Forcer le serveur à effectuer des requêtes internes</td>
+                        <td>Critique</td>
+                    </tr>
+                    <tr>
+                        <td>XML External Entity (XXE)</td>
+                        <td>Exploitation des analyseurs XML</td>
+                        <td>Élevé</td>
+                    </tr>
+                </table>
+                
+                <div class="card bg-light p-3 mt-3">
+                    <h5>Exemple: Directory Traversal</h5>
+                    <code>http://example.com/../../../../etc/passwd</code>
+                    <p class="mt-2">Permet d'accéder au fichier système /etc/passwd</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Attaques spécifiques aux serveurs</h4>
+                        <ul>
+                            <li><strong>Apache</strong>: Mod_status exposé, .htaccess vulnérable</li>
+                            <li><strong>Nginx</strong>: Mauvaise configuration alias, traversée de chemin</li>
+                            <li><strong>IIS</strong>: RCE via WebDAV, vulnérabilités ISAPI</li>
+                            <li><strong>Tomcat</strong>: Manager App non sécurisé, déploiement WAR malveillant</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h4>Attaques de déni de service</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Slowloris</strong>: Maintient les connexions ouvertes</li>
+                            <li><strong>HTTP Flood</strong>: Inonde le serveur de requêtes</li>
+                            <li><strong>RUDY</strong>: Envoi lent de corps POST volumineux</li>
+                            <li><strong>Apache Killer</strong>: Exploite la compression</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-info text-white mt-3">
+                    <div class="card-body">
+                        <h4>Démonstration: Injection SQL</h4>
+                        <ol>
+                            <li>Repérer un paramètre vulnérable: <code>product.php?id=1</code></li>
+                            <li>Tester: <code>id=1'</code> (erreur SQL?)</li>
+                            <li>Exploiter: <code>id=1' UNION SELECT username, password FROM users--</code></li>
+                            <li>Extraire les données sensibles</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Outils d'attaque</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Nmap</h5>
+                            <p>Scan de ports et services</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Nikto</h5>
+                            <p>Scan de vulnérabilités web</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>SQLMap</h5>
+                            <p>Exploitation automatique SQLi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>WPScan</h5>
+                            <p>Scan WordPress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="attack-methodology" class="mt-5">
+        <h1>3. Méthodologie d'attaque</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Étapes du hacking de serveurs web</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li><strong>Reconnaissance</strong>: Collecte d'informations</li>
+                        <li><strong>Scanning</strong>: Identification des services et ports</li>
+                        <li><strong>Énumération</strong>: Découverte des ressources</li>
+                        <li><strong>Exploitation</strong>: Abus des vulnérabilités</li>
+                        <li><strong>Escalade de privilèges</strong>: Obtention d'accès élevés</li>
+                        <li><strong>Maintenance de l'accès</strong>: Installation de backdoors</li>
+                        <li><strong>Effacement des traces</strong>: Suppression des logs</li>
+                    </ol>
+                </div>
+                
+                <h3 class="mt-4">Techniques de reconnaissance</h3>
+                <ul>
+                    <li><strong>WHOIS</strong>: Information sur le domaine</li>
+                    <li><strong>DNS Enumeration</strong>: Découverte des sous-domaines</li>
+                    <li><strong>Search Engine Hacking</strong>: Dorking (site:example.com filetype:pdf)</li>
+                    <li><strong>Wayback Machine</strong>: Archives historiques</li>
+                    <li><strong>Headers HTTP</strong>: Identification des technologies</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Scanning avec Nmap</h4>
+                        <pre class="bg-dark text-light p-2 rounded">nmap -sV -sC -p 80,443,8080 example.com
+nmap --script http-enum,http-vuln* example.com
+nmap -sV --script banner example.com</pre>
+                        <p class="mt-2">Options importantes:</p>
+                        <ul>
+                            <li><code>-sV</code>: Détection des versions</li>
+                            <li><code>-sC</code>: Exécution des scripts par défaut</li>
+                            <li><code>-p</code>: Ports spécifiques</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Énumération des serveurs web</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Découverte des répertoires: <code>gobuster dir -u https://example.com -w wordlist.txt</code></li>
+                            <li>Recherche de sous-domaines: <code>sublist3r -d example.com</code></li>
+                            <li>Analyse des robots.txt et sitemap.xml</li>
+                            <li>Inspection des certificats SSL</li>
+                            <li>Recherche de fichiers exposés: backup.zip, .git, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h5>Exploitation réussie</h5>
+                        <p>Après exploitation, les attaquants installent généralement:</p>
+                        <ul>
+                            <li>Web shells (PHP, ASP, JSP)</li>
+                            <li>Backdoors persistantes</li>
+                            <li>Rootkits niveau noyau</li>
+                            <li>Scripts de minage de cryptomonnaie</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Outils d'énumération</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Gobuster</h5>
+                            <p>Bruteforce de répertoires</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Sublist3r</h5>
+                            <p>Découverte de sous-domaines</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Wfuzz</h5>
+                            <p>Fuzzing de paramètres</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>WhatWeb</h5>
+                            <p>Identification des technologies</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="countermeasures" class="mt-5">
+        <h1>4. Contre-mesures</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Durcissement des serveurs</h3>
+                <div class="card bg-light p-3">
+                    <ul>
+                        <li><strong>Configuration sécurisée</strong>: Suppression des en-têtes serveur</li>
+                        <li><strong>Principle of Least Privilege</strong>: Limitation des permissions</li>
+                        <li><strong>Segmentation réseau</strong>: Isolation des composants</li>
+                        <li><strong>Chiffrement</strong>: TLS 1.3 avec chiffrements forts</li>
+                        <li><strong>Désactivation des services inutiles</strong>: Réduction de la surface d'attaque</li>
+                    </ul>
+                </div>
+                
+                <h3 class="mt-4">Protections logicielles</h3>
+                <ul>
+                    <li>Web Application Firewall (WAF)</li>
+                    <li>Systèmes de détection/prévention d'intrusion (IDS/IPS)</li>
+                    <li>Antivirus serveur</li>
+                    <li>Contrôle d'intégrité des fichiers</li>
+                    <li>Journalisation centralisée</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h4>Meilleures pratiques de sécurité</h4>
+                        <ul>
+                            <li>Validation des entrées utilisateur</li>
+                            <li>Échappement des sorties</li>
+                            <li>Requêtes préparées pour les bases de données</li>
+                            <li>Mise en œuvre de Content Security Policy (CSP)</li>
+                            <li>Authentification multi-facteurs (MFA)</li>
+                            <li>Rotation régulière des clés et certificats</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h4>Configuration sécurisée Apache</h4>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-dark text-light p-2 rounded">ServerTokens Prod
+ServerSignature Off
+TraceEnable Off
+Header unset X-Powered-By
+Options -Indexes -Includes -ExecCGI</pre>
+                    </div>
+                </div>
+                
+                <div class="card bg-warning text-dark mt-3">
+                    <div class="card-body">
+                        <h5>Configuration sécurisée Nginx</h5>
+                        <pre class="bg-dark text-light p-2 rounded">server_tokens off;
+add_header X-Content-Type-Options nosniff;
+add_header X-Frame-Options SAMEORIGIN;
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'";</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Solutions de sécurité</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>ModSecurity</h5>
+                            <p>WAF open-source</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Fail2Ban</h5>
+                            <p>Protection contre les attaques par force brute</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>OSSEC</h5>
+                            <p>Détection d'intrusion basée sur l'hôte</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="patch-management" class="mt-5">
+        <h1>5. Gestion des correctifs</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Cycle de gestion des correctifs</h3>
+                <div class="card bg-light p-3">
+                    <ol>
+                        <li><strong>Identification</strong>: Détection des vulnérabilités</li>
+                        <li><strong>Évaluation</strong>: Analyse des risques</li>
+                        <li><strong>Acquisition</strong>: Obtention des correctifs</li>
+                        <li><strong>Test</strong>: Validation en environnement de test</li>
+                        <li><strong>Déploiement</strong>: Mise en production</li>
+                        <li><strong>Vérification</strong>: Confirmation du succès</li>
+                        <li><strong>Documentation</strong>: Enregistrement des changements</li>
+                    </ol>
+                </div>
+                
+                <h3 class="mt-4">Types de correctifs</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Type</th>
+                        <th>Fréquence</th>
+                        <th>Criticité</th>
+                    </tr>
+                    <tr>
+                        <td>Sécurité critique</td>
+                        <td>Immédiate (24-48h)</td>
+                        <td>Élevée</td>
+                    </tr>
+                    <tr>
+                        <td>Sécurité importante</td>
+                        <td>1-2 semaines</td>
+                        <td>Moyenne</td>
+                    </tr>
+                    <tr>
+                        <td>Mises à jour fonctionnelles</td>
+                        <td>1-3 mois</td>
+                        <td>Faible</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h4>Conséquences du non-patching</h4>
+                        <ul>
+                            <li>70% des violations exploitent des vulnérabilités connues</li>
+                            <li>Temps moyen de correction: 102 jours</li>
+                            <li>60% des violations liées à des correctifs non appliqués</li>
+                            <li>Coût moyen d'une violation évitable: $1.2 million</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Outils de gestion des correctifs</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Windows</strong>: WSUS, SCCM</li>
+                            <li><strong>Linux</strong>: Spacewalk, Foreman, Landscape</li>
+                            <li><strong>Multiplateforme</strong>: Ansible, Puppet, Chef</li>
+                            <li><strong>Cloud</strong>: AWS Systems Manager, Azure Update Management</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-success text-white mt-3">
+                    <div class="card-body">
+                        <h4>Meilleures pratiques</h4>
+                        <ul>
+                            <li>Inventaire complet des actifs</li>
+                            <li>Analyse continue des vulnérabilités</li>
+                            <li>Classification par criticité</li>
+                            <li>Environnements de test dédiés</li>
+                            <li>Automatisation du déploiement</li>
+                            <li>Surveillance post-déploiement</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Processus automatisé avec Ansible</h3>
+            <div class="card bg-dark text-light">
+                <div class="card-body">
+                    <pre>
+- name: Apply security patches
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Update apt cache (Debian)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Apply security updates (Debian)
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Apply security updates (RHEL)
+      yum:
+        name: '*'
+        security: yes
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: Reboot server if required
+      reboot:
+        msg: "Reboot initiated by Ansible for security updates"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

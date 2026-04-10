@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Choisissez un module pour le quiz</h1>
+    <div class="list-group">
+        <a href="{{ url_for('quiz_page', module=1) }}" class="list-group-item list-group-item-action">Quiz Module 1</a>
+        <a href="{{ url_for('quiz_page', module=2) }}" class="list-group-item list-group-item-action">Quiz Module 2</a>
+        <!-- Ajoutez d'autres modules ici -->
+    </div>
+</div>
+
+{% endblock %}

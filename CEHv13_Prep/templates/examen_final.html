@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow rounded-lg border-0">
+                <div class="card-header bg-blue-100 text-white text-center py-4">
+                    <h1 class="mb-3"><i class="fas fa-trophy me-3"></i>Examen Final CEH</h1>
+                    <p class="lead mb-0">Simulation complète de l'examen de certification officiel</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="exam-info-card bg-light p-4 rounded mb-4">
+                                <h3 class="mb-4 text-primary"><i class="fas fa-info-circle me-2"></i> Informations importantes</h3>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle bg-primary text-white me-3">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">Durée</h5>
+                                        <p class="mb-0">4 heures</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle bg-success text-white me-3">
+                                        <i class="fas fa-question"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">Nombre de questions</h5>
+                                        <p class="mb-0">125 questions</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle bg-warning text-white me-3">
+                                        <i class="fas fa-percentage"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">Score minimum</h5>
+                                        <p class="mb-0">70% pour réussir</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle bg-danger text-white me-3">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">Attention</h5>
+                                        <p class="mb-0">L'examen ne peut pas être interrompu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 text-center">
+                            <div class="exam-instructions bg-light p-4 rounded mb-4">
+                                <h3 class="mb-4 text-primary"><i class="fas fa-graduation-cap me-2"></i> Conseils de préparation</h3>
+                                <ul class="list-unstyled text-start">
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Choisissez un environnement calme</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Assurez-vous d'avoir 4 heures devant vous</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Préparez une bouteille d'eau</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Utilisez un navigateur à jour</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Évitez toutes les distractions</li>
+                                </ul>
+                                
+                                <div class="mt-4 p-3 bg-primary text-white rounded">
+                                    <h5 class="mb-0">Vous êtes prêt ?</h5>
+                                    <p class="mb-0">Cliquez sur le bouton ci-dessous pour commencer</p>
+                                </div>
+                                
+                                <a href="{{ url_for('examen_simulation', type='final', id=1) }}" 
+                                   class="btn btn-lg btn-success mt-4 px-5 py-3">
+                                   <i class="fas fa-play-circle me-2"></i>Commencer l'examen final
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .exam-info-card, .exam-instructions {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+</style>
+{% endblock %}

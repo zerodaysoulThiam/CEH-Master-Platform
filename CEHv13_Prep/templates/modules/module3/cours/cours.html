@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block title %}Cours - Module 3{% endblock %}
+
+{% block content %}
+
+<meta charset="UTF-8">
+
+<div class="container mt-4">
+    <h1> Cours - Module 3:  Scanning networks </h1>
+    <table class="table table-bordered table-of-contents">
+        <tr>
+            <td><a href="#banner-grabbing">banner-grabbing</a></td>
+            <td>Technique pour récupérer les banniéres des services réseau afin d'identifier les logiciels et versions utilisées.</td>
+        </tr>
+        <tr>
+            <td><a href="#bypassing-ids-and-firewall">bypassing-ids-and-firewall</a></td>
+            <td>Méthodes pour contourner les systèmes de detection d'intrusion (IDS) et les pare-feux.</td>
+        </tr>
+        <tr>
+            <td><a href="#scanning-networks-overview">scanning-networks-overview</a></td>
+            <td>Vue d'ensemble des techniques et outils pour analyser les réseaux.</td>
+        </tr>
+        <tr>
+            <td><a href="#scanning-techniques">scanning-techniques</a></td>
+            <td>Détails sur les différentes techniques utilisées pour scanner un réseau ou une cible.</td>
+        </tr>
+        <tr>
+            <td><a href="#scanning-tools">scanning-tools</a></td>
+            <td>Présentation des outils couramment utilisés pour effectuer des scans réseau.</td>
+        </tr>
+        <tr>
+            <td><a href="#tcpip-basics">tcpip-basics</a></td>
+            <td>Introduction aux bases du protocole TCP/IP, fondement des communications réseau.</td>
+        </tr>
+    </table>
+
+    <section id="banner-grabbing">
+        <h1>1. Banner Grabbing</h1>
+
+        <p>
+            Le <strong>banner grabbing</strong> est une technique qui consiste à récupérer des informations de type "bannière" émises par un système ou un service réseau. Ces informations comprennent généralement le nom du logiciel, sa version, et parfois des détails sur le système d’exploitation. Elles sont précieuses pour un attaquant car elles permettent d’identifier les services en cours d’exécution et de détecter d’éventuelles vulnérabilités connues afin de planifier une attaque ciblée.
+        </p>
+
+        <h3>Informations typiquement récupérées</h3>
+        <ul>
+            <li>Nom et version du système d’exploitation (OS)</li>
+            <li>Logiciels et versions des services (ex : serveur web nginx, serveur FTP)</li>
+            <li>Messages d’erreur et pages web avec extensions révélatrices</li>
+        </ul>
+
+        <p>
+            <em>Note :</em> Pour se protéger, il est conseillé de désactiver ou modifier les bannières par défaut et de masquer les extensions des pages web afin de limiter les informations accessibles publiquement.
+        </p>
+
+        <h3>Types de Banner Grabbing</h3>
+
+        <h4>Banner Grabbing Passif</h4>
+        <p>
+            Cette méthode consiste à observer le trafic réseau sans interagir directement avec la cible. Par exemple, en analysant les messages d’erreur, les paquets réseau capturés ou les extensions visibles sur un site web, on peut souvent déduire le type de système ou logiciel utilisé. Cette approche est discrète et moins susceptible d’être détectée.
+        </p>
+
+        <h4>Banner Grabbing Actif</h4>
+        <p>
+            Ici, l’attaquant envoie des paquets spécifiques à la cible et analyse les réponses pour identifier le système. Chaque système d’exploitation implémente sa pile TCP/IP différemment, ce qui se traduit par des variations dans des valeurs telles que le TTL (<em>Time To Live</em>) ou la taille de la fenêtre TCP. Les ports communs utilisés sont HTTP (80), FTP (21), SMTP (25), entre autres.
+        </p>
+
+        <h3>Outils courants de Banner Grabbing</h3>
+        <ul>
+            <li>
+                <strong>nmap</strong> : Très utilisé pour le scan de ports et la reconnaissance OS grâce à l’option <code>-O</code> qui effectue une empreinte automatique du système d’exploitation.
+            </li>
+            <li>
+                <strong>netcat</strong> : Outil polyvalent permettant d’établir des connexions TCP ou UDP, souvent surnommé le "couteau suisse" du réseau. Exemples :
+                <ul>
+                    <li><code>nc 178.128.203.1 21</code> pour interroger un serveur FTP sur le port 21 et récupérer sa bannière (ex : <em>Welcome to XXX FTP Server</em>).</li>
+                    <li><code>nc 178.128.203.1 80</code> suivi d’une requête HTTP comme <code>GET /index.html HTTP/1.0</code> pour obtenir les en-têtes HTTP, notamment la version du serveur web (ex : <em>Server: Apache/2.4.6 (CentOS)</em>).</li>
+                </ul>
+                Une variante sécurisée est <a href="http://cryptcat.sourceforge.net/" target="_blank" rel="noopener noreferrer">CryptCat</a>, qui chiffre les échanges.
+            </li>
+            <li>
+                <strong>telnet</strong> : Protocole de communication textuelle utilisé historiquement pour accéder à distance à une interface en ligne de commande. Il est moins utilisé aujourd’hui (remplacé par SSH pour des raisons de sécurité), mais reste utile pour le banner grabbing. Exemple :
+                <ul>
+                    <li><code>telnet <adresse_cible> 23</code> pour se connecter au port 23 et recevoir la bannière du service si le port est ouvert.</li>
+                    <li>La réponse peut ressembler à : <em>Server: Microsoft-IIS/5.0 Date: Fri, 14 Aug 2009 1:14:42 GMT Content-Length:340 Content-Type: text/html</em></li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Recommandations pour la sécurité</h3>
+        <ul>
+            <li>Désactiver ou modifier les bannières par défaut pour ne pas divulguer la version des logiciels.</li>
+            <li>Utiliser des pare-feux pour filtrer les connexions non autorisées aux ports sensibles.</li>
+            <li>Mettre à jour régulièrement les systèmes et services pour corriger les vulnérabilités connues.</li>
+            <li>Surveiller les logs pour détecter toute activité suspecte liée à des tentatives de banner grabbing.</li>
+        </ul>
+
+        <p>
+            Le banner grabbing est une étape clé de la phase de reconnaissance dans un test d’intrusion (pentest). Comprendre cette technique permet à la fois de mieux détecter les tentatives d’attaque et d’améliorer la sécurisation des systèmes.
+        </p>
+    </section>
+
+    <section id="bypassing-ids-and-firewall">
+        <h1>2. Contourner les IDS (Systèmes de Détection d'Intrusion) et les Firewalls</h1>
+        <p>
+            Les IDS et firewalls sont des dispositifs clés pour la sécurité réseau. Ils surveillent le trafic et bloquent les attaques connues, mais il existe des techniques pour les contourner, souvent utilisées en tests d'intrusion ou attaques sophistiquées. Voici les principales méthodes et leurs principes.
+        </p>
+
+        <h2>Fragmentation des paquets (Packet Fragmentation)</h2>
+        <p>
+            Aussi appelée <em>IP fragment scanning</em>, cette technique consiste à découper un paquet TCP en plusieurs fragments plus petits. Le serveur cible reconstitue ensuite les fragments pour traiter la requête complète.
+        </p>
+        <ul>
+            <li>Les IDS ont souvent du mal à analyser correctement les paquets fragmentés car cela demande beaucoup de ressources.</li>
+            <li>Tout type de datagramme IP peut être fragmenté : TCP, UDP, ICMP, etc.</li>
+            <li>La fragmentation est aussi utilisée dans la <a href="../11-firewalls-ids-and-honeypots/evading-ids.md#session-splicing">session splicing</a> pour contourner l’analyse HTTP.</li>
+        </ul>
+        <p>Exemples d’outils :</p>
+        <ul>
+            <li><strong>Nmap</strong> : option <code>-f</code> pour fragmenter les paquets (ex : <code>nmap -f 192.168.1.1</code>), ou <code>--mtu</code> pour définir la taille max des fragments.</li>
+            <li><strong>fragroute</strong> : intercepte et modifie le trafic sortant pour envoyer des paquets fragmentés.</li>
+        </ul>
+
+        <h2>Routage source (Source Routing)</h2>
+        <p>
+            Le routage source, ou <em>path addressing</em>, permet de spécifier un chemin précis pour un paquet IP, contournant les routes standard (souvent utilisées par les firewalls). En modifiant le champ Options IP, un attaquant peut forcer un paquet à emprunter un chemin spécifique.
+        </p>
+        <p><strong>Important :</strong> cette technique est presque toujours bloquée par les équipements modernes.</p>
+        <p>Exemples avec Nmap :</p>
+        <ul>
+            <li><strong>Routage source lâche (Loose routing)</strong> : le paquet passe par des points spécifiés, mais peut aussi emprunter d’autres routes (ex : <code>--ip-options "L 192.168.0.7 192.168.30.9"</code>).</li>
+            <li><strong>Routage source strict (Strict routing)</strong> : chaque saut doit être indiqué (ex : <code>--ip-options "S 192.168.0.7 192.168.0.9 ... 192.168.30.9"</code>).</li>
+        </ul>
+
+        <h2>Scan leurre (IP Decoy)</h2>
+        <p>
+            Technique où des paquets sont envoyés depuis la machine d’attaque, mais avec des adresses IP source falsifiées (leurres). Cela complique la détection d’un scan car le trafic semble provenir de plusieurs sources.
+        </p>
+        <p><strong>Avantages :</strong> brouille la détection des scans de ports.</p>
+        <p><strong>Inconvénients :</strong> n’apporte aucune information supplémentaire et ralentit le scan.</p>
+        <p>Exemple Nmap : <code>nmap -D leurre1,leurre2,ME,leurre3 ... cible</code> ou <code>-D RND:10</code> pour 10 leurres aléatoires.</p>
+
+        <h2>Usurpation d'adresse IP (IP Spoofing)</h2>
+        <p>
+            Modifier le champ adresse source dans le paquet IP pour faire croire qu’il vient d’une autre machine. Très utilisée pour des attaques DoS, car les réponses retournent à l'adresse usurpée, pas à l’attaquant.
+        </p>
+        <p>Outils :</p>
+        <ul>
+            <li><code>hping3 cible -a ip_usurpée</code></li>
+            <li><code>nmap cible -S ip_usurpée</code></li>
+        </ul>
+
+        <h3>Détection de l’usurpation IP</h3>
+        <ul>
+            <li><strong>TTL direct :</strong> Le TTL du paquet en réponse diffère de celui attendu si usurpé.</li>
+            <li><strong>Numéro d’identification IP (IPID) :</strong> Valeur incrémentée par le système, incohérente si usurpation.</li>
+            <li><strong>Contrôle du flux TCP :</strong> Analyse de la fenêtre de réception TCP. Les paquets usurpés ne respectent pas la taille de fenêtre et provoquent des anomalies.</li>
+        </ul>
+
+        <h3>Contre-mesures contre l’usurpation IP</h3>
+        <ul>
+            <li>Utilisation du chiffrement (SSL/TLS, VPN) pour empêcher la manipulation.</li>
+            <li>Éviter la confiance basée sur l’adresse IP (authentification forte).</li>
+            <li>Filtrage d’entrée (ingress filtering) pour bloquer le trafic entrant non légitime.</li>
+            <li>Filtrage de sortie (egress filtering) pour bloquer l’envoi de paquets usurpés depuis l’intérieur.</li>
+            <li>Utilisation de numéros de séquence TCP initiaux aléatoires (ISN).</li>
+        </ul>
+
+        <h2>Chiffrement (Encryption)</h2>
+        <p>
+            Le chiffrement des communications (ex : SSL/TLS, SSH) empêche l’inspection du contenu des paquets par les IDS, ce qui est une méthode efficace d’évasion.
+        </p>
+        <p>
+            Pour contourner cela, les défenses avancées utilisent des attaques Man-in-the-Middle (MITM) ou des systèmes d’analyse comportementale du trafic (Network Traffic Analysis, NTA), qui analysent les métadonnées plutôt que le contenu chiffré.
+        </p>
+
+        <h2>Serveurs Proxy</h2>
+        <p>
+            Les proxies sont des intermédiaires qui relaient les requêtes entre clients et serveurs, permettant d’anonymiser l’origine ou de filtrer le contenu.
+        </p>
+        <p><strong>Usage des défenseurs :</strong></p>
+        <ul>
+            <li>Protéger le réseau interne et masquer les adresses IP.</li>
+            <li>Anonymiser la navigation (ex : VPN, Tor).</li>
+            <li>Filtrer les contenus indésirables et économiser la bande passante.</li>
+        </ul>
+        <p><strong>Usage des attaquants :</strong></p>
+        <ul>
+            <li>Dissimuler la source des attaques.</li>
+            <li>Accéder à distance à des réseaux internes via un proxy compromis.</li>
+            <li>Réaliser des attaques MITM en redirigeant le trafic.</li>
+        </ul>
+
+        <h3>Chaînage de proxies (Proxy chaining)</h3>
+        <p>
+            Utilisation de plusieurs proxies en série pour augmenter l’anonymat (ex : <code>client &lt;-- proxy1 &lt;-- proxy2 &lt;-- cible</code>).
+        </p>
+        <p>Outil notable : <a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener noreferrer">ProxyChains</a>, qui permet de configurer facilement ce chaînage sous Linux.</p>
+
+        <h3>Anonymiseurs et réseaux anonymes</h3>
+        <p>
+            Les anonymiseurs protègent la vie privée en cachant l’adresse IP réelle et en chiffrant le trafic.
+        </p>
+        <ul>
+            <li><strong>Tor</strong> : réseau distribué de relais, offrant un fort anonymat via plusieurs couches de chiffrement. Utilisé pour contourner la censure et préserver la confidentialité.</li>
+            <li><strong>I2P</strong> : alternative pair-à-pair à Tor, centrée sur la confidentialité dans les communications internes au réseau.</li>
+            <li>OS spécialisés comme <a href="https://tails.boum.org/" target="_blank" rel="noopener noreferrer">Tails</a> ou <a href="https://www.whonix.org/" target="_blank" rel="noopener noreferrer">Whonix</a> renforcent la protection contre la surveillance.</li>
+        </ul>
+
+        <p>
+            <em>En résumé :</em> contourner les IDS et firewalls demande souvent d’exploiter des faiblesses dans la gestion des paquets, l’architecture réseau, ou d’utiliser des outils d’anonymisation et de chiffrement. La défense moderne combine filtrage strict, analyse comportementale et chiffrement pour limiter ces contournements.
+        </p>
+
+        <p>
+            Pour approfondir, consulter les ressources officielles telles que le manuel <a href="https://nmap.org/book/subvert-ids.html#avoid-ids" target="_blank" rel="noopener noreferrer">Nmap sur la détection IDS</a> ou les chapitres spécialisés sur <a href="../11-firewalls-ids-and-honeypots/evading-ids.md">l’évasion IDS</a> et <a href="../11-firewalls-ids-and-honeypots/evading-firewalls.md">l’évasion firewall</a>.
+        </p>
+    </section>
+
+
+    <section id="scanning-networks-overview">
+        <h1>3. Vue d’ensemble du scanning de réseaux</h1>
+
+        <p>
+            Le <strong>scanning de réseau</strong> est une phase cruciale dans le processus de reconnaissance en cybersécurité. Il s’agit d’obtenir des informations détaillées sur les hôtes, les ports et les services actifs dans un réseau cible. Cette étape permet de détecter les vulnérabilités des canaux de communication et de préparer un plan d’attaque. Toutefois, les administrateurs systèmes utilisent également ces techniques pour surveiller la disponibilité des services, vérifier les politiques de sécurité et assurer une meilleure gestion de l’infrastructure.
+        </p>
+
+        <p>
+            Différentes techniques et outils permettent d’identifier les adresses IP actives, les ports ouverts, les services associés et leurs versions. Il est même possible de créer des paquets personnalisés grâce à des outils comme :
+            <ul>
+                <li><a href="http://www.colasoft.com" target="_blank">Colasoft Packet Builder</a></li>
+                <li><a href="https://www.netscantools.com" target="_blank">NetScanTools Pro</a></li>
+                <li><a href="http://packeth.sourceforge.net" target="_blank">Packeth</a></li>
+            </ul>
+        </p>
+
+        <h3>Types de scanning</h3>
+        <ul>
+            <li><strong>Scan de ports</strong> : identifie les ports ouverts et les services associés</li>
+            <li><strong>Scan réseau</strong> : détecte les adresses IP disponibles sur le réseau</li>
+            <li><strong>Scan de vulnérabilités</strong> : découvre la présence de failles connues dans les services</li>
+        </ul>
+
+        <h3>Scanning dans les réseaux IPv6</h3>
+        <p>
+            Avec l’adoption croissante d’IPv6, le scanning devient plus complexe. Le grand nombre d’adresses possibles rend les balayages (sweeps) moins efficaces. Il est donc souvent nécessaire de recueillir les adresses IPv6 à partir de journaux, d’e-mails ou de captures de trafic. La détection des hôtes prend également plus de temps en raison de la taille accrue des sous-réseaux.
+        </p>
+
+        <h3>Ports couramment scannés</h3>
+        <p>Voici une liste des ports TCP/UDP fréquemment ciblés lors d’un scan :</p>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Port</th>
+                    <th>Protocole</th>
+                    <th>Service</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>21</td><td>TCP</td><td>FTP - File Transfer Protocol</td></tr>
+                <tr><td>22</td><td>TCP</td><td>SSH - Secure Shell</td></tr>
+                <tr><td>23</td><td>TCP</td><td>Telnet</td></tr>
+                <tr><td>25</td><td>TCP</td><td>SMTP - Simple Mail Transfer Protocol</td></tr>
+                <tr><td>53</td><td>TCP/UDP</td><td>DNS - Domain Name System</td></tr>
+                <tr><td>80</td><td>TCP</td><td>HTTP - Hypertext Transfer Protocol</td></tr>
+                <tr><td>123</td><td>TCP</td><td>NTP - Network Time Protocol</td></tr>
+                <tr><td>443</td><td>TCP/UDP</td><td>HTTPS - HTTP sécurisé</td></tr>
+                <tr><td>500</td><td>TCP/UDP</td><td>IKE/IPSec - Internet Key Exchange / IPSec</td></tr>
+                <tr><td>631</td><td>TCP/UDP</td><td>IPP - Internet Printing Protocol</td></tr>
+                <tr><td>3389</td><td>TCP/UDP</td><td>RDP - Remote Desktop Protocol</td></tr>
+                <tr><td>9100</td><td>TCP/UDP</td><td>AppSocket / JetDirect (imprimantes HP)</td></tr>
+            </tbody>
+        </table>
+        <p>
+            👉 Pour une liste exhaustive, consultez le <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt" target="_blank">registre officiel IANA des ports</a>.
+        </p>
+
+        <h3>Cartographie et topologie réseau</h3>
+        <p>
+            La cartographie d’un réseau consiste à dessiner une vue d’ensemble de la structure du réseau cible, en indiquant les dispositifs présents (pare-feux, routeurs, commutateurs, IDS/IPS, etc.). Cela aide à comprendre les points faibles et les chemins possibles pour une intrusion. Les outils comme <strong>Zenmap</strong> (interface graphique de Nmap) permettent d’automatiser cette tâche.
+        </p>
+        <p>Exemple : dans un lieu public (café), vous pouvez utiliser <code>ipconfig</code> (Windows) ou <code>ifconfig</code> (Linux/macOS) pour identifier votre IP et le sous-réseau. Ensuite, un scan Nmap permet de découvrir les autres hôtes présents et d’établir une carte du réseau.</p>
+        <p><img src="img/zenmap.png" alt="Capture d’écran de Zenmap" style="max-width:100%; height:auto;"></p>
+
+        <h3>Conseils et pratiques</h3>
+        <ul>
+            <li>Avant tout scan, s’assurer d’avoir l’autorisation (scan non autorisé = activité illégale).</li>
+            <li>Privilégier les scans silencieux pour éviter d’être détecté par un IDS/IPS (ex : option <code>-sS</code> dans Nmap).</li>
+            <li>Analyser les résultats pour détecter des services vulnérables (version obsolète, port inhabituel ouvert, etc.).</li>
+        </ul>
+    </section>
+
+
+    <section id="scanning-techniques">
+        <h1>4. Techniques de Scanning en Cybersécurité</h1>
+
+        <p>
+            En cybersécurité, le scanning est une phase cruciale du processus de reconnaissance. Il permet d'identifier les hôtes actifs sur un réseau (découverte d’hôtes) et les ports ouverts (scanning de ports) pour mieux comprendre la surface d’attaque.
+        </p>
+
+        <h2>Objectifs du scanning</h2>
+        <ul>
+            <li>Identifier les ports ouverts sur une machine (scanning de ports)</li>
+            <li>Déterminer quels hôtes sont actifs sur un réseau (découverte d’hôtes)</li>
+            <li>Collecter des informations sur le système, les services et leur état</li>
+        </ul>
+
+        <p>💡 Les mêmes techniques peuvent être utilisées pour les deux types de scanning, mais avec des outils ou options différentes.</p>
+
+        <h2>Protocoles et techniques utilisés</h2>
+
+        <h3>1. Scanning ICMP (couche réseau)</h3>
+        <p>
+            L’ICMP est utilisé pour vérifier si un hôte est actif via des messages de type "echo". Ce type de scan est aussi appelé <strong>ping scan</strong>.
+        </p>
+        <ul>
+            <li>Utilisé principalement pour la <strong>découverte d'hôtes</strong></li>
+            <li>Commandes typiques dans Nmap : <code>-PE</code>, <code>-PP</code>, <code>-PM</code></li>
+            <li>❗ Les pare-feu bloquent souvent les requêtes ICMP entrantes</li>
+            <li>Ne fournit pas d'informations sur les ports</li>
+        </ul>
+
+        <h4>Types de paquets ICMP utilisés</h4>
+        <ul>
+            <li><strong>Echo Request (type 8)</strong> : réponse attendue type 0 (echo reply)</li>
+            <li><strong>Timestamp (type 13)</strong> : vérifie le temps de réponse</li>
+            <li><strong>Address Mask (type 17)</strong> : demande le masque de sous-réseau</li>
+        </ul>
+
+        <h4>Balayage ICMP (ICMP sweep)</h4>
+        <p>Permet de scanner un ensemble d'adresses IP pour repérer les hôtes actifs.</p>
+        <p>Exemples :</p>
+        <ul>
+            <li><code>nmap -sn 192.168.0.0/24</code> : ping tous les hôtes du sous-réseau</li>
+            <li><code>nmap -sn 192.168.0.1-30</code> : ping de l'adresse .1 à .30</li>
+        </ul>
+
+        <h3>2. Scanning TCP (couche transport)</h3>
+
+        <h4>Scan TCP Connect (pleinement ouvert)</h4>
+        <ul>
+            <li>Utilise la fonction système <code>connect()</code></li>
+            <li>Effectue un handshake TCP complet</li>
+            <li><strong>Avantage :</strong> fiable, pas besoin de privilèges root</li>
+            <li><strong>Inconvénient :</strong> facilement détectable</li>
+            <li>Commande : <code>nmap -sT &lt;cible&gt;</code></li>
+        </ul>
+
+        <h4>Scan SYN (semi-ouvert ou furtif)</h4>
+        <ul>
+            <li>Arrête la connexion après l'envoi du SYN-ACK</li>
+            <li>Par défaut dans Nmap : <code>-sS</code></li>
+            <li><strong>Avantage :</strong> rapide et discret</li>
+            <li><strong>Inconvénient :</strong> nécessite des privilèges root</li>
+            <li>Commandes : <code>nmap -sS</code>, <code>hping3 -S</code></li>
+        </ul>
+
+        <h4>Scans RFC 793 (sans SYN/ACK/RST)</h4>
+        <p>Utilisent des combinaisons de drapeaux TCP non standard. Très discrets mais parfois inefficaces contre des systèmes non conformes.</p>
+
+        <h5>Scan XMAS</h5>
+        <ul>
+            <li>Envoie un paquet avec les flags FIN, URG, PUSH</li>
+            <li><code>nmap -sX</code> ou <code>hping3 -F -P -U</code></li>
+        </ul>
+
+        <h5>Scan NULL</h5>
+        <ul>
+            <li>Sans aucun flag (entête TCP vide)</li>
+            <li><code>nmap -sN</code></li>
+        </ul>
+
+        <h5>Scan FIN</h5>
+        <ul>
+            <li>Envoie uniquement le flag FIN</li>
+            <li><code>nmap -sF</code></li>
+        </ul>
+
+        <h3>3. Scanning ACK</h3>
+        <p>
+            Ce type de scan n’identifie pas les ports ouverts, mais sert à détecter la présence de pare-feu et leur comportement.
+        </p>
+        <ul>
+            <li>Envoie un paquet avec le flag ACK</li>
+            <li>Utile pour cartographier des pare-feux stateful</li>
+            <li><code>nmap -sA</code> ou <code>hping3 -A</code></li>
+        </ul>
+
+        <h5>Classification des réponses ACK</h5>
+        <p>Les analyses ACK interprètent la réponse RST pour déduire l'état du port :</p>
+        <ul>
+            <li>TTL &lt; 64 : probablement ouvert</li>
+            <li>Fenêtre TCP (Window) ≠ 0 : probablement ouvert (sur anciens systèmes UNIX/BSD)</li>
+        </ul>
+
+        <h3>4. Scanning IDLE</h3>
+        <p>
+            Méthode avancée et furtive exploitant un hôte "zombie" pour analyser une cible sans exposer l’IP de l’attaquant. Basée sur l’identification IP et les réponses RST.
+        </p>
+        <ul>
+            <li>Très difficile à détecter</li>
+            <li>Requiert un zombie ayant un IP ID incrémentiel</li>
+            <li><code>nmap -sI zombie_ip:port target_ip</code></li>
+        </ul>
+
+        <h2>Outils recommandés</h2>
+        <ul>
+            <li><strong>Nmap</strong> : le plus complet, supporte tous les types de scan</li>
+            <li><strong>Hping3</strong> : pour des scans plus granulaires au niveau TCP/IP</li>
+            <li><strong>Angry IP Scanner</strong> : interface graphique simple pour ICMP sweep</li>
+            <li><strong>Wireshark</strong> : pour analyser le trafic et valider les scans</li>
+        </ul>
+
+        <h2>Conseils pratiques</h2>
+        <ul>
+            <li>🔐 Toujours effectuer des scans sur des systèmes que vous avez le droit de tester</li>
+            <li>🕵️‍♂️ Alternez entre scans furtifs (SYN, XMAS, NULL) et complets (TCP connect) selon l’objectif</li>
+            <li>📉 Privilégiez les scans ICMP en pré-scanning pour éliminer les hôtes inactifs</li>
+            <li>⏱️ Combinez les options de Nmap pour gagner en efficacité (e.g., <code>-Pn</code> pour ignorer le ping initial)</li>
+        </ul>
+    </section>
+
+    <section id="scanning-tools" class="section-scan">
+        <h1> 5. Outils de scan réseau</h1>
+
+        <h3>Nmap (Network Mapper)</h3>
+        <p>
+            Nmap est un outil puissant d’analyse de réseau, utilisé pour détecter les hôtes actifs, les ports ouverts,
+            les systèmes d’exploitation, les services, les pare-feux, et bien plus. Il envoie des paquets spécialement
+            conçus et analyse les réponses pour collecter des informations sur les cibles.
+        </p>
+
+        <h4>Fonctionnalités principales</h4>
+        <ul>
+            <li>Découverte d’hôtes et analyse de ports (TCP/UDP).</li>
+            <li>Détection du système d’exploitation et des services (version, bannières).</li>
+            <li>Utilisation de scripts personnalisés grâce au <strong>NSE (Nmap Scripting Engine)</strong> pour détecter ou exploiter des vulnérabilités.</li>
+            <li>
+                Intégration d’outils complémentaires :
+                <ul>
+                    <li><strong>Ncat</strong> – Équivalent netcat, pour lire/écrire des données via le réseau.</li>
+                    <li><strong>ndiff</strong> – Pour comparer les résultats de scans.</li>
+                    <li><strong>nping</strong> – Générateur de paquets et outil d’analyse de latence.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Phases d'un scan avec Nmap</h4>
+        <ol>
+            <li>Pré-scan des scripts NSE</li>
+            <li>Énumération des cibles (résolution DNS, notation CIDR)</li>
+            <li>Découverte d’hôtes (ping scan)</li>
+            <li>Résolution DNS inversée</li>
+            <li>Scan des ports (états : ouvert, fermé, filtré)</li>
+            <li>Détection de version des services</li>
+            <li>Détection du système d’exploitation</li>
+            <li>Traceroute (chemin réseau)</li>
+            <li>Scan par scripts NSE</li>
+            <li>Affichage des résultats (format texte, XML, greppable...)</li>
+            <li>Post-scan (scripts de rapport)</li>
+        </ol>
+
+        <h4>Options courantes de Nmap</h4>
+        <ul>
+            <li><code>-n</code> : pas de résolution DNS</li>
+            <li><code>-A</code> : active OS detection, version, scripts et traceroute</li>
+            <li><code>--script</code> : exécute des scripts NSE personnalisés</li>
+            <li><code>-T0</code> à <code>-T5</code> : vitesse du scan (de paranoïaque à insensé)</li>
+            <li><code>-sS</code>, <code>-sT</code>, <code>-sU</code>, <code>-sV</code> : différents types de scan (SYN, connect, UDP, version)</li>
+            <li><code>-Pn</code> : scan sans ping (considère toutes les cibles comme vivantes)</li>
+            <li><code>-O</code> : détection du système d’exploitation</li>
+            <li><code>-p-</code> : scanner tous les ports (1 à 65535)</li>
+            <li><code>-oX</code>, <code>-oG</code> : export en XML ou format lisible par grep</li>
+        </ul>
+
+        <h4>Spécification des cibles</h4>
+        <p>
+            On peut spécifier une ou plusieurs cibles :
+            <ul>
+                <li>Adresse IP directe : <code>nmap 192.168.1.1</code></li>
+                <li>Nom de domaine : <code>nmap exemple.com</code></li>
+                <li>Plage CIDR : <code>192.168.1.0/24</code></li>
+                <li>Plage personnalisée : <code>192.168.0-255.1-254</code></li>
+                <li>Fichier de cibles : <code>nmap -iL liste.txt</code></li>
+                <li>Cibles multiples : <code>nmap cible1.com, cible2.com</code></li>
+            </ul>
+        </p>
+
+        <blockquote>
+            💡 Nmap est souvent utilisé dans les films comme Matrix Reloaded ! C’est un outil emblématique de la cybersécurité.
+        </blockquote>
+
+        <hr>
+
+        <h3>Hping</h3>
+        <p>
+            Hping est un scanner de ports plus bas niveau que Nmap, très utile pour les tests furtifs. Il permet d’envoyer
+            des paquets ICMP, UDP ou TCP personnalisés, ce qui le rend particulièrement adapté à la recherche de vulnérabilités
+            ou à l’évasion des pare-feux.
+        </p>
+
+        <h4>Différences entre Hping et Nmap</h4>
+        <ul>
+            <li><strong>Hping</strong> est plus discret, mais ne peut scanner qu'une seule IP à la fois.</li>
+            <li><strong>Nmap</strong> est plus complet, supporte IPv6 et les scans à large échelle.</li>
+            <li>Hping est souvent utilisé pour l’analyse des séquences TCP ou l’injection personnalisée de paquets.</li>
+        </ul>
+
+        <h4>Commandes utiles avec Hping</h4>
+        <ul>
+            <li><code>--tcp-timestamp</code> : tente de deviner la fréquence d’update TCP et l’uptime du système distant</li>
+            <li><code>-Q</code> : collecte les numéros de séquence TCP</li>
+            <li><code>-F</code>, <code>-S</code>, <code>-A</code>, etc. : pour définir des flags TCP (FIN, SYN, ACK...)</li>
+            <li><code>hping3 -1 10.0.1.x</code> : scan ICMP sur un sous-réseau</li>
+            <li><code>hping3 -9 HTTP -I eth0</code> : écoute du trafic HTTP sur l’interface réseau</li>
+        </ul>
+
+        <p>📚 Consultez la <a href="https://linux.die.net/man/8/hping3" target="_blank">documentation officielle</a> pour plus d'exemples.</p>
+
+        <hr>
+
+        <h3>Applications mobiles de scan réseau</h3>
+        <p>Pour des analyses rapides depuis un téléphone, les outils suivants sont recommandés :</p>
+        <ul>
+            <li><a href="https://10base-t.com" target="_blank">IP Scanner (iOS)</a> – Scanner simple pour voir les appareils sur le réseau local</li>
+            <li><a href="https://www.fing.io" target="_blank">Fing (iOS / Android)</a> – Très populaire, détecte les appareils, les ports ouverts, analyse la bande passante</li>
+        </ul>
+
+        <p>
+            📱 Les outils mobiles sont idéals pour des audits de réseau rapides, en déplacement ou dans un cadre non professionnel.
+        </p>
+    </section>
+
+
+    <section id="tcpip-basics">
+        <h1>Modèle TCP/IP et Fondamentaux Réseau</h1>
+
+        <h2>Connexion TCP : L'Établissement de la Communication</h2>
+        <h3>Trois Étapes du Handshake (Three-Way Handshake)</h3>
+        <p>
+            Pour établir une connexion TCP, trois paquets sont échangés entre le client et le serveur :
+        </p>
+        <ol>
+            <li><strong>Client → Serveur :</strong> envoie un paquet <code>SYN</code></li>
+            <li><strong>Serveur → Client :</strong> répond avec <code>SYN-ACK</code></li>
+            <li><strong>Client → Serveur :</strong> confirme avec <code>ACK</code></li>
+        </ol>
+        <p>
+            Une fois la connexion établie, chaque paquet envoyé contiendra le drapeau <code>ACK</code>.
+        </p>
+        <img src="img/three-way-handshake-tcp.png" alt="Handshake TCP">
+
+        <h3>Fermeture d'une Connexion TCP</h3>
+        <ol>
+            <li><strong>Client → Serveur :</strong> envoie <code>FIN</code></li>
+            <li><strong>Serveur → Client :</strong> répond avec <code>ACK + FIN</code></li>
+            <li><strong>Client → Serveur :</strong> envoie <code>ACK</code></li>
+        </ol>
+
+        <h2>Adresses IPv4</h2>
+        <p>L'adresse de boucle locale (localhost) en IPv4 est <code>127.0.0.1</code>.</p>
+
+        <h3>Types d'Adresses IPv4</h3>
+        <ul>
+            <li><strong>Unicast :</strong> vers un seul destinataire</li>
+            <li><strong>Multicast :</strong> vers un groupe défini d'appareils</li>
+            <li><strong>Broadcast :</strong> vers tous les hôtes du réseau</li>
+        </ul>
+        <p>Deux types de broadcast :</p>
+        <ul>
+            <li><strong>Broadcast limité :</strong> <code>255.255.255.255</code> (non relayé par les routeurs)</li>
+            <li><strong>Broadcast dirigé :</strong> par exemple <code>192.168.1.255</code> pour un sous-réseau <code>/24</code></li>
+        </ul>
+
+        <h2>Adresses IPv6</h2>
+        <ul>
+            <li>Utilise 128 bits contre 32 bits pour IPv4</li>
+            <li>Représentée en 8 groupes hexadécimaux séparés par des deux-points</li>
+            <li>Adresse de boucle locale : <code>::1</code></li>
+            <li>Les zéros initiaux peuvent être omis : <code>2001:0db8:0000:0000:0000:0000:0000:0001</code> devient <code>2001:db8::1</code></li>
+        </ul>
+
+        <h2>CIDR (Classless Inter-Domain Routing)</h2>
+        <p>
+            Le CIDR est une méthode de notation pour représenter les adresses IP et les masques de sous-réseau.
+        </p>
+        <table border="1">
+            <thead>
+                <tr><th>Notation CIDR</th><th>Nombre d'adresses</th><th>Masque</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>/32</td><td>1</td><td>255.255.255.255</td></tr>
+                <tr><td>/30</td><td>4</td><td>255.255.255.252</td></tr>
+                <tr><td>/28</td><td>16</td><td>255.255.255.240</td></tr>
+                <tr><td>/26</td><td>64</td><td>255.255.255.192</td></tr>
+                <tr><td>/24</td><td>256</td><td>255.255.255.0</td></tr>
+                <tr><td>/22</td><td>1024</td><td>255.255.252.0</td></tr>
+                <tr><td>/20</td><td>4096</td><td>255.255.240.0</td></tr>
+            </tbody>
+        </table>
+
+        <h2>Les Flags TCP</h2>
+        <p>Chaque flag est un bit qui décrit une action ou un état de la connexion TCP :</p>
+        <ul>
+            <li><strong>SYN :</strong> Démarrage de la connexion</li>
+            <li><strong>ACK :</strong> Accusé de réception</li>
+            <li><strong>FIN :</strong> Terminaison de la connexion</li>
+            <li><strong>RST :</strong> Réinitialisation soudaine (utilisée dans certains scans ou attaques)</li>
+            <li><strong>PSH :</strong> Données à traiter immédiatement</li>
+            <li><strong>URG :</strong> Données urgentes</li>
+        </ul>
+
+        <h3>Comparatifs de Flags</h3>
+        <h4>FIN vs RST</h4>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr><th>FIN</th><th>RST</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Fermeture en douceur</td><td>Fermeture brutale</td></tr>
+                <tr><td>Communication partielle encore possible</td><td>Arrêt immédiat</td></tr>
+            </tbody>
+        </table>
+
+        <h4>PSH vs URG</h4>
+        <table border="2" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr><th>PSH</th><th>URG</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Données à traiter immédiatement</td><td>Données urgentes prioritaires</td></tr>
+                <tr><td>Données en ordre</td><td>Données hors séquence</td></tr>
+            </tbody>
+        </table>
+
+        <h2>Sessions TCP/IP</h2>
+        <p>TCP est un protocole à état (stateful) : une connexion est établie avant tout échange de données.</p>
+        <p>État de la session :</p>
+        <ul>
+            <li><strong>Ouverture :</strong> Handshake (SYN → SYN-ACK → ACK)</li>
+            <li><strong>Échange de données</strong></li>
+            <li><strong>Fermeture :</strong> FIN ou RST</li>
+        </ul>
+
+        <h2>Le Modèle OSI (Open Systems Interconnection)</h2>
+        <p>Modèle théorique en 7 couches qui guide la conception des réseaux :</p>
+        <ol>
+            <li><strong>Physique :</strong> Transmission de bits (câbles, signaux)</li>
+            <li><strong>Liaison de données :</strong> Adressage physique (Ethernet, MAC)</li>
+            <li><strong>Réseau :</strong> Routage, IP, ICMP</li>
+            <li><strong>Transport :</strong> Transmission fiable (TCP, UDP)</li>
+            <li><strong>Session :</strong> Gestion des connexions</li>
+            <li><strong>Présentation :</strong> Format des données, chiffrement (SSL, TLS)</li>
+            <li><strong>Application :</strong> Interfaces utilisateurs (HTTP, DNS, FTP, SMTP)</li>
+        </ol>
+
+        <h2>Le Modèle TCP/IP</h2>
+        <p>Modèle pratique à 4 couches utilisé dans l'Internet :</p>
+        <ol>
+            <li><strong>Couche Accès Réseau (Link) :</strong> Ethernet, ARP</li>
+            <li><strong>Couche Internet :</strong> IP, ICMP, IGMP</li>
+            <li><strong>Couche Transport :</strong> TCP, UDP</li>
+            <li><strong>Couche Application :</strong> HTTP, FTP, DNS, SSH, SMTP</li>
+        </ol>
+
+        <h3>Comparaison OSI vs TCP/IP</h3>
+        <table class="table-bordered table-of-contents"
+            <thead>
+                <tr>
+                    <th>Modèle TCP/IP</th>
+                    <th>Protocoles</th>
+                    <th>Modèle OSI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Application</td>
+                    <td>HTTP, FTP, DNS, SMTP</td>
+                    <td>Application, Présentation, Session</td>
+                </tr>
+                <tr>
+                    <td>Transport</td>
+                    <td>TCP, UDP</td>
+                    <td>Transport</td>
+                </tr>
+                <tr>
+                    <td>Internet</td>
+                    <td>IP, ICMP, ARP</td>
+                    <td>Réseau</td>
+                </tr>
+                <tr>
+                    <td>Accès réseau</td>
+                    <td>Ethernet, Wi-Fi</td>
+                    <td>Liaison, Physique</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Note :</strong> Certains protocoles comme SSL/TLS ne s’intègrent pas parfaitement à l’un ou l’autre modèle, étant situés entre plusieurs couches.</p>
+    </section>
+
+</div>
+
+{% endblock %}

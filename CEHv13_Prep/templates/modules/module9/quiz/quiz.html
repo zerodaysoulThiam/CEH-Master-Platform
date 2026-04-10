@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Module 9 {% endblock %}
+{% block content %}
+
+<meta charset="UTF-8">
+
+<style>
+    .option-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* espace entre chaque option */
+        cursor: pointer;
+    }
+
+        .option-label input[type="radio"] {
+            margin-right: 8px; /* espace entre bouton radio et texte */
+        }
+</style>
+
+
+<div class="body-content container mt-4">
+
+    <h1 id="quizTitle">Quiz 9 : Social engineering </h1>
+
+    <!-- Configuration du Quiz -->
+    <div id="configContainer" class="question">
+        <p><strong>Choisissez la langue :</strong></p>
+        <label class="option-label">
+            <input type="radio" name="langue" value="fr" checked>
+            <span>Français</span>
+        </label>
+        <label class="option-label">
+            <input type="radio" name="langue" value="en">
+            <span>English</span>
+        </label>
+
+        <p><strong>Choisissez la durée du quiz :</strong></p>
+        <select id="durationSelect" class="option-label">
+            <option value="" disabled>-- Sélectionnez la durée --</option>
+            <option value="1200">20 minutes</option>
+            <option value="1800" selected>30 minutes</option>
+            <option value="3600">1 heure</option>
+            <option value="5400">1h 30</option>
+        </select>
+
+        <p><strong>Choisissez la difficulté :</strong></p>
+        <select id="difficultySelect" class="option-label">
+            <option value="" disabled selected>-- Sélectionnez la difficulté --</option>
+            <option value="facile">Facile / Easy</option>
+            <option value="moyen">Moyen / Medium</option>
+            <option value="difficile">Difficile / Hard</option>
+            <option value="tresdifficile">Très difficile / Very Hard</option>
+        </select>
+
+        <br><br>
+        <button id="startQuizBtn">Commencer le quiz / Start quiz</button>
+    </div>
+
+    <!-- Minuteur -->
+    <div class="timerCard" id="timerCard" style="display:none;">
+        <div id="timer">00:00</div>
+    </div>
+
+    <!-- Conteneur du Quiz -->
+    <div id="quizContainer" style="display:none;">
+        <form id="quizForm">
+            <!-- Questions seront insérées dynamiquement ici -->
+        </form>
+
+        <button id="validerBtn" onclick="corriger()">Valider le quiz / Submit quiz</button>
+        <button id="restartBtn" style="display:none;" onclick="recommencer()">Recommencer / Restart</button>
+
+        <div id="resultat"></div>
+    </div>
+
+
+<script>
+    // Données bilingues pour le quiz sur le Social Engineering
+    const quizData = {
+        fr: {
+            facile: [
+                "Qu'est-ce que l'ingénierie sociale?;Une technique de manipulation psychologique;Une méthode de chiffrement avancée;Un type de pare-feu;Un protocole réseau;a",
+                "Quelle est la technique d'ingénierie sociale la plus courante?;Phishing;DDoS;SQL Injection;Cross-site scripting;a",
+                "Quel principe psychologique fait référence à la tendance d'obéir aux figures d'autorité?;Autorité;Réciprocité;Urgence;Preuve sociale;a",
+                "Qu'est-ce qu'un 'rogue DHCP server'?;Un serveur DHCP malveillant;Un serveur DHCP sécurisé;Un type de pare-feu;Un outil de détection d'intrusion;a",
+                "Quelle technique consiste à suivre quelqu'un pour accéder à une zone sécurisée?;Tailgating;Phishing;Vishing;Pretexting;a"
+            ],
+            moyen: [
+                "Quel outil est spécialement conçu pour les attaques d'ingénierie sociale?;SET (Social Engineering Toolkit);Nmap;Wireshark;Metasploit;a",
+                "Quelle technique utilise des appels téléphoniques pour soutirer des informations?;Vishing;Phishing;Smishing;Pretexting;a",
+                "Qu'est-ce que le spear phishing?;Un phishing hautement ciblé;Un phishing de masse;Une attaque DDoS;Une usurpation d'identité sur les réseaux sociaux;a",
+                "Quelle est la principale motivation des menaces internes?;Ressentiment envers l'employeur;Gain financier;Reconnaissance publique;Curiosité technique;a",
+                "Quel outil est utilisé pour la collecte d'informations (OSINT)?;Maltego;Wireshark;Nessus;Burp Suite;a"
+            ],
+            difficile: [
+                "Qu'est-ce que la technique 'Quid Pro Quo' en ingénierie sociale?;Offrir un service en échange d'informations;Créer un faux scénario;Utiliser une clé USB infectée;Suivre quelqu'un dans une zone sécurisée;a",
+                "Quelle technique consiste à compromettre des sites fréquentés par les cibles?;Watering Hole;Phishing;Vishing;Tailgating;a",
+                "Quelle est la meilleure protection contre les attaques d'ingénierie sociale?;Formation et sensibilisation des utilisateurs;Pare-feu nouvelle génération;Chiffrement fort;Authentification biométrique;a",
+                "Quel type d'attaque implique la création d'une relation sentimentale pour obtenir des informations?;Honey Trap;Pretexting;Phishing;Vishing;a",
+                "Qu'est-ce que le 'reverse social engineering'?;Faire en sorte que la victime contacte l'attaquant;Utiliser des techniques de phishing avancées;Créer de faux profils sur les réseaux sociaux;Intercepter des communications téléphoniques;a"
+            ]
+        },
+        en: {
+            facile: [
+                "What is social engineering?;A psychological manipulation technique;An advanced encryption method;A type of firewall;A network protocol;a",
+                "What is the most common social engineering technique?;Phishing;DDoS;SQL Injection;Cross-site scripting;a",
+                "Which psychological principle refers to the tendency to obey authority figures?;Authority;Reciprocity;Urgency;Social proof;a",
+                "What is a 'rogue DHCP server'?;A malicious DHCP server;A secure DHCP server;A type of firewall;An intrusion detection tool;a",
+                "Which technique involves following someone to access a secure area?;Tailgating;Phishing;Vishing;Pretexting;a"
+            ],
+            moyen: [
+                "Which tool is specifically designed for social engineering attacks?;SET (Social Engineering Toolkit);Nmap;Wireshark;Metasploit;a",
+                "Which technique uses phone calls to extract information?;Vishing;Phishing;Smishing;Pretexting;a",
+                "What is spear phishing?;Highly targeted phishing;Mass phishing;DDoS attack;Identity theft on social media;a",
+                "What is the main motivation for insider threats?;Resentment towards the employer;Financial gain;Public recognition;Technical curiosity;a",
+                "Which tool is used for information gathering (OSINT)?;Maltego;Wireshark;Nessus;Burp Suite;a"
+            ],
+            difficile: [
+                "What is the 'Quid Pro Quo' technique in social engineering?;Offering a service in exchange for information;Creating a fake scenario;Using an infected USB key;Following someone into a secure area;a",
+                "Which technique involves compromising websites frequented by targets?;Watering Hole;Phishing;Vishing;Tailgating;a",
+                "What is the best protection against social engineering attacks?;User training and awareness;Next-generation firewall;Strong encryption;Biometric authentication;a",
+                "Which attack type involves creating a romantic relationship to obtain information?;Honey Trap;Pretexting;Phishing;Vishing;a",
+                "What is 'reverse social engineering'?;Making the victim contact the attacker;Using advanced phishing techniques;Creating fake social media profiles;Intercepting phone communications;a"
+            ]
+        }
+    };
+
+
+        const langueRadios = document.getElementsByName('langue');
+        const durationSelect = document.getElementById('durationSelect');
+        const difficultySelect = document.getElementById('difficultySelect');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const resultatDiv = document.getElementById('resultat');
+        const timerDiv = document.getElementById('timer');
+        const validerBtn = document.getElementById('validerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let countdownInterval;
+        let tempsRestant;
+        let quizEnCours = false;
+        let langueChoisie = 'fr';
+        let dureeChoisie = 1800; // par défaut 30 min
+
+        // Activer sélection difficulté uniquement si durée choisie
+        durationSelect.addEventListener('change', () => {
+            difficultySelect.disabled = !durationSelect.value;
+            verifierBoutonStart();
+        });
+
+        difficultySelect.addEventListener('change', verifierBoutonStart);
+
+        langueRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            });
+        });
+
+        function verifierBoutonStart() {
+            startQuizBtn.disabled = !(difficultySelect.value && durationSelect.value);
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            if (!difficultySelect.value || !durationSelect.value) return;
+
+            langueChoisie = document.querySelector('input[name="langue"]:checked').value;
+            dureeChoisie = parseInt(durationSelect.value, 10);
+
+            const diff = difficultySelect.value;
+            if (!quizData[langueChoisie][diff] || quizData[langueChoisie][diff].length === 0) {
+                alert(langueChoisie === 'fr' ? "Aucune question disponible pour cette difficulté." : "No questions available for this difficulty.");
+                return;
+            }
+            afficherQuestions(quizData[langueChoisie][diff]);
+            quizContainer.style.display = "block";
+            resultatDiv.innerHTML = "";
+            document.getElementById("timerCard").style.display = "block";
+            tempsRestant = dureeChoisie; // durée choisie en secondes
+            afficherTimer();
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                tempsRestant--;
+                afficherTimer();
+                mettreAJourCouleurTimer(tempsRestant, dureeChoisie);
+
+                if (tempsRestant <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(langueChoisie === 'fr' ? "Le temps est écoulé, le quiz va être corrigé automatiquement." : "Time is up, the quiz will be corrected automatically.");
+                    corriger();
+                }
+            }, 1000);
+
+            quizEnCours = true;
+
+            // Désactiver la sélection et bouton start pendant le quiz
+            difficultySelect.disabled = true;
+            durationSelect.disabled = true;
+            langueRadios.forEach(radio => radio.disabled = true);
+            startQuizBtn.disabled = true;
+
+            validerBtn.style.display = "inline-block";
+            validerBtn.disabled = false;
+            restartBtn.style.display = "none";
+        });
+
+        function afficherTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            const label = langueChoisie === 'fr' ? 'T' : 'Time remaining';
+            timerDiv.textContent = `${label} : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        }
+
+        function afficherQuestions(questionsRaw) {
+            quizForm.innerHTML = "";
+            questionsRaw.forEach((ligne, index) => {
+                const parts = ligne.split(';');
+                const question = parts[0];
+                const a = parts[1];
+                const b = parts[2];
+                const c = parts[3];
+                const d = parts[4];
+                const bonne = parts[5];
+                const correction = parts.slice(6).join(';') || "";
+
+                const qid = `q${index + 1}`;
+                // Construire les boutons radio
+                const optionsHTML = `
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="a" />
+                ${a}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="b" />
+                ${b}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="c" />
+                ${c}
+              </label>
+              <label class="option-label">
+                <input type="radio" name="${qid}" value="d" />
+                ${d}
+              </label>
+            `;
+
+                const questionHTML = `
+              <div class="question" id="question${index}">
+                <p><strong>${index + 1}. ${question}</strong></p>
+                <div class="options-container">
+                  ${optionsHTML}
+                </div>
+                <div class="correction-text" id="correction${index}" style="display:none;"></div>
+              </div>
+            `;
+                quizForm.insertAdjacentHTML('beforeend', questionHTML);
+
+                // Stocker la bonne réponse et la correction en dataset
+                const divQuestion = document.getElementById(`question${index}`);
+                divQuestion.dataset.bonneReponse = bonne;
+                divQuestion.dataset.correction = correction;
+            });
+        }
+
+        function recommencer() {
+            location.reload(); // recharge la page
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            timerDiv.style.display = "none";
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Mettre la bonne réponse en bleu, mauvaise en rouge
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                // Si bonne réponse, +1
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+
+        function corriger() {
+            if (!quizEnCours) return;
+
+            clearInterval(countdownInterval);
+            // Ne plus cacher le timer, il doit rester visible
+            // timerDiv.style.display = "none"; <-- supprimer/commenter cette ligne
+
+            let score = 0;
+            const total = quizForm.querySelectorAll('.question').length;
+
+            quizForm.querySelectorAll('.question').forEach((divQuestion, index) => {
+                const bonneReponse = divQuestion.dataset.bonneReponse;
+                const correction = divQuestion.dataset.correction;
+                const qName = `q${index + 1}`;
+                const radios = divQuestion.querySelectorAll(`input[name="${qName}"]`);
+                let reponseUtilisateur = null;
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    if (radio.checked) reponseUtilisateur = radio.value;
+                });
+
+                // Supprimer d'abord les classes pour éviter accumulation
+                radios.forEach(radio => {
+                    radio.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                // Ajouter classes pour bonnes et mauvaises réponses
+                radios.forEach(radio => {
+                    if (radio.value === bonneReponse) {
+                        radio.parentElement.classList.add('correct');
+                    }
+                    if (radio.checked && radio.value !== bonneReponse) {
+                        radio.parentElement.classList.add('incorrect');
+                    }
+                });
+
+                if (reponseUtilisateur === bonneReponse) score++;
+
+                // Afficher correction texte
+                const divCorrection = document.getElementById(`correction${index}`);
+                divCorrection.style.display = 'block';
+                divCorrection.textContent = correction;
+            });
+
+            // Afficher résultat
+            const labelScore = langueChoisie === 'fr' ? "Votre score" : "Your score";
+            resultatDiv.textContent = `${labelScore} : ${score} / ${total}`;
+
+            // Masquer bouton valider, montrer bouton recommencer
+            validerBtn.style.display = "none";
+            restartBtn.style.display = "inline-block";
+
+            quizEnCours = false;
+        }
+        function mettreAJourCouleurTimer(tempsRestant, dureeTotale) {
+            const ratio = tempsRestant / dureeTotale;
+
+            if (ratio > 0.5) {
+                timerDiv.style.color = '#28a745'; // vert
+            } else if (ratio > 0.2) {
+                timerDiv.style.color = '#ffc107'; // jaune
+            } else {
+                timerDiv.style.color = '#dc3545'; // rouge
+            }
+        }
+
+
+
+    </script>
+
+
+</div>
+
+{% endblock %}   
