@@ -82,6 +82,6 @@ pip install -r requirements.txt
 # Run development server
 python runserver.py
 
-https://img.shields.io/badge/Open%2520in-Codespaces-181717?logo=github&style=for-the-badge
-https://img.shields.io/badge/Open%2520in-Gitpod-FFAE33?logo=gitpod&style=for-the-badge
+[![EC-Council](https://img.shields.io/badge/EC--Council-CEH%20v12-red?style=flat-square&logo=acclaim)](https://www.eccouncil.org/ceh)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/yourusername/ceh-platform)
 
