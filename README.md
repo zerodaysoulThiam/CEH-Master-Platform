@@ -79,6 +79,11 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+https://img.shields.io/badge/Open%2520in-Codespaces-181717?logo=github&style=for-the-badge
+https://img.shields.io/badge/Open%2520in-Gitpod-FFAE33?logo=gitpod&style=for-the-badge
+
+
+
 
 # Run development server
 python runserver.py
